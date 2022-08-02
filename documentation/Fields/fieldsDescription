@@ -1,0 +1,126 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  object      fieldsDescription;
+}
+
+
+volScalarField {
+  AField[0] "Pre-exponential factor of the pyrolysis reaction 0";
+  AField[1] "Pre-exponential factor of the pyrolysis reaction 1";
+  AField[2] "Pre-exponential factor of the pyrolysis reaction 2";
+  Beta "Part of the storage mass flux [s]";
+  C(gr) "Carbon (graphite), solid mass fraction";
+  CO "Carbon monoxide, gaseous mass fraction";
+  CO2 "Carbon dioxide, gaseous mass fraction";
+  O2 "Oxygen, gaseous mass fraction";
+  N2 "Nitrogen, gaseous mass fraction";
+  Ediff "Flux transported by diffusion of the species [W/m3]";
+  Dm[N2] "Nitrogen diffusion coefficient";
+  Dm[O2] "Oxygen diffusion coefficient";
+  Dm[CO2] "Carbon dioxide diffusion coefficient";
+  Dm[CO] "Carbon monoxide diffusion coefficient";
+  Dm[C(gr)] "Carbon (graphite) diffusion coefficient";
+  M_g "Gaseous molar mass [kg/kmol]";
+  RR.C(gr) "Carbon (graphite) reaction rates [kg/m3/s]";
+  RR.CO "Carbon monoxide reaction rates [kg/m3/s]";
+  RR.CO2 "Carbon dioxide reaction rates [kg/m3/s]";
+  RR.N2 "Nitrogen reaction rates [kg/m3/s]";
+  RR.O2 "Oxygen reaction rates [kg/m3/s]";
+  T "Temperature [K]";
+  Ta "Temperature [K]";
+  Ta_old "Temperature of previous time step [K]";
+  X[N2] "Nitrogen mole fraction";
+  X[O2] "Oxygen mole fraction";
+  X[CO2] "Carbon dioxide mole fraction";
+  X[CO] "Carbon monoxide mole fraction";
+  X[C(gr)] "Cargon (graphite) mole fraction";
+  Y[N2] "Nitrogen mole fraction";
+  Y[O2] "Oxygen mass fraction";
+  Y[CO2] "Carbon dioxide mass fraction";
+  Y[CO] "Carbon monoxide mass fraction";
+  Y[C(gr)] "Carbon (graphite) mass fraction";
+  Ydefault "Default mass fraction";
+  Yold[N2] "Nitrogen mass fraction of previous time step";
+  Yold[O2] "Oxygen mass fraction of previous time step";
+  Yold[CO2] "Carbon dioxide mass fraction of previous time step";
+  Yold[CO] "Carbon monoxide mass fraction of previous time step";
+  Yold[C(gr)] "Carbon (graphite) mass fraction of previous time step";
+  absorptivity "Absorptivity";
+  blowingCorrection "Blowing correction";
+  cp "Heat capacity [J/kg/K]";
+  diffY[C(gr)] "Diffusive part of Carbon (graphite)";
+  diffY[CO2] "Diffusive part of Carbon dioxide";
+  diffY[CO] "Diffusive part of Carbon monoxide";
+  diffY[N2] "Diffusive part of Nitrogen";
+  diffY[O2] "Diffusive part of oxygen";
+  emissivity "Emissivity";
+  eps_g "Gaseous volume fraction";
+  eps_s "Solid volume fraction";
+  eps_s0 "Initial solid volume fraction";
+  eps_s_phase0 "Initial solid volume fraction of phase 0";
+  h "Enthalpy [J/kg]";
+  hSpeciesField(N2) "Nitrogen enthalpy [J/kg]";
+  hSpeciesField(O2) "Oxygen enthalpy [J/kg]";
+  hSpeciesField(CO2) "Carbon dioxide enthalpy [J/kg]";
+  hSpeciesField(CO) "Carbon monoxide enthalpy [J/kg]";
+  hSpeciesField(C(gr)) "Carbon (graphite) enthalpy [J/kg]";
+  h_bar "Average enthalpy [J/kg]";
+  h_c "Carbon enthalpy [J/kg]";
+  h_ew "Wall enthalpy using the environment composition [J/kg]";
+  h_g "Gaseous enthalpy [J/kg]";
+  mDotGw "Pyrolysis gas mass flux at the wall [kg/m2/s]";
+  mu_g "Gaseous viscosity";
+  omegaHeterogeneousEnergy "Heterogeneous energy [W/m3]";
+  omegaHeterogeneousRate "Heterogeneous rate [kg/m3/s]"
+  p "Pressure [Pa]";
+  p_old "Pressure at the previous time step [Pa]";
+  piTotal "Total pyrolysis production rate [kg/m3/s]";
+  pyrolysisFlux "Pyrolysis flux [W/m3]";
+  rT "Fiber radius [m]";
+  rT0 "Initial fiber radius [m]";
+  recession "Recession [m]";
+  rho_ext "External solid density [kg/m3]";
+  rho_g "Gaseous density [kg/m3]";
+  rho_s "Solid density [kg/m3]";
+  rho_s_phase1 "Solid density of phase 0 [kg/m3]";
+  rhoeUeCH "Heat transfer coefficient [kg/m2/s]";
+  siteDensity "Site density [kmol/m2]" ;
+  siteDensityIni "Initial site density [kmol/m2]" ;
+  specificSurface "Specific surface [1/m]";
+  tau "Advancement of the pyrolysis";
+  thermo:alpha "Thermal diffusivity [kg/m/s]";
+  thermo:mu "Viscosity [kg/m/s]";
+  thermo:psi "Compressibility [s2/m2]";
+  thermo:psi_0 "Initial compressibility [s2/m2]";
+}
+
+volVectorField
+{
+  U "Velocity [m/s]: U=eps*vG";
+  cellMotionU "Cell motion velocity [m/s]";
+  initialPosition "Initial face center positions"; 
+  mDotG "Pyrolysis gas mass flux [kg/m3/s]";
+  vG "Gaseous velocity [m/s]";
+}
+
+surfaceVectorField
+{
+  mDotGface "Pyrolysis gas mass flux interpolated at the surface [kg/m2/s]";
+}
+
+volTensorField
+{
+  Gamma "Part of the convective mass flux [s] : q_conv = dx . ( Gamma dx p )";
+  K "Permeability [m2]";
+  k "Thermal conductivity [W/m/K";
+  kijk "Thermal conductivity direction ijk";
+}

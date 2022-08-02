@@ -1,0 +1,3 @@
+heatTransfer2T.C
+
+EXE = $(PATO_DIR)/install/bin/heatTransfer2T

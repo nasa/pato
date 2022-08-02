@@ -1,0 +1,219 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.5                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 0.001; // convert millimeters in meters
+
+// Geometry properties
+// We use 5 blocks, 10 points
+r1 13.3;
+h1 0;
+r2 13.3;
+h2 13.6;
+r3 0;
+h3 13.6;
+r4 20.5;
+h4 0;
+r5 20.5;
+h5 13.6;
+r7 13.3;
+h7 20.603;
+r8 13.5;
+h8 20.603;
+r9 0;
+h9 20.603;
+rcap0 0;
+hcap0 22.03;
+rcap1 13.3;
+hcap1 22.03;
+rcap2 12.0;
+hcap2 25.6;
+rcap3 0;
+hcap3 25.6;
+rcap4 14.965;
+hcap4 22.03;
+rcap5 13.3;
+hcap5 25.6;
+
+
+alphaDeg 2.5; // half angle of the wedge in degrees
+alpha    	#calc "degToRad($alphaDeg)";
+r1s             #calc "$r1*sin($alpha)";
+r1sn		#calc "-1.0*$r1s";
+r1c             #calc "$r1*cos($alpha)";
+r2s             #calc "$r2*sin($alpha)";
+r2sn		#calc "-1.0*$r2s";
+r2c             #calc "$r2*cos($alpha)";
+r3s             #calc "$r3*sin($alpha)";
+r3sn		#calc "-1.0*$r3s";
+r3c             #calc "$r3*cos($alpha)";
+r4s             #calc "$r4*sin($alpha)";
+r4sn		#calc "-1.0*$r4s";
+r4c             #calc "$r4*cos($alpha)";
+r5s             #calc "$r5*sin($alpha)";
+r5sn		#calc "-1.0*$r5s";
+r5c             #calc "$r5*cos($alpha)";
+r7s             #calc "$r7*sin($alpha)";
+r7sn		#calc "-1.0*$r7s";
+r7c             #calc "$r7*cos($alpha)";
+r8s             #calc "$r8*sin($alpha)";
+r8sn		#calc "-1.0*$r8s";
+r8c             #calc "$r8*cos($alpha)";
+r9s             #calc "$r9*sin($alpha)";
+r9sn		#calc "-1.0*$r9s";
+r9c             #calc "$r9*cos($alpha)";
+rcap0s             #calc "$rcap0*sin($alpha)";
+rcap0sn		#calc "-1.0*$rcap0s";
+rcap0c             #calc "$rcap0*cos($alpha)";
+rcap1s             #calc "$rcap1*sin($alpha)";
+rcap1sn		#calc "-1.0*$rcap1s";
+rcap1c             #calc "$rcap1*cos($alpha)";
+rcap2s             #calc "$rcap2*sin($alpha)";
+rcap2sn		#calc "-1.0*$rcap2s";
+rcap2c             #calc "$rcap2*cos($alpha)";
+rcap3s             #calc "$rcap3*sin($alpha)";
+rcap3sn		#calc "-1.0*$rcap3s";
+rcap3c             #calc "$rcap3*cos($alpha)";
+rcap4s             #calc "$rcap4*sin($alpha)";
+rcap4sn		#calc "-1.0*$rcap4s";
+rcap4c             #calc "$rcap4*cos($alpha)";
+rcap5s             #calc "$rcap5*sin($alpha)";
+rcap5sn		#calc "-1.0*$rcap5s";
+rcap5c             #calc "$rcap5*cos($alpha)";
+
+// position on arc, at 45° (between 5 and 8)
+rad_arc 7.;
+px #calc "$r8+$rad_arc*std::sqrt(2)/2";
+py #calc "$h5+$rad_arc*std::sqrt(2)/2";
+pxs             #calc "$px*sin($alpha)";
+pxsn		#calc "-1.0*$pxs";
+pxc             #calc "$px*cos($alpha)";
+
+vertices
+(
+    (0 0 0)          // 0
+    ($r1c $h1 $r1sn) // 1
+    ($r2c $h2 $r2sn) // 2
+    ($r3c $h3 $r3sn) // 3
+    ($r4c $h4 $r4sn) // 4
+    ($r5c $h5 $r5sn) // 5
+    ($r7c $h7 $r7sn) // 6
+    ($r8c $h8 $r8sn) // 7
+    ($r9c $h9 $r9sn) // 8
+
+    (0 0 0)          // 9
+    ($r1c $h1 $r1s)  // 10
+    ($r2c $h2 $r2s)  // 11
+    ($r3c $h3 $r3s)  // 12
+    ($r4c $h4 $r4s)  // 13
+    ($r5c $h5 $r5s)  // 14
+    ($r7c $h7 $r7s)  // 15
+    ($r8c $h8 $r8s)  // 16
+    ($r9c $h9 $r9s)  // 17
+
+    ($rcap0c $hcap0 $rcap0sn) // 18
+    ($rcap1c $hcap1 $rcap1sn) // 19
+    ($rcap2c $hcap2 $rcap2sn) // 20
+    ($rcap3c $hcap3 $rcap3sn) // 21
+    ($rcap4c $hcap4 $rcap4sn) // 22
+    ($rcap5c $hcap5 $rcap5sn) // 23
+    (0 0 0)          // 24
+    (0 0 0)          // 25
+    (0 0 0)          // 26
+    (0 0 0)          // 27
+
+    ($rcap0c $hcap0 $rcap0s)  // 28
+    ($rcap1c $hcap1 $rcap1s)  // 29
+    ($rcap2c $hcap2 $rcap2s)  // 30
+    ($rcap3c $hcap3 $rcap3s)  // 31
+    ($rcap4c $hcap4 $rcap4s)  // 32
+    ($rcap5c $hcap5 $rcap5s)  // 33
+);
+
+blocks
+(
+    hex (0 1 2 3 0 10 11 3) porousMat (40 20 1) simpleGrading (1 1 1) // block 0, collapsed 9->0, 12->3
+    hex (1 4 5 2 10 13 14 11) porousMat (15 20 1) simpleGrading (1 1 1) // block 1
+    hex (3 2 6 8 3 11 15 8) porousMat (40 20 1) simpleGrading (1 1 1) // block 2, collapsed 12->3, 17->8
+    hex (2 5 7 6 11 14 16 15) porousMat (15 20 1) simpleGrading (1 1 1) // block 3
+// cap
+    hex (8 6 19 18 8 15 29 18) porousMat (40 5 1) simpleGrading (1 1 1) // block 5, collapsed 28->18, 17->8
+    hex (18 19 20 21 18 29 30 21) demiseMat (40 20 1) simpleGrading (1 1 1) // block 6, collapsed 28->18, 31->21
+    hex (19 22 23 20 29 32 33 30) demiseMat (5 20 1) simpleGrading (1 1 1) // block 7
+);
+
+edges
+(
+    arc 5 7   ($pxc $py $pxsn)
+    arc 14 16  ($pxc $py $pxs)
+
+);
+
+patches
+(
+    wall top
+    (
+        (20 21 21 30)
+        (23 20 30 33)
+    )
+
+    wedge wedge_neg
+    (
+        (0 3 2 1)
+        (1 2 5 4)
+        (2 3 8 6)
+        (2 6 7 5)
+        (8 18 19 6)
+        (18 21 20 19)
+        (19 20 23 22)
+    )
+
+    wedge wedge_pos
+    (
+        (0 3 11 10)
+        (10 11 14 13)
+        (11 3 8 15)
+        (11 15 16 14)
+        (8 18 29 15)
+        (18 21 30 29)
+        (29 30 33 32)
+    )
+
+    empty center
+    (
+        (0 0 3 3)
+        (3 3 8 8)
+        (8 8 18 18)
+        (18 18 21 21)
+    )
+    wall bottom
+    (
+        (0 1 10 0)
+        (1 4 13 10)
+// sides - same BC as bottom
+        (7 16 14 5)
+        (4 5 14 13)
+        (6 15 16 7)
+        (6 19 29 15)
+        (19 22 32 29)
+        (22 23 33 32)
+    )
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //
+

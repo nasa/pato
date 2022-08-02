@@ -1,0 +1,45 @@
+/*---------------------------------------------------------------------------*\
+Material properties for the substructure materials
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant/subMati/FourierProperties";
+    object      constantProperties;
+}
+// * * * * * *  Units * * * * * [kg m s K mol A cd] * * * * * * * * * * * * * // 
+// e.g. W: kg m^2 s^{-3} 	[1 2 -3 0 0 0 0]
+
+/*** 		Temperature dependent material properties	***/
+/***		5 coefs - n0 + n1 T + n2 T² + n3 T³ + n4 T⁴	***/
+// specific heat capacity - cp - [0 2 -2 -1 0 0 0]
+cp_sub_n[0]	588.133;  
+cp_sub_n[1]	0.829;   
+cp_sub_n[2]	-2.40703E-04;  
+cp_sub_n[3]	-9.96383E-09; 
+cp_sub_n[4]	1.10954E-11;   
+
+// isotropic conductivity  - k - [1 1 -3 -1 0 0 0]
+k_sub_n[0]	422.183;  
+k_sub_n[1]	-9.84998E-01;   
+k_sub_n[2]      9.72343E-04;  
+k_sub_n[3]	-4.14373E-07; 
+k_sub_n[4]	6.31881E-11;
+
+// density - rho - [1 -3 0 0 0 0 0]
+rho_sub_n[0]	3200;  
+rho_sub_n[1]	0;   
+rho_sub_n[2]	0;  
+rho_sub_n[3]	0; 
+rho_sub_n[4]	0;
+
+// emissivity - e - [0 0 0 0 0 0 0]
+e_sub_n[0]	0.95;  
+e_sub_n[1]	0;   
+e_sub_n[2]	0;  
+e_sub_n[3]	0; 
+e_sub_n[4]	0;
+

@@ -1,0 +1,3 @@
+compressibleDarcy2T.C
+
+EXE = $(PATO_DIR)/install/bin/compressibleDarcy2T

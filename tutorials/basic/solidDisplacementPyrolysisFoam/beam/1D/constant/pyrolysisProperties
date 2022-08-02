@@ -1,0 +1,30 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+// * * * * * *  Units * * * * * [kg m s K mol A cd] * * * * * * * * * * * * * //
+// e.g. W: kg m^2 s^{-3}        [1 2 -3 0 0 0 0]
+
+/****           Universal constants                                        ****/
+A               A               [0 0 -1 0 0 0 0]         1e4;
+Ep              Ep              [1 2 -2 0 -1 0 0]       7e4;
+
+
+pyrolysisStress   yes;
+
+
+// ************************************************************************* //

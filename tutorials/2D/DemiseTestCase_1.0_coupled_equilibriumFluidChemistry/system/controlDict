@@ -1,0 +1,73 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "system";
+  object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     PATOx;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         120;
+
+deltaT          1e-3;
+
+writeControl    adjustableRunTime;
+
+writeInterval   1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  12;
+
+writeCompression uncompressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+graphFormat     xmgr;
+
+runTimeModifiable yes;
+
+/* Adjustable time step - based on a limiter on the max. pressure gradient and on species mass-fraction variations */
+adjustTimeStep  yes; // you can turn it off but it's going to be very slow
+
+adjustStartTime 0;
+
+maxCo           10;
+
+maxDeltaT   1e-2; // reduce it if the surface temperature starts oscilliating
+
+minDeltaT   1e-6;
+
+REVlength   1e3;
+
+minChemDeltaT   1e-6; // Minimum time step for species equation
+
+dYtolMin    0.05; // Min variation of mass fractions in species equation
+dYtolMax    0.1; // Max
+Ythreshold  0.001; // Species below this mass fraction are ignored for the time step optimization
+/* End adjustable time step */
+
+// For cfd coupled simulation, allow the flow to adjust to the solid temperature
+delaySolid 1e-1; // time in seconds
+
+
+// ************************************************************************* //

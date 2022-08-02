@@ -1,0 +1,45 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volTensorField;
+    location    "0";
+    object      k;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 1 -3 -1 0 0 0];
+
+internalField   uniform (1 0 0 0 1 0 0 0 1);
+
+boundaryField
+{
+    top
+    {
+        type boundaryMapping;
+        mappingType polynomial;
+        mappingFileName "$PATO_UNIT_TESTING/testsuites/MaterialModel/BoundaryConditionsModel/testPolynomial/data/1D";
+        mappingFields ((k  "2")); // order polynomial: k = k_0 + k_1 * t + k_2 * t^2
+        value uniform (1 0 0 0 1 0 0 0 1);
+    }
+    sides
+    {
+      type calculated;
+      value uniform (1 0 0 0 1 0 0 0 1);
+    }
+    bottom
+    {
+      type calculated;
+      value uniform (1 0 0 0 1 0 0 0 1);
+    }
+}
+
+
+// ************************************************************************* //

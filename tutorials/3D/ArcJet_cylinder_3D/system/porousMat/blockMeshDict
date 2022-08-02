@@ -1,0 +1,151 @@
+// blockMesh :  Block mesh description file
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+FoamFile
+{
+version  2.0;
+format   ascii;
+class dictionary;
+object blockMeshDict;
+}
+// ************************************
+
+
+
+
+
+
+//   meshGenApp blockMesh;
+   convertToMeters 0.001;
+
+    //63.5 mm column diameter
+    //25.4 mm length
+   
+   
+   
+    //Width of middle square section
+   
+   
+   
+   
+    //how many cells in the square section
+    //how many cells from square section to perimeter
+    // how many cells from top to bottom
+
+   vertices
+   (
+    ( 15.875 0.0  15.875) // Vertex fiveoclocksqb = 0 
+    (-15.875 0.0  15.875) // Vertex sevenoclocksqb = 1 
+    (-15.875 0.0 -15.875) // Vertex elevenoclocksqb = 2 
+    ( 15.875 0.0 -15.875) // Vertex oneoclocksqb = 3 
+   
+    ( 22.4506403026717 0.0  22.450640302674) // Vertex fiveoclockcb = 4 
+    (-22.4506403026717 0.0  22.450640302674) // Vertex sevenoclockcb = 5 
+    (-22.4506403026717 0.0 -22.450640302674) // Vertex elevenoclockcb = 6 
+    ( 22.4506403026717 0.0 -22.450640302674) // Vertex oneoclockcb = 7 
+
+    ( 15.875 25.4  15.875) // Vertex fiveoclocksqt = 8 
+    (-15.875 25.4  15.875) // Vertex sevenoclocksqt = 9 
+    (-15.875 25.4 -15.875) // Vertex elevenoclocksqt = 10 
+    ( 15.875 25.4 -15.875) // Vertex oneoclocksqt = 11 
+   
+    ( 22.4506403026717 25.4  22.450640302674) // Vertex fiveoclockct = 12 
+    (-22.4506403026717 25.4  22.450640302674) // Vertex sevenoclockct = 13 
+    (-22.4506403026717 25.4 -22.450640302674) // Vertex elevenoclockct = 14 
+    ( 22.4506403026717 25.4 -22.450640302674) // Vertex oneoclockct = 15 
+   );				
+
+   blocks
+   (
+    //square block
+    hex (
+       1 0 3 2
+       9 8 11 10
+       )
+    ablaMat
+    (10 10 100)
+    simpleGrading (1 1 0.01)
+
+    //slice1
+    hex (
+       5 4 0 1
+       13 12 8 9
+       )
+    ablaMat
+    (10 5 100)
+    simpleGrading (1 1 0.01)
+
+    //slice2
+    hex (
+       1 2 6 5 
+       9 10 14 13 
+       )
+    ablaMat
+   (10 5 100)
+simpleGrading (1 1 0.01)
+
+   //slice3
+   hex (
+         2 3 7 6
+         10 11 15 14
+       )
+    ablaMat
+   (10 5 100)
+simpleGrading (1 1 0.01)
+
+   //slice4
+   hex (
+         3 0 4 7
+         11 8 12 15
+       )
+    ablaMat
+   (10 5  100)
+simpleGrading (1 1 0.01)
+
+   );
+
+
+   //create the quarter circles
+   edges
+   (
+    arc 4 5 (0.0 0.0 31.75)
+    arc 5 6 (-31.75 0.0 0.0)
+    arc 6 7 (0.0 0.0 -31.75)
+    arc 7 4 (31.75 0.0 0.0)
+
+    arc 12 13 (0.0 25.4 31.75)
+    arc 13 14 (-31.75 25.4 0.0)
+    arc 14 15 (0.0 25.4 -31.75)
+    arc 15 12 (31.75 25.4 0.0)
+
+   );
+
+   patches
+   (
+    wall bottom
+    (
+     (0 3 2 1)
+     (0 4 7 3)
+     (4 0 1 5)
+     (1 2 6 5)
+     (3 7 6 2)
+    )
+
+    wall top
+    (
+     (8 11 10 9)
+     (8 12 15 11)
+     (12 8 9 13)
+     (9 10 14 13)
+     (11 15 14 10)
+    )
+
+    wall sides
+    (
+     (5 4 12 13)
+     (5 13 14 6)
+     (6 14 15 7)
+     (7 15 12 4)
+    )
+
+);
+

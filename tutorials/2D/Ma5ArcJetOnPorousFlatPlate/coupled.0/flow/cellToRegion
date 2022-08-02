@@ -1,0 +1,76 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0/flow";
+    object      cellToRegion;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    top
+    {
+        type            zeroGradient;
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+    front_bottom
+    {
+        type            zeroGradient;
+    }
+    back_bottom
+    {
+        type            zeroGradient;
+    }
+    left_wall
+    {
+        type            zeroGradient;
+    }
+    obstacle
+    {
+        type            zeroGradient;
+    }
+    inlet1
+    {
+        type            zeroGradient;
+    }
+    nozzle
+    {
+        type            zeroGradient;
+    }
+    top_nozzle
+    {
+        type            zeroGradient;
+    }
+    bottom_nozzle
+    {
+        type            zeroGradient;
+    }
+    defaultFaces
+    {
+        type            empty;
+    }
+    flow_to_porousMat
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+}
+
+
+// ************************************************************************* //

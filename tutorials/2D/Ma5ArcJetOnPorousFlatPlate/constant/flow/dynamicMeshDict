@@ -1,0 +1,37 @@
+/*---------------------------------------------------------------------------*\
+Directory of the dynamic mesh.
+This is where the mesh parameters are set by the user.
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+    class           dictionary;
+    object          dynamicMeshDict;
+}
+
+/* * * 		User-defined mesh motion parameters	 * * */
+
+twoDMotion     		no; 	// "yes" for 1D and 2D deformations (n.b. axi-symmetrical is 3D). 
+meshMotion      	yes; 	// "no" to force no recession while using the boundary layer approximation 
+				// (eg. for AblationTestCase2.1).
+movingPatch		flow_to_porousMat; 	// name of moving patch (ie. ablating surface) - 
+				// needs to be consistant with 'constant/polyMesh/boundary' (and with 
+				// 'constant/polyMesh/blockMeshDict' if 'blockMesh' is used to generate the mesh)
+distancePatches 
+(
+    flow_to_porousMat // same as movingPatch
+ 
+);
+movingRegion    	flow; // name of moving region (only one by default: 'region0')
+
+//==============================================================================================
+// For code initialization - Do NOT modify
+dynamicFvMesh   	dynamicMotionSolverFvMesh; 		// mesh motion class
+solver        		velocityLaplacian;			// mesh motion solver
+velocityLaplacianCoeffs
+{
+   diffusivity    	uniform;				// try quadratic if topology is lost due to large dispacements	
+}
+//==============================================================================================

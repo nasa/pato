@@ -1,0 +1,16 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory 
+
+# create 0 folder
+if [ ! -d 0 ]; then
+    scp -r origin.0 0
+fi
+
+# create polyMesh 
+blockMesh
+
+# split the regions
+splitMeshRegions -cellZones  -overwrite
+
+# run PATOx
+PATOx

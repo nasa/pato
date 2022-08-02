@@ -1,0 +1,8 @@
+#!/bin/sh
+rm  -rf build
+rm  -rf install
+rm  -rf thirdparty/catch/build
+rm  -rf thirdparty/eigen/build
+rm  -f  scripts/utils.pyc
+
+

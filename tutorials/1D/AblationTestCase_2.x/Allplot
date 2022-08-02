@@ -1,0 +1,4 @@
+#!/bin/sh
+cd plots
+python plot.py
+evince *.pdf

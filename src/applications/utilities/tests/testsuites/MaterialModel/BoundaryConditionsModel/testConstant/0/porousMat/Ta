@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+Volume-averaged temperature of the ablative material (gas + solid).
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      Ta;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 300;
+
+boundaryField
+{
+     top
+	  {
+	    type            Bprime;
+	    BprimeFile      "$PATO_UNIT_TESTING/testsuites/MaterialModel/BoundaryConditionsModel/testConstant/data/Materials/TACOT-Mars/BprimeTable";
+	    movingMesh      yes;
+	    mappingType constant;
+	    mappingFileName "$PATO_UNIT_TESTING/testsuites/MaterialModel/BoundaryConditionsModel/testConstant/data/SMEB-Ta";
+	    mappingFields
+    (
+     (p "1")
+     (rhoeUeCH "4")
+     (h_r "5")
+     (qRad "6")
+     (heatOn "8")
+     (lambda "9")
+     (Tbackground "10")
+     );
+
+	    value uniform 0;
+	}
+
+
+    sides       
+    {
+      type            zeroGradient;
+    }
+
+    bottom          
+    {
+        type            zeroGradient;
+    }
+
+}
+// ************************************************************************* /

@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+/****************************** GENERAL ************************************/
+//debug yes;
+/****************************** END GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  IOType PurePyrolysis; // purePyrolysis IO type
+  readFiles // reads the temperature file and change the temperature at the cells
+  (
+      "Temperature.txt"
+  );
+  writeFields ();  // write fields in the time folders
+  probingFunctions   // name of sampling/probing dictionaries in "system/porousMat"
+  (
+      plotDict
+  );
+}
+/****************************** END IO *************************************/
+
+/****************************** PYROLYSIS **********************************/
+Pyrolysis {
+  PyrolysisType LinearArrhenius;
+}
+/****************************** END PYROLYSIS ******************************/
+
+/****************************** MATERIAL PROPERTIES ***********************/
+MaterialProperties {
+  MaterialPropertiesType Porous; // porous material properties
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Composites/TACOT"; // material properties directory
+}
+/****************************** END MATERIAL PROPERTIES ******************/
+

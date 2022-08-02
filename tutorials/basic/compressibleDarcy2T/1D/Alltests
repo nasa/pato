@@ -1,0 +1,5 @@
+#!/bin/sh
+
+./Allrun_basic
+./PATOx/Allrun_basic
+./PATOx/Allplot

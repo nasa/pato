@@ -1,0 +1,151 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.5                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Creating a 2D axi mesh for a cylinder
+
+convertToMeters 0.001; // convert millimeters in meters
+
+// Cylinder properties
+radius 5; //  radius 5 mm
+l_inlet 100; // inlet length 100 mm
+l_porous 15; // porous material length 15 mm
+l_outlet 100; // inlet length 100 mm
+alphaDeg 2.5; // half angle of the wedge in degrees
+
+alpha    	#calc "degToRad($alphaDeg)";
+s               #calc "$radius*sin($alpha)";
+s_neg		#calc "-1.0*$s";
+c               #calc "$radius*cos($alpha)";
+l2		#calc "$l_inlet+$l_porous";
+l3		#calc "$l2+$l_outlet";
+
+vertices
+(
+    (0 0 0) // 0
+    ($l_inlet 0 0) // 1
+    ($l_inlet $c $s_neg) // 2
+    (0 $c $s_neg) // 3
+
+    (0 0 0) // 4
+    ($l_inlet 0 0) // 5
+    ($l_inlet $c $s)// 6
+    (0 $c $s) // 7
+
+    ($l2 0 0) // 8
+    ($l2 $c $s_neg) // 9
+    ($l2 $c $s)// 10
+    ($l2 0  0)// 11
+
+    ($l3 0 0) // 12
+    ($l3 $c $s_neg) // 13
+    ($l3 $c $s)// 14
+    ($l3 0 0)// 15
+
+
+);
+
+blocks
+(
+    // hex (0 1 2 3 4 5 6 7) upwindTube (400 40 1) simpleGrading (1 1 1) // 0
+    hex (0 1 2 3 4 5 6 7) upwindTube (200 15 1) simpleGrading (1 1 1) // 0, collapsed 7->3, 4-> 0
+    hex (1 8 9 2 5 11 10 6) porousMat (30 15 1) simpleGrading (1 1 1) // 1
+    hex (8 12 13 9 11 15 14 10) downwindTube (200 15 1) simpleGrading (1 1 1) // 1
+);
+
+edges
+(
+);
+
+patches
+(
+    wall upwindTube_top
+    (
+        (3 7 6 2)
+    )
+
+    wall upwindTube_inlet
+    (
+        (0 4 7 3)
+    )
+
+    
+
+
+    wall porousMat_top
+    (
+        (2 6 10 9)
+    )
+ 
+    wall downwindTube_top
+    (
+        (9 10 14 13)
+    )
+
+    
+   wall downwindTube_outlet
+   (
+        (12 13 14 15)
+   )
+
+    wedge upwindTubewedge_pos
+    (
+        (4 5 6 7)
+    )
+    wedge porousMatwedge_pos
+    (
+        (5 11 10 6)
+    )
+    wedge downwindTube_pos
+    (
+        (11 15 14 10)
+    )
+
+ 
+
+    wedge upwindTubewedge_neg
+    (
+        (0 3 2 1)
+    )
+    wedge porousMatwedge_neg
+    (
+        (1 2 9 8)
+    )
+
+    wedge downwindTube_neg
+    (
+        (8 9 13 12)
+    )
+
+    empty center
+    (
+        (0 4 5 1)
+    )
+
+   empty center1
+   (
+        (1 5 11 8)
+   )
+   empty center2
+   (
+        (8 11 15 12)
+   )
+
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

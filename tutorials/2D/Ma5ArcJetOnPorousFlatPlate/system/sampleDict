@@ -1,0 +1,93 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  dev                                   |
+|   \\  /    A nd           | Web:      http://www.openfoam.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+    class           dictionary;
+    location        system;
+    object          sample;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type sets;
+libs ("libsampling.so");
+
+interpolationScheme cellPointFace; //cellPoint;
+
+setFormat    raw; // xmgr;
+surfaceFormat raw;
+
+sets
+(
+
+    lineX1
+    {
+        type            uniform;
+        axis            xyz;
+        start           ( 0.5126 0.0 0.0 );
+        end             ( 0.59496 0.03 0.0 );
+	nPoints         20 ;
+    }
+    
+    lineX2
+    {
+        type            uniform;
+        axis            xyz;
+        start           ( 0.59496 0.03 0.0 );
+        end             ( 0.64147 0.03 0.0 );
+	nPoints         10 ;
+    }   
+
+    lineX3
+    {
+        type            uniform;
+        axis            xyz;
+        start           ( 0.64147 0.03 0.0 );
+        end             ( 0.64428 0.02424 0.0 );
+	nPoints         5 ;
+    }   
+    
+    sortieTuyere
+    {
+        type            uniform;
+        axis            xyz;
+        start           ( 0.47 0.0 0.0 );
+        end             ( 0.47 0.073 0.0 );
+	nPoints         40 ;
+    }  
+    
+    plot
+    {
+        type            cloud;
+        axis            xyz;
+        points          (
+                        ( 0.5126 0.0 0.0 ) // TC 1
+                        ( 0.59496 0.03 0.0 ) // TC 2
+                        ( 0.64147 0.03 0.0 ) // TC 3
+                        ( 0.64428 0.2424 0.0 ) // TC 4
+
+);
+    }
+);
+
+
+fields
+(
+    p
+    T      
+    U
+    
+        
+);
+
+
+
+// *********************************************************************** //

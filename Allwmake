@@ -1,0 +1,37 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory 
+ROOTDIR=`pwd`
+
+# compile Mutation++ and its thirdParty libraries
+if [ ! -d $MPP_DIRECTORY/install ]; then
+    cd $MPP_DIRECTORY
+    python scripts/install_dependencies.py
+    mkdir build
+    cd build
+    cmake ..
+    make -j `nproc` install
+    ### added on 11/16/21
+    if [ "$(uname)" = "Darwin" ]; then
+        lib_name=$PATO_DIR/src/thirdParty/mutation++/install/lib/libmutation++.dylib
+        install_name_tool -id $lib_name $lib_name
+    fi    
+    ###
+    cd $ROOTDIR
+fi
+
+# compile PATO library, solvers and utilities
+cd src/applications
+wmake libso libraries/samplingUser
+wmake libso libraries/libPATOx
+wmake all solvers
+wmake all utilities
+cd $ROOTDIR
+
+# compile the documentation
+if [ "$BUILD_DOCUMENTATION" = "yes" ]; then
+    if [ ! -d documentation/Doxygen/html ]; then
+	documentation/Doxygen/Allmake
+    fi
+fi
+
+# ----------------------------------------------------------------- end-of-file

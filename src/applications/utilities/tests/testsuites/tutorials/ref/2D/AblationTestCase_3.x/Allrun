@@ -1,0 +1,21 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory 
+
+# Create 0 folder
+if [ ! -d 0 ]; then
+    scp -r origin.0 0
+fi
+
+# Select the mesh (Arc, Ellipse, or a mesh of your choice) 
+cp system/porousMat/blockMeshDict_Ellipse system/porousMat/blockMeshDict
+
+exec 3>&2 # file descriptor 3 to stderr
+exec 2>&1 # stderr to stdout
+
+# Generate axial mesh from definition in blockMeshDict
+blockMesh -region porousMat
+
+exec 2>&3 # stderr to file descriptor 3
+
+# Run PATOx
+PATOx

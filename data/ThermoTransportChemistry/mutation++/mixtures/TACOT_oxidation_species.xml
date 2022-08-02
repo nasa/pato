@@ -1,0 +1,7 @@
+<mixture mechanism="none" thermo_db="NASA-7" 
+>
+    <species>
+ N2                O2                CO2               CO                H2O              
+ H2                CH4               A1                A1OH              C(gr)
+    </species>
+</mixture>

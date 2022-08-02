@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 273;
+
+boundaryField
+{
+    sides
+    {
+        type            zeroGradient;
+    }
+    top
+    {
+        type            codedFixedValue;
+        value           uniform 273;
+        name            ablation;
+        code            #{
+            const vector axis(1, 0, 0);
+    	    vectorField c = this->patch().Cf();
+    	    const tmp<scalarField> x_tmp = (c & axis);
+	    const scalarField& x = x_tmp();
+	    scalar sigma = 0.01;
+	    scalar mu = 0;
+	    scalar deltaT = 300;
+	    scalar Tini = 273;
+            operator==(deltaT*exp(-pow(x-mu,2)/(2*pow(sigma,2)))+Tini);
+        #};
+    }
+    bottom
+    {
+        type            zeroGradient;
+    }
+}
+
+
+// ************************************************************************* //

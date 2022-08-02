@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# Run from this directory
+cd "${0%/*}" || exit 1
+
+# Source tutorial run functions
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+./Allclean
+
+# Extract fibres surface on a sub-set of the triSurface  (dictionnaire: surfaceSubsetDict)
+runApplication surfaceSubset constant/triSurface/cube_minus_sphere.obj constant/triSurface/fibres.obj system/surfaceSubsetDict
+
+# Extract surface features (dictionnaire: surfaceFeaturesDict)
+runApplication surfaceFeatures
+
+# Create background mesh (dictionnaire: blockMeshDict)
+runApplication blockMesh
+
+# Create final mesh (dictionaire: snappyHexMeshDict, meshQualityDict)
+runApplication snappyHexMesh -overwrite
+
+# Check the Mesh for information
+runApplication checkMesh
+
+# Decompose the mesh for parallel running (dictionnaire: decomposeParDict)
+runApplication decomposePar -copyZero
+
+# Make the linear system more diagonal dominant. It will speed-up the linear solvers.
+runParallel renumberMesh -overwrite
+
+# To run in parallel the solver. getApplication finds solver name from "application" entry in controlDict
+runParallel $(getApplication)
+
+# To reconstruct for post-processing
+runApplication reconstructPar #-latestTime
+
+# To plot the drag coefficient
+gnuplot plot/plot_cd
+
+# To visualize the streamlines
+paraview postProcessing/sets/streamlines/579/track0_U.vtk 
+
+#------------------------------------------------------------------------------

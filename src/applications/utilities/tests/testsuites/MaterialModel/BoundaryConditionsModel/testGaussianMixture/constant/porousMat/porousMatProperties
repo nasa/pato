@@ -1,0 +1,14 @@
+/*---------------------------------------------------------------------------*\
+OpenFOAM file. Numerical method and parameter options for the finite-rate chemistry solver.
+No modifications are needed for tutorial-derived cases.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     5.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant/porousMat/poroursMatProperties";
+    object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

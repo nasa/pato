@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      constantProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+/****************************** END GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields ();  // write fields in the time folders
+  probingFunctions   // name of sampling/probing dictionaries in "system/porousMat"
+  (
+      plotDict
+  );
+}
+/****************************** END IO *************************************/
+
+/****************************** ENERGY *************************************/
+Energy {
+  EnergyType BoundaryTable; // Update the cell center value using the boundary value
+}
+/****************************** END ENERGY *********************************/
+
+/****************************** GAS PROPERTIES *****************************/
+GasProperties {
+  GasPropertiesType  Tabulated; // Update the tabulated gas properties
+  GasPropertiesFile "$PATO_DIR/data/Materials/Composites/TACOT/gasProperties"; // tabulated gas properties file
+}
+/****************************** END GAS PROPERTIES *************************/
+
+/****************************** MATERIAL PROPERTIES ************************/
+MaterialProperties {
+  MaterialPropertiesType Porous; // porous material properties
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Composites/TACOT"; // material properties directory
+}
+/****************************** END MATERIAL PROPERTIES ********************/

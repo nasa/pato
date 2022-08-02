@@ -1,0 +1,35 @@
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |               P A T O
+    \\  /    A nd           | Copyright (C) 2018 PATO-community
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+License
+    This New thermophysical Model was developped to insure the implementation 
+    of the equilibrium chemistry thermophysical property Tables in PATO.
+    
+    Based on tilasoldo, Yuusha and chriss85 contribution to OpenFOAM, this new 
+    thermophysical model has been modified and checked by PATO-community.
+      
+    The Interpolation function used in this updated thermophysical model is
+    that of OpenFoam called "interpolation2DTable"(no extrapolation). 
+    
+    OpenFOAM is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+    
+
+\*---------------------------------------------------------------------------*/
+
+

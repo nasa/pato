@@ -1,0 +1,22 @@
+#!/bin/sh                                                                                                                                                                                                                                                   
+cd ${0%/*} || exit 1    # Run from this directory                                                                                                                                                                                                            
+
+# remove time folders
+rm -rf [0-9]*
+
+# remove all the *.pdf files
+rm -f plots/*.pdf
+
+# clean polyMesh 
+rm -rf constant/porousMat/polyMesh
+
+#remove output folder and add an empty file for git repository
+if [ -d output ]; then
+    rm -rf output
+    mkdir output
+    touch output/empty
+fi
+
+# remove temporary files                                                                                                                                                                                                                                    
+find . -name '*~' -ls -delete
+

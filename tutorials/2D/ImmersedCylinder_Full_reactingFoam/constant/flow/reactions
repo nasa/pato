@@ -1,0 +1,21 @@
+
+
+
+species
+(
+    O2
+    N2
+    C
+    CO2
+);
+
+reactions {
+  oxydationReaction
+  {
+    type     irreversibleArrheniusReaction;
+    reaction "C + O2 = CO2";
+    A        5.2e1;
+    beta     0;
+    Ta       1496;
+  }
+

@@ -1,0 +1,23 @@
+ELEMENTS H C O AR 
+END
+SPECIES
+CH4 H2 C2H6 C2H4 C2H2 C A1OH A1 H2O CO CO2 AR
+END
+REACTIONS JOULES/MOLE 
+   CH4		=  0.5 H2   + 0.5 C2H6 		7.600E+14	0.00	397480! 1
+   C2H6		=      C2H4 +     H2 		3.1e+14		0.00	292880! 2
+   C2H4		=      C2H2 +     H2 		2.6e+8		0.00	167360! 3	
+   C2H2		=  2   C    +     H2 		2.1e+10		0.00	41840!  4
+  		FORD	/ C2H2	2 /
+    C	+  2 H2	=  	CH4		 	2.0e+9		0.00	71128!  5
+  		FORD	/ C	0 /
+		FORD	/ H2	0 /
+   A1OH +    H2	=      H2O  +     A1		2.0e+13		0.00	188280! 6
+  		FORD	/ H2	0 /
+   A1		=  3   C2H2			1.4e+9		0.00	146440! 7
+   C    +    H2O=      CO  +      H2		1.2e+12		-1.0	343088! 8
+   CO   +    H2O=      H2  +      CO2		1.0e+12		0.00	125520! 9
+   C    +    CO2=  2   CO			1.0e+6		-1.0	209200! 10f  
+		FORD	/ CO2	0 /
+   2 CO		=      C   +      CO2		1.0e-9		0.00	255224! 10b  
+END

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+#. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# generate mesh
+blockMesh
+
+# run application
+compressibleDarcy2T
+
+# Create data
+postProcess -func singleGraph
+
+# To plot compressibleDarcy2T results, uncomment this
+# ./Allplot
+
+# paraview
+#paraFoam
+
+# -----------------------------------------------------------------------------

@@ -1,0 +1,565 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.5                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 0.001; // convert millimeters in meters
+
+// Geometry properties
+// We use 5 blocks, 10 points
+r1 13.3;
+h1 0;
+r2 13.3;
+h2 13.6;
+r3 0;
+h3 13.6;
+r4 20.5;
+h4 0;
+r5 20.5;
+h5 13.6;
+r7 13.3;
+h7 20.603;
+r8 13.5;
+h8 20.603;
+r9 0;
+h9 20.603;
+rcap0 0;
+hcap0 22.03;
+rcap1 13.3;
+hcap1 22.03;
+rcap2 12.0;
+hcap2 25.6;
+rcap3 0;
+hcap3 25.6;
+rcap4 14.965;
+hcap4 22.03;// ??????????
+rcap5 13.3;
+hcap5 25.6;// ??????????
+
+//h_fluide
+h_fluid #calc "3*$hcap5";
+h_bound_lay #calc "4*$hcap5/3";
+
+
+r4bis 21.927;
+r4bis2 25.497;
+
+
+
+alphaDeg 2.5; // half angle of the wedge in degrees
+alpha    	#calc "degToRad($alphaDeg)";
+r1s             #calc "$r1*sin($alpha)";
+r1sn		#calc "-1.0*$r1s";
+r1c             #calc "$r1*cos($alpha)";
+r2s             #calc "$r2*sin($alpha)";
+r2sn		#calc "-1.0*$r2s";
+r2c             #calc "$r2*cos($alpha)";
+r3s             #calc "$r3*sin($alpha)";
+r3sn		#calc "-1.0*$r3s";
+r3c             #calc "$r3*cos($alpha)";
+
+r4s             #calc "$r4*sin($alpha)";
+r4biss		#calc "$r4bis*sin($alpha)";	// ceramic
+r4bis2s  	#calc "$r4bis2*sin($alpha)"; // ceramic
+
+
+r4sn		#calc "-1.0*$r4s";
+r4bissn         #calc "-1.0*$r4biss";	// ceramic
+r4bis2sn	#calc "-1.0*$r4bis2s";	// ceramic
+
+r4c             #calc "$r4*cos($alpha)";
+r4bisc		#calc "$r4bis*cos($alpha)";	// ceramic
+r4bis2c		#calc "$r4bis2*cos($alpha)";	// ceramic
+
+
+r5s             #calc "$r5*sin($alpha)";
+$r5biss		#calc "$r4bis*sin($alpha)";	// ceramic
+$r5bis2s	#calc "$r4bis2*sin($alpha)"; // ceramic
+
+
+r5sn		#calc "-1.0*$r5s";
+r5bissn         #calc "-1.0*$r4biss";	// ceramic
+r5bis2sn	#calc "-1.0*$r4bis2s";	// ceramic
+
+
+
+r5c             #calc "$r5*cos($alpha)";
+r5bisc		#calc "$r4bis*cos($alpha)";	// ceramic
+r5bis2c		#calc "$r4bis2*cos($alpha)";	// ceramic
+
+
+
+
+
+r7s             #calc "$r7*sin($alpha)";
+r7sn		#calc "-1.0*$r7s";
+r7c             #calc "$r7*cos($alpha)";
+r8s             #calc "$r8*sin($alpha)";
+r8sn		#calc "-1.0*$r8s";
+r8c             #calc "$r8*cos($alpha)";
+r9s             #calc "$r9*sin($alpha)";
+r9sn		#calc "-1.0*$r9s";
+r9c             #calc "$r9*cos($alpha)";
+rcap0s             #calc "$rcap0*sin($alpha)";
+rcap0sn		#calc "-1.0*$rcap0s";
+rcap0c             #calc "$rcap0*cos($alpha)";
+rcap1s             #calc "$rcap1*sin($alpha)";
+rcap1sn		#calc "-1.0*$rcap1s";
+rcap1c             #calc "$rcap1*cos($alpha)";
+rcap2s             #calc "$rcap2*sin($alpha)";
+rcap2sn		#calc "-1.0*$rcap2s";
+rcap2c             #calc "$rcap2*cos($alpha)";
+rcap3s             #calc "$rcap3*sin($alpha)";
+rcap3sn		#calc "-1.0*$rcap3s";
+rcap3c             #calc "$rcap3*cos($alpha)";
+rcap4s             #calc "$rcap4*sin($alpha)";
+rcap4sn		#calc "-1.0*$rcap4s";
+rcap4c             #calc "$rcap4*cos($alpha)";
+rcap5s             #calc "$rcap5*sin($alpha)";
+rcap5sn		#calc "-1.0*$rcap5s";
+rcap5c             #calc "$rcap5*cos($alpha)";
+
+
+
+// position on arc, at 45° (between 5 and 8)
+rad_arc 7.2;
+px #calc "$r8+$rad_arc*std::sqrt(2)/2";
+py #calc "$h5+$rad_arc*std::sqrt(2)/2";
+pxs             #calc "$px*sin($alpha)";
+pxsn		#calc "-1.0*$pxs";
+pxc             #calc "$px*cos($alpha)";
+
+//modif : Point 57-56
+
+rad_arc2 8.687;
+px2 #calc "$r8+$rad_arc2*std::sqrt(2)/2";
+py2 #calc "$h5+$rad_arc2*std::sqrt(2)/2";
+pxs2             #calc "$px2*sin($alpha)";
+pxsn2		#calc "-1.0*$pxs2";
+pxc2             #calc "$px2*cos($alpha)";
+
+//modif : Point 50-51
+
+rad_arc3 11.857;
+px3 #calc "$r8+$rad_arc3*std::sqrt(2)/2"; //xx cos
+py3 #calc "$h5+$rad_arc3*std::sqrt(2)/2";
+pxs3             #calc "$px3*sin($alpha)";
+pxsn3		#calc "-1.0*$pxs3";
+pxc3            #calc "$px3*cos($alpha)";
+
+//modif 60-61 //ceramic modif
+betaDeg 22.5; //
+beta    #calc "degToRad($betaDeg)";
+rad_arc3 11.857;
+pxbis3 #calc "$r8+$rad_arc3*cos($beta)";
+pybis3 #calc "$h5+$rad_arc3*sin($beta)";
+pxsbis3             #calc "$pxbis3*sin($alpha)";
+pxsnbis3		#calc "-1.0*$pxsbis3";
+pxcbis3            #calc "$pxbis3*cos($alpha)";
+
+//modif : Point 58-59
+
+rad_arc2 8.687;
+pxbis2    #calc "$r8+$rad_arc2*cos($beta)";
+pybis2       #calc "$h5+$rad_arc2*sin($beta)";
+pxsbis2             #calc "$pxbis2*sin($alpha)";
+pxsnbis2		#calc "-1.0*$pxsbis2";
+pxcbis2             #calc "$pxbis2*cos($alpha)";
+
+
+//modif 62-63 //ceramic modif
+beta_2Deg 67.5; //
+beta_2    #calc "degToRad($beta_2Deg)";
+rad_arc3 11.857;
+pxbis_2_3 #calc "$r8+$rad_arc3*cos($beta_2)";
+pybis_2_3 #calc "$h5+$rad_arc3*sin($beta_2)";
+pxsbis_2_3             #calc "$pxbis_2_3*sin($alpha)";
+pxsnbis_2_3		#calc "-1.0*$pxsbis_2_3";
+pxcbis_2_3            #calc "$pxbis_2_3*cos($alpha)";
+
+//modif : Point 64-65
+
+rad_arc2 8.687;
+pxbis_2_2    #calc "$r8+$rad_arc2*cos($beta_2)";
+pybis_2_2       #calc "$h5+$rad_arc2*sin($beta_2)";
+pxsbis_2_2             #calc "$pxbis_2_2*sin($alpha)";
+pxsnbis_2_2		#calc "-1.0*$pxsbis_2_2";
+pxcbis_2_2             #calc "$pxbis_2_2*cos($alpha)";
+
+
+//Fluide
+rsinflui_pos             #calc "$r4bis2s*1.5";
+rsinflui_neg             #calc "$r4bis2sn*1.5";
+rcosflui_pos             #calc "$r4bis2c*1.5";
+
+rsinflui_pos2             #calc "$r4bis2s*3";
+rsinflui_neg2             #calc "$r4bis2sn*3";
+rcosflui_pos2             #calc "$r4bis2c*3";
+
+
+//h_bound_lay2            #calc "$py3+($hcap5/3)*std::sqrt(2)/2";
+//comp_x			#calc "$pxc3+($hcap5/3)*std::sqrt(2)/2";
+vertices
+(
+    (0 0 0)          // 0
+    ($r1c $h1 $r1sn) // 1
+    ($r2c $h2 $r2sn) // 2
+    ($r3c $h3 $r3sn) // 3
+    ($r4c $h4 $r4sn) // 4
+    ($r5c $h5 $r5sn) // 5
+    ($r7c $h7 $r7sn) // 6
+    ($r8c $h8 $r8sn) // 7
+    ($r9c $h9 $r9sn) // 8
+
+    (0 0 0)          // 9
+    ($r1c $h1 $r1s)  // 10
+    ($r2c $h2 $r2s)  // 11
+    ($r3c $h3 $r3s)  // 12
+    ($r4c $h4 $r4s)  // 13
+    ($r5c $h5 $r5s)  // 14
+    ($r7c $h7 $r7s)  // 15
+    ($r8c $h8 $r8s)  // 16
+    ($r9c $h9 $r9s)  // 17
+
+    ($rcap0c $hcap0 $rcap0sn) // 18
+    ($rcap1c $hcap1 $rcap1sn) // 19
+    ($rcap2c $hcap2 $rcap2sn) // 20
+    ($rcap3c $hcap3 $rcap3sn) // 21
+    ($rcap4c $hcap4 $rcap4sn) // 22 pt
+    ($rcap5c $hcap5 $rcap5sn) // 23 pt
+    (0 0 0)          // 24
+    (0 0 0)          // 25
+    (0 0 0)          // 26
+    (0 0 0)          // 27
+
+    ($rcap0c $hcap0 $rcap0s)  // 28
+    ($rcap1c $hcap1 $rcap1s)  // 29
+    ($rcap2c $hcap2 $rcap2s)  // 30
+    ($rcap3c $hcap3 $rcap3s)  // 31
+    ($rcap4c $hcap4 $rcap4s)  // 32 pt
+    ($rcap5c $hcap5 $rcap5s)  // 33 pt
+
+// Ceramic
+
+//4
+    ($r4bisc $h4 $r4bissn) // 34  4bis neg
+    ($r4bis2c $h4 $r4bis2sn) // 35  4bis2 neg
+
+
+    ($r4bisc $h4 $r4biss)  // 36  4bis pos
+    ($r4bis2c $h4 $r4bis2s)  // 37  4bis2 pos
+
+//5
+    ($r4bisc $h5 $r4bissn) // 38  5bis neg
+    ($r4bis2c $h5 $r4bis2sn) // 39  5bis2 neg
+
+
+    ($r4bisc $h5 $r4biss)  // 40  5bis pos
+    ($r4bis2c $h5 $r4bis2s)  // 41  5bis2 pos
+
+// Fluide
+
+    ($rcosflui_pos $h4 $rsinflui_neg) // 42-F1  (neg)
+    ($rcosflui_pos $h4 $rsinflui_pos)  // 43-F2  (pos)
+
+    ($rcosflui_pos $h5 $rsinflui_neg) // 44-F1bis  (neg)
+    ($rcosflui_pos $h5 $rsinflui_pos)  // 45-F2bis  (pos)
+
+
+    ($rcosflui_pos2 $h4 $rsinflui_neg2) // 46-F1  (neg)
+    ($rcosflui_pos2 $h4 $rsinflui_pos2)  // 47-F2  (pos)
+
+    ($rcosflui_pos2 $h5 $rsinflui_neg2) // 48-F1bis  (neg)
+    ($rcosflui_pos2 $h5 $rsinflui_pos2)  // 49-F2bis  (pos)
+
+// point on arc (neg between 23 and 39)
+
+    ($pxc3 $py3 $pxsn3)  // 50-on arc  (neg)
+
+// point on arc (pos between 33 and 41)
+
+    ($pxc3 $py3 $pxs3)    // 51-on arc  (pos)
+
+// THE OTHER POINTS
+
+    ($rcosflui_pos $py3 $rsinflui_neg) // 52
+    ($rcosflui_pos $py3 $rsinflui_pos)  // 53
+    ($rcosflui_pos2 $py3 $rsinflui_neg2) // 54
+    ($rcosflui_pos2 $py3 $rsinflui_pos2)  // 55
+
+// point on arc (neg between 34 and 22)
+
+    ($pxc2 $py2 $pxsn2) // 56-on arc  (neg)
+
+
+// point on arc (pos between 36 and 32)
+
+    ($pxc2 $py2 $pxs2)  // 57-on arc  (pos)
+
+//
+// point on arc (neg between 38 and 56)
+
+    ($pxcbis2 $pybis2 $pxsnbis2)  // 58-on arc  (neg)
+
+
+// point on arc (pos between 40 and 57)
+
+    ($pxcbis2 $pybis2 $pxsbis2)  // 59-on arc  (pos)
+
+
+// point on arc (neg between 39 and 50)
+
+    ($pxcbis3 $pybis3 $pxsnbis3)  // 60  (neg)
+
+// point on arc (pos between 51 and 41)
+
+    ($pxcbis3 $pybis3 $pxsbis3)   // 61  (pos)
+
+
+// point on arc (neg between 50 and 23)
+
+    ($pxcbis_2_3 $pybis_2_3 $pxsnbis_2_3) // 62  (neg)
+
+// point on arc (pos between 51 and 33)
+
+    ($pxcbis_2_3 $pybis_2_3 $pxsbis_2_3)   // 63  (pos)
+
+// point on arc (neg between 22 and 56)
+
+    ($pxcbis_2_2 $pybis_2_2 $pxsnbis_2_2)  // 64-on arc  (neg)
+
+
+// point on arc (pos between 32 and 57)
+
+    ($pxcbis_2_2 $pybis_2_2 $pxsbis_2_2)  // 65-on arc  (pos)
+
+
+    ($pxc3 $h_bound_lay $pxsn3)  // 66 through 50 (neg)
+    ($pxc3 $h_bound_lay $pxs3)    // 67 through 51 (pos)
+
+    ($rcap5c $h_bound_lay $rcap5sn) // 68 through 23 (neg)
+    ($rcap5c $h_bound_lay $rcap5s)  // 69 through 33 (pos)
+
+
+    ($rcap2c $h_bound_lay $rcap2sn) // 70 through 20 (neg)
+    ($rcap2c $h_bound_lay $rcap2s)  // 71 through 30 (pos)
+
+    ($rcap3c $h_bound_lay $rcap3sn) // 72 through 21 empty center
+
+    ($rcosflui_pos $h_bound_lay $rsinflui_neg) // 73 through 52
+    ($rcosflui_pos $h_bound_lay $rsinflui_pos)  // 74 through 53
+
+//       ($comp_x $h_bound_lay2 $rsinflui_neg) // 73 through 50
+//	($comp_x $h_bound_lay2 $rsinflui_pos)  // 74 through 51
+
+    ($rcosflui_pos2 $h_bound_lay $rsinflui_neg2) // 75 through 54
+    ($rcosflui_pos2 $h_bound_lay $rsinflui_pos2)  // 76 through 55
+
+//top_fluide points
+
+    ($rcosflui_pos2 $h_fluid $rsinflui_neg2) // 77 through 75
+    ($rcosflui_pos2 $h_fluid $rsinflui_pos2)  // 78 through 76
+
+    ($rcosflui_pos $h_fluid $rsinflui_neg) // 79 through 73
+    ($rcosflui_pos $h_fluid $rsinflui_pos)  // 80 through 74
+
+    ($pxc3 $h_fluid $pxsn3)  // 81 through 66 (neg)
+    ($pxc3 $h_fluid $pxs3)    // 82 through 67 (pos)
+
+    ($rcap5c $h_fluid $rcap5sn) // 83 through 68 (neg)
+    ($rcap5c $h_fluid $rcap5s)  // 84 through 69 (pos)
+
+    ($rcap2c $h_fluid $rcap2sn) // 85 through 70 (neg)
+    ($rcap2c $h_fluid $rcap2s)  // 86 through 71 (pos)
+
+    ($rcap3c $h_fluid $rcap3sn) // 87 through 72 empty center
+
+);
+
+blocks
+(
+    hex (0 1 2 3 0 10 11 3) porousMat (20 20 1) simpleGrading (1 1 1) // block 0, collapsed 9->0, 12->3
+    hex (1 4 5 2 10 13 14 11) porousMat (20 20 1) simpleGrading (1 1 1) // block 1
+    hex (3 2 6 8 3 11 15 8) porousMat (20 20 1) simpleGrading (1 1 1) // block 2, collapsed 12->3, 17->8
+    hex (2 5 7 6 11 14 16 15) porousMat (20 20 1) simpleGrading (1 1 1) // block 3
+// cap
+    hex (8 6 19 18 8 15 29 18) porousMat (20 5 1) simpleGrading (1 1 1) // block 4, collapsed 28->18, 17->8
+    hex (18 19 20 21 18 29 30 21) demiseMat (20 10 1) simpleGrading (1 1 1) // block 5, collapsed 28->18, 31->21
+    hex (19 22 23 20 29 32 33 30) demiseMat (3 10 1) simpleGrading (1 1 1) // block 6
+//ceramic
+    hex (22 56 50 23 32 57 51 33) ceramicMat (20 10 1) simpleGrading (1 1 1)//7
+    hex (56 38 39 50 57 40 41 51) ceramicMat (20 10 1) simpleGrading (1 1 1)//8
+    hex (38 34 35 39 40 36 37 41) ceramicMat (20 10 1) simpleGrading (1 1 1)//9
+//blockFluide
+    /**/ hex (35 42 44 39 37 43 45 41) hotFlow (20 20 1) simpleGrading (1 1 1)   //10//
+    hex (42 46 48 44 43 47 49 45) hotFlow (20 20 1) simpleGrading (1 1 1)   //11//
+    /**/  hex (39 44 73 50 41 45 74 51) hotFlow (20 20 1) simpleGrading (1 1 1)   //12//
+    hex (44 48 75 73 45 49 76 74) hotFlow (20 20 1) simpleGrading (1 1 1)   //13//
+    /**/  hex (23 50 73 68 33 51 74 69) hotFlow (20 20 1) simpleGrading (1 1 1)   //14//
+    /**/  hex (20 23 68 70 30 33 69 71) hotFlow (3 20 1) simpleGrading (1 1 1)    //15//
+    /**/ hex (21 20 70 72 21 30 71 72) hotFlow (20 20 1) simpleGrading (1 1 1)   //16//
+    hex (73 75 77 79 74 76 78 80) hotFlow (20 20 1) simpleGrading (1 1 1)   //17//
+    hex (68 73 79 83 69 74 80 84) hotFlow (20 20 1) simpleGrading (1 1 1)   //18//
+    hex (70 68 83 85 71 69 84 86) hotFlow (3 20 1) simpleGrading (1 1 1)    //19/
+    hex (72 70 85 87 72 71 86 87) hotFlow (20 20 1) simpleGrading (1 1 1)   //20//
+
+
+
+
+);
+
+edges
+(//probleme points
+    arc 5 7   ($pxc $py $pxsn)
+    arc 14 16  ($pxc $py $pxs)
+
+//arc ceramic
+    arc 38 56  ($pxcbis2 $pybis2 $pxsnbis2) 			   // point 58
+    arc 56 22  ($pxcbis_2_2 $pybis_2_2 $pxsnbis_2_2)  		   // point 64
+
+    arc 40 57  ($pxcbis2 $pybis2 $pxsbis2)  			   // point 59
+    arc 57 32  ($pxcbis_2_2 $pybis_2_2 $pxsbis_2_2)  		   // point 65
+
+//
+    arc 39 50  ($pxcbis3 $pybis3 $pxsnbis3) 			   // point 60
+    arc 50 23  ($pxcbis_2_3 $pybis_2_3 $pxsnbis_2_3)  		   // point 62
+
+    arc 41 51  ($pxcbis3 $pybis3 $pxsbis3) 			   // point 61
+    arc 51 33  ($pxcbis_2_3 $pybis_2_3 $pxsbis_2_3)		   // point 63
+
+);
+
+patches
+(
+// orienter les surfaces
+
+    wedge wedge_neg
+    (
+
+        (0 3 2 1)
+        (1 2 5 4)
+        (2 3 8 6)
+        (2 6 7 5)
+        (8 18 19 6)
+        (18 21 20 19)
+        (19 20 23 22)
+
+        // wedge wedge_neg_cer
+
+        (56 22 23 50)//
+        (38 56 50 39)
+        (34 38 39 35)//
+        //fluide_wedge(pos/neg)
+        //wedge wedge_neg_fluide
+
+        (42 35 39 44)
+        (46 42 44 48)
+        (23 20 70 68)
+        (20 21 72 70)
+        (75 73 79 77)
+        (68 70 85 83)
+        (70 72 87 85)
+        (48 44 73 75)//
+        (44 39 50 73)//
+        (73 50 23 68)//
+        (73 68 83 79)//
+
+    )
+
+    wedge wedge_pos
+    (
+        (0 3 11 10)
+        (10 11 14 13)
+        (11 3 8 15)
+        (11 15 16 14)
+        (8 18 29 15)
+        (18 21 30 29)
+        (29 30 33 32)
+
+        //wedge wedge_pos_cer
+
+        (36 37 41 40)//
+        (40 41 51 57)//
+        (57 51 33 32) //
+
+        //wedge wedge_pos_fluide
+
+        (37 43 45 41)
+        (45 49 47 43)
+        (30 33 69 71)
+        (21 30 71 72)
+        (74 76 78 80)
+        (71 69 84 86)
+        (72 71 86 87)
+        (45 49 76 74)
+        (41 45 74 51)
+        (33 51 74 69)
+        (69 74 80 84)
+
+    )
+
+    //fluide_top
+    /*8*/ wall   top
+    (
+        (77 79 80 78)
+        (83 85 86 84)
+        (85 87 87 86)
+        (79 83 84 80)
+    )
+
+    //fluide_lateral
+    /*9*/ wall   lateral
+    (
+        (46 48 49 47)//
+        (75 77 78 76)
+        (48 75 76 49) //
+        (57 32 22 56) //
+        (40 57 56 38)
+        (36 40 38 34) //
+    )
+
+    /*10*/      empty center
+    (
+        (0 0 3 3)
+        (3 3 8 8)
+        (8 8 18 18)
+        (18 18 21 21)
+        (21 21 72 72)
+        (72 72 87 87)
+    )
+    /*11*/     wall bottom
+    (
+        (0 1 10 0)
+        (1 4 13 10)
+        // sides - same BC as bottom
+        (7 16 14 5)
+        (4 5 14 13)
+        (6 15 16 7)
+        (6 19 29 15)
+        (19 22 32 29)
+        //fluide_bottom
+        //      wall bottom_fluid
+        (43 37 35 42)
+        (47 43 42 46)
+        (37 36 34 35) //
+    )
+
+
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //
+

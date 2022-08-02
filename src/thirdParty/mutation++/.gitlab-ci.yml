@@ -1,0 +1,180 @@
+
+build:debian:
+  stage: build
+  script:
+    - export MPP_DIRECTORY=$PWD
+    - python scripts/install_dependencies.py
+    - mkdir build
+    - cd build
+    - cmake -DENABLE_TESTING:BOOL=ON ..
+    - make install
+  artifacts:
+    paths:
+      - build/
+      - install/
+  only:
+    - master
+    - ci_implement
+  tags:
+    - debian8
+
+build:ubuntu:
+  stage: build
+  script:
+    - export MPP_DIRECTORY=$PWD
+    - python scripts/install_dependencies.py
+    - mkdir build
+    - cd build
+    - cmake -DENABLE_TESTING:BOOL=ON ..
+    - make install
+  artifacts:
+    paths:
+      - build/
+      - install/
+  only:
+    - master
+    - ci_implement
+  tags:
+    - ubuntu-lts
+
+build:fedora:
+  stage: build
+  script:
+    - export MPP_DIRECTORY=$PWD
+    - python scripts/install_dependencies.py
+    - mkdir build
+    - cd build
+    - cmake -DENABLE_TESTING:BOOL=ON ..
+    - make install
+  artifacts:
+    paths:
+      - build/
+      - install/
+  only:
+    - master
+    - ci_implement
+  tags:
+    - fedora24
+
+build:centos:
+  stage: build
+  script:
+    - export MPP_DIRECTORY=$PWD
+    - python scripts/install_dependencies.py
+    - mkdir build
+    - cd build
+    - cmake -DENABLE_TESTING:BOOL=ON ..
+    - make install
+  artifacts:
+    paths:
+      - build/
+      - install/
+  only:
+    - master
+    - ci_implement
+  tags:
+    - centos7
+
+build:macos:
+  stage: build
+  script:
+    - export MPP_DIRECTORY=$PWD
+    - python scripts/install_dependencies.py
+    - mkdir build
+    - cd build
+    - cmake -DENABLE_TESTING:BOOL=ON ..
+    - make install
+  artifacts:
+    paths:
+      - build/
+      - install/
+  only:
+    - master
+    - ci_implement
+  tags:
+    - macOS
+
+test:macos:
+  stage: test
+  script:
+    - export MPP_DIRECTORY=$PWD
+    - export MPP_DATA_DIRECTORY=$MPP_DIRECTORY/data
+    - export PATH=$MPP_DIRECTORY/install/bin:$PATH
+    - export DYLD_LIBRARY_PATH=$MPP_DIRECTORY/install/lib:$DYLD_LIBRARY_PATH
+    - cd build/
+    - ctest -V
+  dependencies:
+    - build:macos
+  only:
+    - master
+    - ci_implement
+  tags:
+    - macOS
+
+test:centos:
+  stage: test
+  script:
+    - export MPP_DIRECTORY=$PWD
+    - export MPP_DATA_DIRECTORY=$MPP_DIRECTORY/data
+    - export PATH=$MPP_DIRECTORY/install/bin:$PATH
+    - export LD_LIBRARY_PATH=$MPP_DIRECTORY/install/lib:$LD_LIBRARY_PATH
+    - cd build/
+    - ctest -V
+  dependencies:
+    - build:centos
+  only:
+    - master
+    - ci_implement
+  tags:
+    - centos7
+
+test:fedora:
+  stage: test
+  script:
+    - export MPP_DIRECTORY=$PWD
+    - export MPP_DATA_DIRECTORY=$MPP_DIRECTORY/data
+    - export PATH=$MPP_DIRECTORY/install/bin:$PATH
+    - export LD_LIBRARY_PATH=$MPP_DIRECTORY/install/lib:$LD_LIBRARY_PATH
+    - cd build/
+    - ctest -V
+  dependencies:
+    - build:fedora
+  only:
+    - master
+    - ci_implement
+  tags:
+    - fedora24
+
+test:debian:
+  stage: test
+  script:
+    - export MPP_DIRECTORY=$PWD
+    - export MPP_DATA_DIRECTORY=$MPP_DIRECTORY/data
+    - export PATH=$MPP_DIRECTORY/install/bin:$PATH
+    - export LD_LIBRARY_PATH=$MPP_DIRECTORY/install/lib:$LD_LIBRARY_PATH
+    - cd build/
+    - ctest -V
+  dependencies:
+    - build:debian
+  only:
+    - master
+    - ci_implement
+  tags:
+    - debian8
+
+test:ubuntu:
+  stage: test
+  script:
+    - export MPP_DIRECTORY=$PWD
+    - export MPP_DATA_DIRECTORY=$MPP_DIRECTORY/data
+    - export PATH=$MPP_DIRECTORY/install/bin:$PATH
+    - export LD_LIBRARY_PATH=$MPP_DIRECTORY/install/lib:$LD_LIBRARY_PATH
+    - cd build/
+    - ctest -V
+  dependencies:
+    - build:ubuntu
+  only:
+    - master
+    - ci_implement
+  tags:
+    - ubuntu-lts

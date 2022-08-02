@@ -1,0 +1,32 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory                                                                                                                                                                                                            
+EXT=C
+HEADER=mastertest.$EXT
+FOLDER=$1
+
+if [[ ! $# -eq 1 ]] ; then
+    echo 'Need 1 argument: ./AddTests <dirName>'
+    exit 0
+fi
+
+for file in $(find $FOLDER -name '*.'$EXT)
+do
+    INC_FOUND=$(grep -r $file $HEADER) 
+    if [ -z "$INC_FOUND" ]; then
+	INC="#include \"$file\""
+	echo "$HEADER: "$INC
+	if [ "$(uname)" == "Darwin" ]; then
+	    gsed -i "/INCLUDE NEW TEST SUITES HERE - DO NOT REMOVE THIS LINE/a   $INC" $HEADER
+	else
+	    sed -i "/INCLUDE NEW TEST SUITES HERE - DO NOT REMOVE THIS LINE/a   $INC" $HEADER
+	fi
+	filename=$(basename -- "$file")
+	PUSH="testSuites.push_back(${filename%.*}());"
+        echo "$HEADER: "$PUSH
+	if [ "$(uname)" == "Darwin" ]; then
+	    gsed -i "/ADD NEW TEST SUITES HERE - DO NOT REMOVE THIS LINE/a    $PUSH" $HEADER
+	else
+	    sed -i "/ADD NEW TEST SUITES HERE - DO NOT REMOVE THIS LINE/a    $PUSH" $HEADER
+	fi
+    fi
+done

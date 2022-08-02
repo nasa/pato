@@ -1,0 +1,67 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  object      p_rgh;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 101325;
+
+boundaryField {
+
+ upwindTube_inlet
+    {
+      type          fixedValue;
+      value         uniform  102325;
+
+/*        type            codedFixedValue;
+        value           uniform 101325;
+        name            openValve;
+        code            #{            
+    	    scalar t_ = this->db().time().value();
+	    scalar p_max = 102325;
+            scalar p_min = 101325;
+	    operator==(min(p_min+(t_*100)*(p_max-p_min), p_max));
+        #};
+*/
+    }   
+
+  upwindTube_top
+    {
+      type            zeroGradient;
+    }
+
+     upwindTube_to_porousMat
+    {
+      type            zeroGradient;
+    }
+
+    upwindTubewedge_neg
+    {
+    type            wedge;
+    }
+
+    upwindTubewedge_pos 
+    {
+    type            wedge;
+    }
+
+    emptycenter
+    {
+    type           empty;
+    }
+
+}
+
+
+// ************************************************************************* //

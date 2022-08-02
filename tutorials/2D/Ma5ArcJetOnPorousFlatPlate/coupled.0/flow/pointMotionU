@@ -1,0 +1,89 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+Input file needed for the mesh motion solver. Please do not remove.
+It is not advised to modify this file unless you need to modify the boundaryField names.
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+    class           pointVectorField;
+    object          pointMotionU;
+    IOobject        NO_WRITE;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+
+    top
+    {
+        type            slip;
+    }
+
+    outlet
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+
+    front_bottom
+    {
+        type            slip;
+    }
+
+    back_bottom
+    {
+        type            slip;
+    }
+
+    left_wall
+    {
+        type            slip;
+    }
+
+    obstacle
+    {
+        type            slip;
+    }
+
+    inlet1
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+
+    nozzle
+    {
+        type            slip;
+    }
+
+    top_nozzle
+    {
+        type            slip;
+    }
+
+    bottom_nozzle
+    {
+        type            slip;
+    }
+
+    flow_to_porousMat
+    {
+        type            calculated;
+    }
+
+    defaultFaces
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

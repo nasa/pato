@@ -1,0 +1,8 @@
+#set term x11 persist
+
+set xlabel 'time'
+set ylabel 'cl'
+plot [1:][] 'postProcessing/forceCoeffs_object/0/forceCoeffs.dat' u 1:4 w l
+pause 5
+
+

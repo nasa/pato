@@ -1,0 +1,22 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# create volume fields (first time step : 50 s)
+scp -r origin.0 50
+
+# create meshes
+scp -r constant/porousMat/copy.polyMesh constant/porousMat/polyMesh
+scp -r constant/subMat1/copy.polyMesh constant/subMat1/polyMesh
+
+# run PATOx
+PATOx
+
+# 3D post-processing
+# paraFoam -builtin
+
+# probe scalar fields (temperature, pressure, density, etc) at desired locations - chosen in system/sampleDict
+postProcess -func sampleDict -region porousMat
+
+# grab probed fields and copy them into files
+# postProcessTime <dictName> <regionName> <inputFileName> <outputFileName>
+postProcessTime sampleDict porousMat surfacePatch_Ta.xy output/plot_surfacePatch_Ta

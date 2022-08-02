@@ -1,0 +1,2 @@
+patoManager.C
+EXE = $(PATO_DIR)/install/bin/patoManager

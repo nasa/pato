@@ -1,0 +1,45 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  dev                                   |
+|   \\  /    A nd           | Web:      http://www.openfoam.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+FoamFile {
+  version         2.0;
+  format          ascii;
+  class           dictionary;
+  location        system;
+  object          sampleDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type sets;
+libs ("libsampling.so");
+
+interpolationScheme cellPoint;
+setFormat     	  raw;
+surfaceFormat     raw;
+sets
+(
+plot {
+  type            points;
+  ordered         on;
+  axis            xyz;
+  points          (
+      ( 0.0 0.0256 0.0 ) // pyrometre
+      ( 0.0 0.0218 0.0 ) // TC 1
+      ( 0.0075 0.0218 0.0 ) // TC 2
+      ( 0.015 0.0218 0.0 ) // TC 3
+  );
+}
+);
+
+fields
+(
+    Ta
+);
+
+// *********************************************************************** //

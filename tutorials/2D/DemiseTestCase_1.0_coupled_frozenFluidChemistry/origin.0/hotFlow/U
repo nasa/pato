@@ -1,0 +1,75 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volVectorField;
+  location    "0/cube";
+  object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField {
+  wedge_neg
+  {
+    type            wedge;
+  }
+  wedge_pos
+  {
+    type            wedge;
+  }
+
+  top
+  {
+    type            pressureInletVelocity;
+    value           uniform ( 0 0 0 );
+  }
+
+  bottom
+  {
+    type            inletOutlet;
+    value           uniform ( 0 0 0 );
+    inletValue      uniform ( 0 0 0 );
+  }
+
+  hotFlow_to_demiseMat
+  {
+// Decoupled velocity simulation
+    type            fixedValue;
+    value           uniform (0 0 0);
+
+//Coupled velocity simulation
+//     type            fixedValueToNbrValue;
+    //    nbr             U;
+    //   value	       uniform ( 0 0 0 );
+  }
+
+  hotFlow_to_ceramicMat
+  {
+    // Decoupled velocity simulation
+    type            fixedValue;
+    value           uniform (0 0 0);
+
+    // Coupled velocity simulation
+    //    type            fixedValueToNbrValue;
+    //    nbr             U;
+    //    value	       uniform ( 0 0 0 );
+  }
+
+  lateral
+  {
+    type         zeroGradient;
+  }
+
+
+}
+// ************************************************************************* //

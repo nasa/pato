@@ -1,0 +1,14 @@
+FoamFile
+{
+    version     5.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant/porousMat/poroursMatProperties";
+    object      porousMatProperties;
+}
+
+p[0] 1;// p = p_0 + p_1 * t
+p[1] 2;
+
+k[0] 3;// k = k_0 + k_1 * t
+k[1] 4;

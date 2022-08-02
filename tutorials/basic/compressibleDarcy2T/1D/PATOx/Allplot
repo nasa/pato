@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Run from this directory
+cd ${0%/*} || exit 1
+
+if [ ! -d "postProcessing/singleGraph/" ]; then
+    echo "Fatal Error : plots seems to not have been generated.\n"
+    echo "exit"
+    exit 1
+else
+    ./plots/plots.py
+    ./plots/plots_error.py
+fi

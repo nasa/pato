@@ -1,0 +1,33 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     4.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant/porousMat";
+    object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+/****************************** GENERAL ************************************/
+//debug yes;
+/****************************** END GENERAL ********************************/
+
+Mass
+{
+  MassType FixedPressureGamma;
+  internalField_P 2;
+  boundaryField_P (("porousMat2_to_porousMat1" 0) ("bottom" 0) ("sides" 0));
+  internalField_Gamma 1;
+  boundaryField_Gamma (("porousMat2_to_porousMat1" 1) ("bottom" 1) ("sides" 1));
+
+}
+

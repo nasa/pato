@@ -1,0 +1,19 @@
+// SetCase
+FoamFile
+{
+    version     5.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant/setCase";
+    object      setCase;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+regions
+{
+solid (virgin);
+solid (char);
+}
+
+// ************************************************************************* //

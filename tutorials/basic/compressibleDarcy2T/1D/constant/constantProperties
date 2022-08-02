@@ -1,0 +1,59 @@
+/*---------------------------------------------------------------------------*\
+Solid properties. Update as needed.
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      solidProperties;
+}
+
+// * * * * * *  Units * * * * * [kg m s K mol A cd] * * * * * * * * * * * * * //
+// e.g. W: kg m^2 s^{-3}        [1 2 -3 0 0 0 0]
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//Perfect gas constant
+R		R [1 2 -2 -1 -1 0 0]      8.314471469;
+
+// Molar mass
+M		M [1 0 0 0 -1 0 0]        2.801e-02;
+
+// Viscosity
+mu 		mu [1 -1 -1 0 0 0 0]	  1.61345e-05;
+
+// Permeability in basis (x,y,z) of the mesh
+K		K [0 2 0 0 0 0 0]	 (6e-11 0 0
+					  0 6e-11 0
+					  0 0 6e-11);
+// Porosity
+eps            eps       [0  0  0  0 0 0 0] 0.9;
+
+// Solid conductivity in basis (x,y,z) of the mesh
+k_s            k_s       [1  1 -3 -1 0 0 0] (4.03E-01 0 0
+					     0 4.03E-01 0
+					     0 0 4.03E-01);
+
+// Gas conductivity in basis (x,y,z) of the mesh
+k_g            k_g       [1  1 -3 -1 0 0 0] (0.0299983 0 0
+					     0 0.0299983 0
+					     0 0 0.0299983);
+
+// Solid density
+rho_s          rho_s   [1 -3  0  0 0 0 0] 1600;
+
+// Solid heat capacity
+cp_s           cp_s    [0  2 -2 -1 0 0 0] 836;
+
+// Gas heat capacity
+cp_g           cp_g    [0  2 -2 -1 0 0 0] 1012;
+
+// Exchange coeficient from gas to solid
+hgs            hgs       [1 -1 -3 -1 0 0 0] 1000;
+
+// Exchange coeficient from solid to gas
+hsg            hsg       [1 -1 -3 -1 0 0 0] 1000;
+
+// ************************************************************************* //

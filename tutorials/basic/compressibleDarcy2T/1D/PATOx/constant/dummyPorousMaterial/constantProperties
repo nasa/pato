@@ -1,0 +1,32 @@
+/*---------------------------------------------------------------------------*\
+Solid properties. Update as needed.
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      solidProperties;
+}
+
+// * * * * * *  Units * * * * * [kg m s K mol A cd] * * * * * * * * * * * * * //
+// e.g. W: kg m^2 s^{-3}        [1 2 -3 0 0 0 0]
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+nSolidPhases    1;                                              // number of phases (index starts at 1)
+rhoI[1]         rhoI[1]         [1 -3 0 0 0 0 0]        1600;   // intrinsic density of the fibers
+epsI[1]         epsI[1]         [0 0 0 0 0 0 0]         1;    // volume fraction of the fibrous preform
+
+K_c             K_c             [0 2 0 0 0 0 0]         (6e-11 0 0 0 6e-11 0 0 0 6e-11);       // char permeability (second order tensor)
+K_v             K_v             [0 2 0 0 0 0 0]         (6e-11 0 0 0 6e-11 0 0 0 6e-11); // virgin material permeability (second order tensor)
+eps_g_v         eps_g_v         [0 0 0 0 0 0 0]         0.9;    // virgin material porosity
+eps_g_c         eps_g_c         [0 0 0 0 0 0 0]         0.9;   // char porosity
+
+
+// Heat exchange coefficient
+Hv0             Hv0             [1 -1 -3 -1 0 0 0]              1000;    // heat transfer coefficient
+
+
+// ************************************************************************* //

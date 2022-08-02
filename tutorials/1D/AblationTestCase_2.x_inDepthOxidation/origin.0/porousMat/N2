@@ -1,0 +1,46 @@
+/*---------------------------------------------------------------------------*\
+Initial gas composition for finite-rate chemistry (in mass-fraction). Not used in Equilibrium mode.
+Molecules not specified in the directory 0 - and present in the chemisty mechanism - will defaut to Ydefault.
+\*---------------------------------------------------------------------------*/
+
+FoamFile {
+  version         2.0;
+  format          ascii;
+
+  root            "";
+case            "";
+  instance        "";
+  local           "";
+
+  class           volScalarField;
+  object          Y[N2];
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+dimensions          [ 0 0 0 0 0 0 0 ];
+
+internalField   uniform 0.77;
+
+boundaryField {
+  top
+  {
+    type            fixedValue;
+    value           uniform 0.77;
+  }
+
+  sides
+  {
+    type            zeroGradient;
+  }
+
+  bottom
+  {
+    type            zeroGradient;
+  }
+
+}
+
+
+// ************************************************************************* //

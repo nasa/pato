@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# Run from this directory
+cd ${0%/*} || exit 1
+
+# remove time folders
+rm -rf [0-9]*
+
+# remove all the *.pdf files
+rm -f plots/*.pdf
+
+# remove mesh
+rm -rf constant/porousMat/polyMesh
+rm -rf constant/flow/polyMesh
+rm -rf system/blockMeshDict
+
+# remove data
+rm -f constant/thermophysicalProperties
+rm -f constant/turbulenceProperties
+
+# remove output folder and add an empty file for git repository
+if [ -d output ]; then
+    rm -rf output
+    mkdir output
+    touch output/empty
+fi
+
+# remove the processor* folders
+rm -rf processor*
+
+# remove paraview files
+rm -f *.OpenFOAM
+
+# remove temporary files
+find . -name '*~' -ls -delete

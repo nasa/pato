@@ -1,0 +1,44 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 1 0 0 0 0];
+
+internalField   uniform 101325;
+
+boundaryField
+{
+    top
+      {
+
+	type            boundaryMapping;
+	mappingType "3D-tecplot";
+	mappingFileName "$PATO_UNIT_TESTING/testsuites/MaterialModel/BoundaryConditionsModel/test3Dtecplot/data/MSL";
+	mappingFields ((p  "3"));
+	value           uniform 101325;
+      }
+    sides
+    {
+        type            zeroGradient;
+    }
+    bottom
+    {
+        type            zeroGradient;
+    }
+}
+
+
+// ************************************************************************* //

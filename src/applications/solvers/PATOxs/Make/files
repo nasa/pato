@@ -1,0 +1,3 @@
+PATOxs.C
+
+EXE = $(PATO_DIR)/install/bin/PATOxs

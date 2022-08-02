@@ -1,0 +1,39 @@
+/*---------------------------------------------------------------------------*\
+OpenFOAM file. Numerical method and parameter options for the finite-rate chemistry solver.
+No modifications are needed for tutorial-derived cases.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     7.0;
+    format      binary;
+    class       dictionary;
+    location    "constant/porousMat";
+    object      chemistryProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+chemistryType
+{
+    solver          EulerImplicitFiniteRate;
+}
+
+chemistry       on;
+
+initialChemicalTimeStep 1e-06;
+
+odeCoeffs
+{
+    solver          SIBS;
+    eps             0.05;
+}
+
+EulerImplicitCoeffs
+{
+    cTauChem        0.05;
+    equilibriumRateLimiter off;
+}
+
+
+
+// ************************************************************************* //

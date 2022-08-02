@@ -1,0 +1,17 @@
+#!/bin/sh
+
+cd ${0%/*} || exit 1    # Run from this directory                                                                                                  
+
+# create volume fields                                                                                                                             
+cp -rf origin.0 0
+
+# generate meshes                                                                                                                                  
+cp -r constant/hotFlow/copy.polyMesh constant/hotFlow/polyMesh
+cp -r constant/porousMat/copy.polyMesh constant/porousMat/polyMesh
+
+# run PATOx                                                                                                         #PATOx
+decomposePar -allRegions -force
+mpirun -np 4 PATOx -parallel
+reconstructPar -allRegions
+
+#------------------------------------------------------------------------------

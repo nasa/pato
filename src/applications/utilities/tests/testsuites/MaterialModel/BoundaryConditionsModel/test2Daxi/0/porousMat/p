@@ -1,0 +1,45 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 1 0 0 0 0];
+
+internalField   uniform 101325;
+
+boundaryField
+{
+    top
+      {
+
+	type            boundaryMapping;
+	mappingType "2D-axi";
+	mappingFileName "$PATO_UNIT_TESTING/testsuites/MaterialModel/BoundaryConditionsModel/test2Daxi/data/MSL";
+	mappingFields ((p  "2"));
+	mappingAxis "z";
+	value           uniform 101325;
+      }
+    sides
+    {
+        type            zeroGradient;
+    }
+    bottom
+    {
+        type            zeroGradient;
+    }
+}
+
+
+// ************************************************************************* //

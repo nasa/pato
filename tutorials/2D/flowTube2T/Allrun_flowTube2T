@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Run from this directory
+cd ${0%/*} || exit 1    
+
+# copy the 0 folder
+if [ ! -f 0 ]; then
+    cp -r origin.0 0
+fi
+
+# generate mesh blocks
+ blockMesh
+ splitMeshRegions -cellZones -overwrite
+
+# run PATOx
+ PATOx
+#------------------------------------------------------------------------------

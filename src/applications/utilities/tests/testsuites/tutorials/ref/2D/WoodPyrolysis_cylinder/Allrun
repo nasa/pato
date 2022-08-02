@@ -1,0 +1,19 @@
+#!/bin/sh
+
+cd ${0%/*} || exit 1    # Run from this directory                                                                                                  
+ 
+# create volume fields
+cp -rf origin.0 0
+
+exec 3>&2 # file descriptor 3 to stderr
+exec 2>&1 # stderr to stdout
+
+# generate meshes
+blockMesh -region porousMat
+
+exec 2>&3 # stderr to file descriptor 3
+
+# run PATOx
+PATOx
+
+# -----------------------------------------------------------------------------

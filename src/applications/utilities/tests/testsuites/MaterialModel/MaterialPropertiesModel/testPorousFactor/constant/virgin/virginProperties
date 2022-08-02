@@ -1,0 +1,22 @@
+/*---------------------------------------------------------------------------*\
+OpenFOAM file. Numerical method and parameter options for the finite-rate chemistry solver.
+No modifications are needed for tutorial-derived cases.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     5.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant/porousMat/porousMatProperties";
+    object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+MaterialProperties {
+  virginOrChar virgin;
+  MaterialPropertiesType Porous_factor;
+  MaterialPropertiesDirectory "$PATO_UNIT_TESTING/testsuites/MaterialModel/MaterialPropertiesModel/testPorousFactor/data/material";
+  fieldFactors (("cp_v" 0.9)("ki_v" 1.1)("kj_v" 1.1)("kk_v" 1.1)("emissivity_v" 0.9)("absorptivity_v" 0.95)("cp_c" 0.9)("ki_c" 1.1)("kj_c" 1.1)("kk_c" 1.1)("emissivity_c" 1.1)("absorptivity_c" 1.1));
+}

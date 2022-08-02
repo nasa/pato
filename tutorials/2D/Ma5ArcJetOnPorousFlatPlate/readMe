@@ -1,0 +1,23 @@
+This tutorial consists in a 2D fully coupled simulation of a Mach-5 Arc Jet test
+on a porous ablative material in wedge plate configuration.
+
+Geometry
+- It contains the "fluid" geometry of the Arc Jet nozzle and test chamber.
+- It contains the "material" geometry of the porous material.
+
+Mesh
+- meshes for both blocks (fluid and material) are generated on the fly with the blockMesh utility
+- the meshes are generated as two blocks that connect at their interface.
+
+Coupling
+- It is possible to run simulations on each mesh separately for uncoupled simulations 
+or on both meshes simultaneously for coupled simulations.
+
+To run the case there are 4 ./Allrun scripts.
+1_ ./Allrun_aero : runs the Mach-5 flow simulation separately on a single processor with rhoCentralFoam under the frozen chemistry assumption.
+2_ ./Allrun_parallel_aero : similar to the serial run but in parallel. The simulation time to reach 0.004 s of physical time is 8 hours on 192 processors.
+Therefore, to allow running the case in a single processor, the converged flow solution is provided as initialization of the coupled simulations.
+3_ ./Allrun_coupled_standard : coupled simulations are run using a two temperature model (gas/solid) for the material. 
+4_ ./Allrun_coupled_stiching : a time scale separation strategy is used to speed-up coupled simulations. 
+Simulation time becomes close to physical time a single processor.
+

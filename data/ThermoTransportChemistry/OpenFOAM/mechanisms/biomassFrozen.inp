@@ -1,0 +1,8 @@
+ELEMENTS
+ N   O   C   H  
+END
+SPECIES
+ H2                CO                CO2               CH4               N2	
+ H2O               O2
+END
+

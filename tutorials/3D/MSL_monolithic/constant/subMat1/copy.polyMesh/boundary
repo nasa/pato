@@ -1,0 +1,29 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       polyBoundaryMesh;
+    location    "constant/polyMesh";
+    object      boundary;
+}
+
+2         
+(
+    bottom
+    {
+        type wall;
+        inGroups        1(wall);
+        nFaces 1836;
+        startFace 8586;
+    }
+    subMat1_to_porousMat
+    {
+        type            mappedWall;
+        inGroups        1(wall);
+        sampleMode      nearestPatchFace;
+        sampleRegion    porousMat;
+        samplePatch     porousMat_to_subMat1;
+        nFaces 1728;
+        startFace 10422;
+    }
+)

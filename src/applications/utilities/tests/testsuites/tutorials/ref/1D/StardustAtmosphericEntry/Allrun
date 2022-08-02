@@ -1,0 +1,15 @@
+#!/bin/sh
+
+cd ${0%/*} || exit 1    # Run from this directory 
+
+# create volume fields
+cp -rf origin.0 0
+
+# generate meshes
+blockMesh
+splitMeshRegions -cellZones  -overwrite
+
+# run case
+PATOx
+
+# -----------------------------------------------------------------------------

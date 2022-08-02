@@ -1,0 +1,31 @@
+EXE_INC = \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_PATO)/libPATOx/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude \
+    -I$(LIB_SRC)/TurbulenceModels/compressible/lnInclude \
+    -isystem$(PATO_DIR)/src/thirdParty/mutation++/install/include \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_PATO)/samplingUser/lnInclude \
+    -I$(PATO_UNIT_TESTING)/testframework \
+    -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
+    -I$(PATO_UNIT_TESTING)/testsuites/tutorials \
+    -Wfatal-errors \
+    -Wno-old-style-cast
+
+EXE_LIBS = \
+    -lfiniteVolume \
+    -lmeshTools \
+    -ldynamicFvMesh \
+    -ldynamicMesh \
+    -lcompressibleTurbulenceModels \
+    -L$(PATO_DIR)/install/lib \
+    -lPATOx \
+    -L$(PATO_DIR)/src/thirdParty/mutation++/install/lib \
+    -lmutation++ \
+    -lsampling \
+    -L$(PATO_DIR)/install/lib \
+    -lSamplingUser \
+    -lregionModels \
+

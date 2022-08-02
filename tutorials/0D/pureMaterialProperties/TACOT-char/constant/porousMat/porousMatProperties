@@ -1,0 +1,46 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+/****************************** END GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields ();  // write fields in the time folders
+  probingFunctions   // name of sampling/probing dictionaries in "system/porousMat"
+  (
+      plotDict
+  );
+}
+/****************************** END IO *************************************/
+
+/****************************** ENERGY *************************************/
+Energy {
+  EnergyType BoundaryTable; // Update the cell center value using the boundary value
+}
+/****************************** END ENERGY ********************************/
+
+/****************************** MATERIAL PROPERTIES ***********************/
+MaterialProperties {
+  MaterialPropertiesType Porous; // porous material properties
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Composites/TACOT"; // material properties directory
+  virginOrChar char; // Char material properties
+  K_v             K_v             [0 2 0 0 0 0 0]         (1.6e-11 0 0 0 1.6e-11 0 0 0 1.6e-11); // virgin material permeability (second order tensor)
+  K_c             K_c             [0 2 0 0 0 0 0]         (2e-11 0 0 0 2e-11 0 0 0 2e-11);       // char permeability (second order tensor)
+}
+/****************************** END MATERIAL PROPERTIES ******************/
