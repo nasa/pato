@@ -1,0 +1,88 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+movingMesh yes;
+/****************************** end GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  IOType Profile;
+  topPatch "top";
+  bottomPatch "bottom";
+  plot1DMassLoss true;
+  plot1DProfileList (
+      rho_s
+      eps_s
+      Y[O2]
+      Y[N2]
+      Y[CO2]
+      Y[CO]
+      Y[C(gr)]
+  );
+  writeFields (); // write fields in the time folders
+  probingFunctions
+  (
+      plotDict
+  ); // name of sampling/probing dictionaries in "system/porousMat"
+}
+/****************************** END IO ************************************/
+
+/****************************** PYROLYSIS, MASS, ENERGY *******************/
+Pyrolysis {
+  PyrolysisType virgin;
+}
+
+MaterialProperties {
+  MaterialPropertiesType Porous; // porous material properties
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Composites/CarbonFiberPreform"; // material properties file
+  detailedSolidEnthalpies yes;
+}
+
+Mass {
+  MassType DarcyLaw_Heterogeneous; // Solve the semi implicit pressure equation in cluding heterogeneous reactions
+}
+/****************************** END PYROLYSIS, MASS, ENERGY ****************/
+
+/****************************** GAS PROPERTIES  ************************************/
+GasProperties {
+  GasPropertiesType FiniteRate; // gas properties for finite-rate chemistry
+}
+/****************************** END GAS PROPERTIES **************************/
+
+/****************************** MaterialChemistry  **********************************/
+MaterialChemistry {
+  MaterialChemistryType SpeciesConservation;
+  mixture Carbon_oxidation_species; // Mutation++ mixture in "$PATO_DIR/data/ThermoTransportChemistry/mutation++/mixtures"
+}
+/****************************** END MaterialChemistry  ******************************/
+
+
+/****************************** VOLUME ABLATION  **********************************/
+VolumeAblation {
+  VolumeAblationType FibrousMaterialTypeA; // Cylindrical fiber shrinking, fibrous material type A
+  energyConservation isothermal;
+}
+/****************************** END VOLUME ABLATION  ******************************/
+
+/****************************** TIME CONTROL  **********************************/
+TimeControl {
+  TimeControlType GradP_ChemYEqn; // change the integration time step in function of the gradient of the pressure and the species mass fractions
+  chemTransEulerStepLimiter no;
+}
+/****************************** END TIME CONTROL  ******************************/

@@ -1,0 +1,105 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1; // convert millimeters in meters
+
+// Dimensions
+H   0.3;
+Phi 0.85;            // Cylinder diameter, included tank
+R   #calc "$Phi/2."; //Cylinder radius used for symmetric simulations
+
+// Wedges
+alphaDeg 2.5;
+alpha    #calc "degToRad($alphaDeg)";
+s        #calc "$R*sin($alpha)";
+s_neg    #calc "-1.0*$s";
+c        #calc "$R*cos($alpha)";
+
+vertices
+(
+    (0 0 0)        // 0
+    ($c $s_neg 0)  // 1
+    ($c $s 0)      // 2
+
+    (0 0 $H)       // 3
+    ($c $s_neg $H) // 4
+    ($c $s $H)     // 5
+);
+
+blocks
+(
+    hex (0 1 2 0 3 4 5 3) (45 1 30) simpleGrading (0.1 1 1)
+);
+
+edges
+(
+);
+
+boundary
+(
+top {
+  type patch;
+  faces
+  (
+      (3 4 5 3)
+  );
+}
+
+bottom {
+  type patch;
+  faces
+  (
+      (0 2 1 0)
+  );
+}
+
+wall {
+  type wall;
+  faces
+  (
+      (4 5 2 1)
+  );
+}
+
+axis {
+  type empty;
+  faces
+  (
+      (0 3 3 0)
+  );
+}
+
+wedge1 {
+  type wedge;
+  faces
+  (
+      (3 4 1 0)
+  );
+}
+
+wedge2 {
+  type wedge;
+  faces
+  (
+      (0 2 5 3)
+  );
+}
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

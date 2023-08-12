@@ -1,0 +1,77 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      constantProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+/****************************** END GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields
+  (
+      RR.C(gr)
+      RR.CO
+      RR.CO2
+      RR.N2
+      RR.O2
+  );  // write fields in the time folders
+  probingFunctions   // name of sampling/probing dictionaries in "system/porousMat"
+  (
+      plotDict
+  );
+}
+/****************************** END IO *************************************/
+
+/****************************** MASS *************************************/
+Mass {
+  createFields ((p volScalarField)); // pressure [Pa]
+}
+/****************************** END MASS *********************************/
+
+/****************************** ENERGY *************************************/
+Energy {
+  EnergyType BoundaryTable; // Update the cell center value using the boundary value
+  createFields ((rho_s volScalarField)); // solid density [kg/m3]
+}
+/****************************** END ENERGY *********************************/
+
+/****************************** PYROLYSIS *************************************/
+Pyrolysis {
+  PyrolysisType virgin;
+}
+/****************************** END PYROLYSIS *********************************/
+
+/****************************** CHEMISTRY **********************************/
+MaterialChemistry {
+  MaterialChemistryType OnlyFiniteRate; // finte-rate using Mutation++
+  mixture Carbon_oxidation_species; // Mutation++ mixture in "$PATO_DIR/data/ThermoTransportChemistry/mutation++/mixtures"
+}
+/****************************** END CHEMISTRY ******************************/
+
+/****************************** GAS PROPERTIES **********************************/
+GasProperties {
+  GasPropertiesType FiniteRate; // Update the finite-rate gas properties
+}
+/****************************** END GAS PROPERTIES ******************************/
+
+/****************************** MATERIAL PROPERTIES ************************/
+MaterialProperties {
+  MaterialPropertiesType Porous; // porous material properties
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Composites/TACOT"; // material properties directory
+}
+/****************************** END MATERIAL PROPERTIES ********************/
+

@@ -1,0 +1,19 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Clean all the tutorials
+files=`find . -path '*/Allclean' -type f` # find all the Allclean files
+echo Cleaning all the tutorials:
+for x in $files
+do
+    filename=$(dirname $x) # directory 
+    filename2=${filename#"./"} # remove ./
+    echo "    -" $filename2 
+    $x > /dev/null # call the Allclean
+done

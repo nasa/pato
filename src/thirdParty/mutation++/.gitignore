@@ -1,0 +1,23 @@
+# Build directories
+build/
+install/
+
+# Documentation
+docs/tests.h
+docs/html/
+
+# IDE
+.idea/
+.cproject
+.project
+.pydevproject
+.metadata/
+.vscode/
+
+# Python
+*.pyc
+_skbuild/
+*.whl
+
+# OS specifics
+.DS_Store

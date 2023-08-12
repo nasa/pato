@@ -1,0 +1,30 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+eval `tutoInDevel.sh` # Tutorial in development. Usage: ./Allrun <continue_flag> <error_msg>
+
+# Coupled with initialisation
+scp system/fvSchemes.empty system/fvSchemes 
+scp system/fvSolution.empty system/fvSolution 
+
+scp -r coupled.0/ 0/
+scp -r system/blockMeshDict.coupled system/blockMeshDict
+
+# generate meshes
+blockMesh
+splitMeshRegions -cellZones -overwrite 
+
+# run case
+PATOx
+
+# open paraview
+#paraFoam -touchAll
+#paraview
+
+# -----------------------------------------------------------------------------

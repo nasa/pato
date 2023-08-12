@@ -1,0 +1,110 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volVectorField;
+  location    "0";
+  object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField {
+  inlet
+  {
+    type   fixedValue;
+    value  uniform (0.0001 0 0);
+  }
+  outlet
+  {
+    type            zeroGradient;
+  }
+  "wall.*"
+  {
+    type            slip;
+  }
+  solid1
+  {
+    type            codedFixedValue;
+    value           uniform (0 0 0);
+    redirectType	        slipRegime;
+
+    code
+#{
+    // step1) find delta and normal vectors
+
+    const fvMesh& mesh = internalField().mesh();
+
+    vectorField normal(this->patch().nf());
+    vectorField delta(mesh.C().internalField()[mesh.boundaryMesh().findPatchID("solid1")] - this->patch().Cf());
+
+    // step2) find the angle between the normal and the vector
+
+    const scalarField angle((acos((normal.component(0) * delta.component(0) + normal.component(1) * delta.component(1) + normal.component(2) * delta.component(2)) / (mag(normal)*mag(delta)))));
+
+    // step3) find the distance corrected
+
+    scalarField distance(1/(this->patch().deltaCoeffs()));
+    scalarField distance_corrected(distance * cos(angle));
+    //Info<< distance - distance_corrected <<endl;
+
+    // step4) set the b.c.
+
+    vectorField u(this->patchInternalField());
+    scalarField magU(mag(u));
+    const scalar accomodation_coefficient = 0.921;
+    scalar slip_coefficient = (2-accomodation_coefficient)/accomodation_coefficient*(1.016-0.1211*(1-accomodation_coefficient));
+    const scalar mean_free_path = 1.74804e-06;
+    scalar corrector_factor = mean_free_path*slip_coefficient;
+    operator==( corrector_factor*u / (distance+corrector_factor) );
+#};
+  }
+  solid2
+  {
+    type            codedFixedValue;
+    value           uniform (0 0 0);
+    redirectType	        slipRegime;
+
+    code
+#{
+    // step1) find delta and normal vectors
+
+    const fvMesh& mesh = internalField().mesh();
+
+    vectorField normal(this->patch().nf());
+    vectorField delta(mesh.C().internalField()[mesh.boundaryMesh().findPatchID("solid1")] - this->patch().Cf());
+
+    // step2) find the angle between the normal and the vector
+
+    const scalarField angle((acos((normal.component(0) * delta.component(0) + normal.component(1) * delta.component(1) + normal.component(2) * delta.component(2)) / (mag(normal)*mag(delta)))));
+
+    // step3) find the distance corrected
+
+    scalarField distance(1/(this->patch().deltaCoeffs()));
+    scalarField distance_corrected(distance * cos(angle));
+    //Info<< distance - distance_corrected <<endl;
+
+    // step4) set the b.c.
+
+    vectorField u(this->patchInternalField());
+    scalarField magU(mag(u));
+    const scalar accomodation_coefficient = 0.921;
+    scalar slip_coefficient = (2-accomodation_coefficient)/accomodation_coefficient*(1.016-0.1211*(1-accomodation_coefficient));
+    const scalar mean_free_path = 1.74804e-06;
+    scalar corrector_factor = mean_free_path*slip_coefficient;
+    operator==( corrector_factor*u / (distance+corrector_factor) );
+#};
+  }
+}
+
+
+// ************************************************************************* //

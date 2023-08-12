@@ -1,0 +1,64 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       polyBoundaryMesh;
+  location    "constant/polyMesh";
+  object      boundary;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+7
+(
+top {
+  type            symmetryPlane;
+  inGroups        1(symmetryPlane);
+  nFaces          40;
+  startFace       10836;
+}
+bottom {
+  type            symmetryPlane;
+  inGroups        1(symmetryPlane);
+  nFaces          59;
+  startFace       10876;
+}
+inlet {
+  type            patch;
+  nFaces          40;
+  startFace       10935;
+}
+outlet {
+  type            patch;
+  nFaces          58;
+  startFace       10975;
+}
+front {
+  type            empty;
+  inGroups        1(empty);
+  nFaces          5458;
+  startFace       11033;
+}
+back {
+  type            empty;
+  inGroups        1(empty);
+  nFaces          5458;
+  startFace       16491;
+}
+hotFlow_to_porousMat {
+  type            mappedWall;
+  inGroups        1(wall);
+  nFaces          256;
+  startFace       21949;
+  sampleMode      nearestPatchFace;
+  sampleRegion    porousMat;
+  samplePatch     porousMat_to_hotFlow;
+}
+)
+
+// ************************************************************************* //

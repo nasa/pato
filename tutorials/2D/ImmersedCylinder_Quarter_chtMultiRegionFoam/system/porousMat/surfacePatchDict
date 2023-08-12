@@ -1,0 +1,45 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  dev                                   |
+|   \\  /    A nd           | Web:      http://www.openfoam.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version         4.0;
+  format          ascii;
+  class           dictionary;
+  location        system/porousMat;
+  object          surfacePatchDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type sets;
+libs ("libsampling.so");
+
+interpolationScheme cellPatchConstrained;
+
+setFormat         raw;
+surfaceFormat     raw;
+
+sets
+(
+surfacePatch {
+  type            boundaryPoints;
+  axis            xyz;
+  points        (
+      (-0.1 0 0.2)
+  );
+  maxDistance     1e-2;
+  patches         (".*");
+}
+);
+
+
+fields
+(
+    Ta
+);
+
+// *********************************************************************** //

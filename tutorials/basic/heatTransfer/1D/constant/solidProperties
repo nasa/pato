@@ -1,0 +1,28 @@
+/*---------------------------------------------------------------------------*\
+Solid properties. Update as needed.
+\*---------------------------------------------------------------------------*/
+
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant";
+  object      solidProperties;
+}
+
+// * * * * * *  Units * * * * * [kg m s K mol A cd] * * * * * * * * * * * * * //
+// e.g. W: kg m^2 s^{-3}        [1 2 -3 0 0 0 0]
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// density
+rho		rho [1 -3 0 0 0 0 0] 	1000;
+
+// heat capacity
+cp 		cp  [0 2 -2 -1 0 0 0]	1000;
+
+// thermal conductivity in basis (x,y,z) of the mesh
+k		k   [1 1 -3 -1 0 0 0]	(1 0 0
+                           0 1 0
+                           0 0 1);
+
+// ************************************************************************* //

@@ -1,0 +1,13 @@
+Basic tutorial for solving a simple heat transfert problem. 
+
+The initial condition of the problem is represented in sketch.PNG: a gas flows into a porous material (Tg < Ts) due to an applied pressure gradient (Poutlet < Pinlet). We want to determine the gas velocity, the density variation of the gas, and the temperature distribution in the domain over time of the gas and the solid.  
+
+This tutorial will solve the problem first with the compressibleDarcy2T solver (OpenFoam), then with a Fenics script, 
+and finally it will compare the different results. 
+
+Type ./Allrun in the terminal to execute the tutorial and plot the fields at a certain time step. 
+
+
+N.B. Due to stability problems, Fenics needs a smaller time step than the one of openFoam --> Fenics computational time is higher. (Fenics solve all the equations coupled, whereas openFoam solves the equations decoupled) 
+
+

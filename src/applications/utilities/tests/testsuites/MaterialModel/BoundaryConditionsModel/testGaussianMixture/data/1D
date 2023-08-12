@@ -1,0 +1,16 @@
+FoamFile {
+  version     5.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat/poroursMatProperties";
+  object      porousMatProperties;
+}
+
+// p = a1 * exp(-((t-b1)/c1)^2) + a2 * exp(-((t-b2)/c2)^2)
+p[a1] 5;
+p[b1] 20;
+p[c1] 100;
+p[a2] 6;
+p[b2] 21;
+p[c2] 101;
+

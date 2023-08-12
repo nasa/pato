@@ -1,0 +1,10 @@
+// Tabulated flux-factor for axi-symmetrical problems (more precisely, factor for heat-transfer coefficient variation).
+// The distance (d, in m) is computed from the center of axi-symmetry (defined in file /constant/setCase).
+
+// d (m)	flux factor	pressure factor  
+0.000e-2	1.000		1
+1.000e-2	0.8		1
+2.000e-2	0.2		1
+3.000e-2	0.05		1
+10.000e-2	0.0		1
+

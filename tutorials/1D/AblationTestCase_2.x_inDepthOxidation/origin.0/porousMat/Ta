@@ -1,0 +1,65 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  location    "0";
+  object      Ta;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 300;
+
+boundaryField {
+  top
+  {
+    type  VolumeAblation;
+    // High-fidelity erosion models - available for volAblation = yes (this is research in progress)
+    // 0 - not used (no erosion)
+    // 1 - min fiber diameter, rfFail
+    // 2 - min density
+    // 3 - remove cell-by-cell
+    // 4 - min fiber diam, fiber diam gradient, and smoothing
+    // 5 - recession equal to the mass loss rate divided by the density in subpatch cell and smoothing
+    physicsBasedErosionModel 1;
+
+    // Environment species composition
+    environmentDirectory "$PATO_DIR/data/Environments/RawData/Earth";
+
+    // mapping type
+    mappingType constant;
+    mappingFileName "constant/porousMat/BoundaryConditions";
+    mappingFields
+    (
+        (p "1")
+        (rhoeUeCH "2")
+        (h_r "3")
+        (chemistryOn "4")
+    );
+    qRad 0;
+    lambda 0.5;
+    Tbackground 300;
+    Tedge 300;
+    hconv 0;
+    value uniform 300;
+  }
+  sides
+  {
+    type            zeroGradient;
+  }
+  bottom
+  {
+    type            zeroGradient;
+  }
+}
+
+
+// ************************************************************************* //

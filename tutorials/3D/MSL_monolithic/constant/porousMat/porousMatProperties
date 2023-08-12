@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+/****************************** GENERAL ************************************/
+//debug yes;
+movingMesh      yes;
+/****************************** END GENERAL ********************************/
+
+/****************************** MASS, ENERGY, PYROLYSIS ********************/
+Pyrolysis {
+  PyrolysisType LinearArrhenius; // PATO pyrolysis
+}
+
+Mass {
+  MassType DarcyLaw; // Solve the semi implicit pressure equation
+}
+
+Energy {
+  EnergyType Pyrolysis; // Solve the temperature equation
+}
+/****************************** END MASS, ENERGY, PYROLYSIS *****************/
+
+/****************************** GAS PROPERTIES  *****************************/
+GasProperties {
+  GasPropertiesType Tabulated; // tabulated gas properties
+  GasPropertiesFile "$FOAM_CASE/data/Materials/TACOT-Mars/gasProperties"; // gas properties file
+}
+/****************************** END GAS PROPERTIES ***************************/
+
+/****************************** MATERIAL PROPERTIES  *************************/
+MaterialProperties {
+  MaterialPropertiesType Porous; // porous material properties
+  MaterialPropertiesDirectory "$FOAM_CASE/data/Materials/TACOT-Mars"; // TACOT-Mars properties file
+}
+/****************************** END MATERIAL PROPERTIES **********************/
+
+/****************************** TIME CONTROL  **********************************/
+TimeControl {
+  TimeControlType GradP; // change the integration time step in function of the gradient of the pressure and the species mass fractions
+  chemTransEulerStepLimiter no;
+}
+/****************************** END TIME CONTROL  ******************************/

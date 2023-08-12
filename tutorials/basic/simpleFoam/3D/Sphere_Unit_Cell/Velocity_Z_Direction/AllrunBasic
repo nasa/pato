@@ -1,0 +1,65 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Source tutorial run functions
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+./Allclean
+
+
+# Translate the fibres mesh
+runApplication surfaceTransformPoints -translate '(0.5 0.5 1.0)' constant/triSurface/porosity_0_55.obj constant/triSurface/sphere.obj
+
+# Extract surface features (dictionnaire: surfaceFeaturesDict)
+runApplication surfaceFeatures
+
+# Create background mesh (dictionnaire: blockMeshDict)
+runApplication blockMesh
+
+# Decompose the mesh for parallel running (dictionnaire: decomposeParDict)
+runApplication decomposePar -copyZero
+
+# Create final mesh (dictionaire: snappyHexMeshDict, meshQualityDict)
+runParallel snappyHexMesh -overwrite
+
+# Check the Mesh for information
+runParallel checkMesh
+
+# Rescale the Mesh in micro-meters.
+runParallel transformPoints -scale '(1e-6 1e-6 1e-6)'
+
+# Make the linear system more diagonal dominant. It will speed-up the linear solvers.
+runParallel renumberMesh -overwrite
+
+# Extract the domain region
+runParallel topoSet 
+
+# To run in parallel the solver. getApplication finds solver name from "application" entry in controlDict
+runParallel $(getApplication)
+
+# To Reconstruct a mesh using geometric information only. constant = include the 'constant/' dir in the times list 
+runApplication reconstructParMesh -constant
+
+# To reconstruct the case for post-processing. 
+runApplication reconstructPar
+
+# Remove processor folders
+rm -r proc*
+
+# Extract the domain region
+runApplication topoSet 
+
+# Post-processing functions: calculate pressure gradient between inlet and outlet
+postProcess -fields '(p)' -func  pressureDifferenceSurface
+
+# Post-processing functions: calculate pressure gradient in x and y direction
+postProcess -fields '(p)' -func  pressureDifferencePatch1
+postProcess -fields '(p)' -func  pressureDifferencePatch2
+
+#------------------------------------------------------------------------------

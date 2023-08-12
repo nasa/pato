@@ -1,0 +1,36 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant";
+  object      mechanicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+rho {
+  type        uniform;
+  value       500;
+}
+
+nu {
+  type        uniform;
+  value       0.3;
+}
+
+E {
+  type        uniform;
+  value       12e+9;
+}
+
+planeStress     no;
+dynamicMesh     yes;
+
+
+// ************************************************************************* //

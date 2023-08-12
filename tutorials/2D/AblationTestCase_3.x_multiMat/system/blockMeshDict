@@ -1,0 +1,203 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.5                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Creating a 2D axi mesh for an IsoQ geometry, with an ellpise arc
+
+convertToMeters 0.001; // convert millimeters in meters
+
+// Geometry properties
+// We use 5 blocks, 10 points
+r1 38;
+h1 0;
+r2 38;
+h2 50;
+r3 0;
+h3 50;
+r4 50;
+h4 0;
+r5 50;
+h5 50;
+r6 0;
+h6 65;
+r7 38;
+h7 65;
+r8 50;
+h8 86.60254;
+r9 0;
+h9 100;
+
+alphaDeg 	2.5; // half angle of the wedge in degrees
+alpha    	#calc "degToRad($alphaDeg)";
+r1s             #calc "$r1*sin($alpha)";
+r1sn		#calc "-1.0*$r1s";
+r1c             #calc "$r1*cos($alpha)";
+r2s             #calc "$r2*sin($alpha)";
+r2sn		#calc "-1.0*$r2s";
+r2c             #calc "$r2*cos($alpha)";
+r3s             #calc "$r3*sin($alpha)";
+r3sn		#calc "-1.0*$r3s";
+r3c             #calc "$r3*cos($alpha)";
+r4s             #calc "$r4*sin($alpha)";
+r4sn		#calc "-1.0*$r4s";
+r4c             #calc "$r4*cos($alpha)";
+r5s             #calc "$r5*sin($alpha)";
+r5sn		#calc "-1.0*$r5s";
+r5c             #calc "$r5*cos($alpha)";
+r6s             #calc "$r6*sin($alpha)";
+r6sn		#calc "-1.0*$r6s";
+r6c             #calc "$r6*cos($alpha)";
+r7s             #calc "$r7*sin($alpha)";
+r7sn		#calc "-1.0*$r7s";
+r7c             #calc "$r7*cos($alpha)";
+r8s             #calc "$r8*sin($alpha)";
+r8sn		#calc "-1.0*$r8s";
+r8c             #calc "$r8*cos($alpha)";
+r9s             #calc "$r9*sin($alpha)";
+r9sn		#calc "-1.0*$r9s";
+r9c             #calc "$r9*cos($alpha)";
+
+/* point on ellipse arc
+py		#calc "sin(degToRad(60))*($h9-$h8)+$h8";
+px		#calc "cos(degToRad(60))*($r8-$r9)";
+pxs             #calc "$px*sin($alpha)";
+pxsn		#calc "-1.0*$pxs";
+pxc             #calc "$px*cos($alpha)";
+*/
+
+vertices
+(
+    (0 0 0)          // 0
+    ($r1c $h1 $r1sn) // 1
+    ($r2c $h2 $r2sn) // 2
+    ($r3c $h3 $r3sn) // 3
+    ($r4c $h4 $r4sn) // 4
+    ($r5c $h5 $r5sn) // 5
+    ($r6c $h6 $r6sn) // 6
+    ($r7c $h7 $r7sn) // 7
+    ($r8c $h8 $r8sn) // 8
+    ($r9c $h9 $r9sn) // 9
+
+    (0 0 0)          // 10
+    ($r1c $h1 $r1s)  // 11
+    ($r2c $h2 $r2s)  // 12
+    ($r3c $h3 $r3s)  // 13
+    ($r4c $h4 $r4s)  // 14
+    ($r5c $h5 $r5s)  // 15
+    ($r6c $h6 $r6s)  // 16
+    ($r7c $h7 $r7s)  // 17
+    ($r8c $h8 $r8s)  // 18
+    ($r9c $h9 $r9s)  // 19
+
+);
+
+blocks
+(
+    hex (0 1 2 3 0 11 12 3) subMat1 (40 20 1) simpleGrading (1 1 1) // block 0, collapsed 10->0, 13->3
+    hex (1 4 5 2 11 14 15 12) subMat1 (100 20 1) simpleGrading (0.1 1 1) // block 1
+    hex (3 2 7 6 3 12 17 6) subMat1 (40 20 1) simpleGrading (1 0.2 1) // block 2, collapsed 13->3, 16->6
+    hex (2 5 8 7 12 15 18 17) porousMat (100 20 1) simpleGrading (0.1 0.2 1) // block 3
+    hex (6 7 8 9 6 17 18 9) porousMat (40 100 1) simpleGrading (1 0.1 1) // block 4, collapsed 16->6, 19->9
+);
+
+edges
+(
+    spline 8 9   ( #codeStream
+{
+  codeInclude
+#{
+#include "pointField.H"
+#};
+
+  code
+#{
+  label nbPoints = 20;
+  for (label i = 1; i < nbPoints; i++) {
+    scalar xi = cos(degToRad(90/nbPoints*i))*($r8-$r9)*cos($alpha);
+    scalar yi = sin(degToRad(90/nbPoints*i))*($h9-$h8)+$h8;
+    scalar zi = cos(degToRad(90/nbPoints*i))*($r8-$r9)*sin($alpha);
+    os  << point(xi, yi, -zi) << endl;
+    // Info  << point(xi, yi, -zi) << endl;
+  }
+#};
+}            ) //end codeStream
+
+    spline 18 9  (#codeStream
+{
+  codeInclude
+#{
+#include "pointField.H"
+#};
+
+  code
+#{
+  label nbPoints = 20;
+  for (label i = 1; i < nbPoints; i++) {
+    scalar xi = cos(degToRad(90/nbPoints*i))*($r8-$r9)*cos($alpha);
+    scalar yi = sin(degToRad(90/nbPoints*i))*($h9-$h8)+$h8;
+    scalar zi = cos(degToRad(90/nbPoints*i))*($r8-$r9)*sin($alpha);
+    os  << point(xi, yi, zi) << endl;
+    // Info  << point(xi, yi, -zi) << endl;
+  }
+#};
+}            ) //end codeStream
+);
+
+patches
+(
+    wall top
+    (
+        (9 9 18 8)
+        (8 18 15 5)
+        (4 5 15 14)
+    )
+
+    wedge wedge_neg
+    (
+        (0 3 2 1)
+        (1 2 5 4)
+        (2 3 6 7)
+        (5 2 7 8)
+        (6 9 8 7)
+    )
+
+    wedge wedge_pos
+    (
+        (0 11 12 3)
+        (11 14 15 12)
+        (3 12 17 6)
+        (12 15 18 17)
+        (6 17 18 9)
+    )
+
+    empty axis
+    (
+        (0 0 3 3)
+        (3 3 6 6)
+        (6 6 9 9)
+    )
+
+    wall bottom
+    (
+        (0 1 11 0)
+        (1 4 14 11)
+    )
+
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

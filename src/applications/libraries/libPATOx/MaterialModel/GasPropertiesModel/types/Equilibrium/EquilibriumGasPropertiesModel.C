@@ -1,0 +1,176 @@
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+License
+    This file is part of OpenFOAM.
+
+    OpenFOAM is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+\*---------------------------------------------------------------------------*/
+
+#include "EquilibriumGasPropertiesModel.H"
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::EquilibriumGasPropertiesModel::EquilibriumGasPropertiesModel
+(
+    const fvMesh& mesh,
+    const word& dictName
+)
+  :
+simpleGasPropertiesModel(mesh, dictName),
+verifyMaterialChemistry_(verifyMaterialChemistry()),
+eps_g(createVolField<scalar>("eps_g",dimensionedScalar("zero", dimensionSet(0, 0, 0, 0, 0, 0, 0), 0.0))),
+h_g(createVolField<scalar>("h_g",dimensionedScalar("0", dimensionSet(0, 2, -2, 0, 0, 0, 0), 0.0))),
+M(createVolField<scalar>("M_g",dimensionedScalar("0", dimensionSet(1, 0, 0, 0, -1, 0, 0), 0.02))),
+mu(createVolField<scalar>("mu_g",dimensionedScalar("0", dimensionSet(1, -1, -1, 0, 0, 0, 0), 2e-5))),
+rho_g(createVolField<scalar>("rho_g",dimensionedScalar("zero", dimensionSet(1, -3, 0, 0, 0, 0, 0), 0.0))),
+eps_g_c_(createDimScalarProp("eps_g_c")),
+eps_g_v_(createDimScalarProp("eps_g_v")),
+p_threshold_(createScalarProp("p_threshold","yes",10)),
+T_threshold_(createScalarProp("T_threshold","yes",10)),
+energyModel_(refModel<simpleEnergyModel>()),
+Tg(energyModel_.refVolField<scalar>("Ta")),
+massModel_(refModel<simpleMassModel>()),
+p(massModel_.refVolField<scalar>("p")),
+pyrolysisModel_(refModel<simplePyrolysisModel>()),
+tau_(pyrolysisModel_.refVolField<scalar>("tau")),
+MaterialChemistryModel_(refModel<simpleMaterialChemistryModel>()),
+mix_(const_cast<autoPtr<Mutation::Mixture>&>(MaterialChemistryModel_.mixture())),
+pTp(new double [2]),
+massFractions_(MaterialChemistryModel_.massFractions()),
+moleFractions_(MaterialChemistryModel_.moleFractions()),
+p_Zx(new double [moleFractions_.size()]),
+Tg_old(createVolField<scalar>("Ta_old",Tg)),
+p_old(createVolField<scalar>("p_old",p)),
+initialized_(false)
+{
+  Tg_old == dimensionedScalar("0",dimTemperature,0);
+  Tg_old.boundaryFieldRef() == 0;
+  p_old == dimensionedScalar("0",dimensionSet(1,-1,-2,0,0,0,0),0);
+  p_old.boundaryFieldRef() == 0;
+  modelInitialized();
+}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::EquilibriumGasPropertiesModel::~EquilibriumGasPropertiesModel()
+{
+  delete[] pTp;
+  delete[] p_Zx;
+}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::EquilibriumGasPropertiesModel::update()
+{
+
+  if (simpleGasPropertiesModel::debug_) {
+    Info << "update M, hg, mu"<< endl;
+  }
+
+  if (!initialized_) {
+    std::cout.setstate(std::ios_base::failbit);
+  }
+
+  forAll(M, cellI) {
+    if ((mag(Tg[cellI] - Tg_old[cellI]) > T_threshold_) || (mag(p[cellI] - p_old[cellI]) > p_threshold_)) {
+      Tg_old[cellI] = Tg[cellI];
+      p_old[cellI] = p[cellI];
+      scalar T_var = Tg[cellI];
+      scalar p_var = p[cellI];
+
+      forAll(moleFractions_, elemI) {
+        p_Zx[elemI] = moleFractions_[elemI][cellI];
+      }
+
+      pTp[1] = T_var;
+      pTp[0] = p_var;
+      mix_().setState(p_Zx, pTp, 2);
+
+      M[cellI]  = mix_().mixtureMw();
+      h_g[cellI] = mix_().mixtureHMass();
+      mu[cellI] = mix_().viscosity();
+    }
+  }
+
+  forAll(mesh_.boundaryMesh(), patchI) {
+    forAll(M.boundaryField()[patchI], faceI) {
+
+      if ((mag(Tg.boundaryField()[patchI][faceI] - Tg_old.boundaryField()[patchI][faceI]) > T_threshold_)
+          || (mag(p.boundaryField()[patchI][faceI] - p_old.boundaryField()[patchI][faceI]) > p_threshold_)) {
+        Tg_old.boundaryFieldRef()[patchI][faceI] = Tg.boundaryField()[patchI][faceI];
+        p_old.boundaryFieldRef()[patchI][faceI] = p.boundaryField()[patchI][faceI];
+        scalar T_var = Tg.boundaryField()[patchI][faceI];
+        scalar p_var = p.boundaryField()[patchI][faceI];
+        forAll(moleFractions_, elemI) {
+          p_Zx[elemI] = moleFractions_[elemI].boundaryField()[patchI][faceI];
+        }
+
+        pTp[1] = T_var;
+        pTp[0] = p_var;
+
+        mix_().setState(p_Zx, pTp, 2);
+
+        M.boundaryFieldRef()[patchI][faceI]  = mix_().mixtureMw();
+        h_g.boundaryFieldRef()[patchI][faceI] = mix_().mixtureHMass();
+        mu.boundaryFieldRef()[patchI][faceI] = mix_().viscosity();
+      }
+    }
+  }
+
+  if (!initialized_) {
+    std::cout.clear();
+    initialized_=true;
+  }
+
+  const dimensionedScalar R = constant::physicoChemical::R;
+  rho_g  = p * M / (R * Tg); // gas density (perfect gas law)
+  eps_g = eps_g_c_ + (eps_g_v_ - eps_g_c_) * tau_; // empirical porosity
+
+  if (simpleGasPropertiesModel::debug_) {
+    Info << "\t end --- Foam::EquilibriumGasPropertiesModel::update()"<< endl;
+  }
+}
+
+Switch Foam::EquilibriumGasPropertiesModel::verifyMaterialChemistry()
+{
+  if (!simpleGasPropertiesModel::materialDict_.isDict("MaterialChemistry")) {
+    FatalErrorInFunction << "MaterialChemistry not found in \"constant/" << simpleGasPropertiesModel::materialDict_.path().name() << "/" << simpleGasPropertiesModel::materialDict_.name() << "\"" << exit(FatalError);
+  }
+
+  word chemType_(simpleGasPropertiesModel::materialDict_.subDict("MaterialChemistry").lookup("MaterialChemistryType"));
+  wordList validChemType_;
+  validChemType_.append("ConstantEquilibrium");
+  validChemType_.append("EquilibriumElement");
+  bool valid_ = false;
+  forAll(validChemType_, typeI) {
+    if (chemType_ == validChemType_[typeI]) {
+      valid_=true;
+    }
+  }
+  if (!valid_) {
+    FatalErrorInFunction << "MaterialChemistryType is not compatible with the GasPropertiesType." << nl << "Only MaterialChemistryType valid: " <<  validChemType_ << exit(FatalError);
+  }
+
+  return "yes";
+}
+
+// ************************************************************************* //

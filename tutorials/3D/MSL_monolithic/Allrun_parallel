@@ -1,0 +1,70 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# source OpenFOAM and PATO if darwin
+if [ "$(uname)" = "Darwin" ]; then
+    source $FOAM_ETC/bashrc
+    source $PATO_DIR/bashrc
+fi
+
+# Check number of processors
+if [ -z $1 ];
+then
+    echo "error: correct usage = ./Allrun_parallel <number_processors>"
+    exit 1
+fi
+re='^[0-9]+$'
+if ! [[ $1 =~ $re ]] ; then
+   echo "error: First argument is not a number" >&2
+   exit 1
+fi
+
+NPROCESSOR=$1
+
+# sed command
+if [ "$(uname)" = "Darwin" ]; then
+    sed_cmd=gsed
+else
+    sed_cmd=sed
+fi
+
+# change the decomposeParDict files
+$sed_cmd -i 's/numberOfSubdomains \+[0-9]*;/numberOfSubdomains '"$NPROCESSOR"';/g' system/porousMat/decomposeParDict
+$sed_cmd -i 's/numberOfSubdomains \+[0-9]*;/numberOfSubdomains '"$NPROCESSOR"';/g' system/subMat1/decomposeParDict
+
+
+# create volume fields (first time step : 50 s)
+scp -r origin.0 50
+scp -r constant/porousMat/copy.polyMesh constant/porousMat/polyMesh
+scp -r constant/subMat1/copy.polyMesh constant/subMat1/polyMesh
+
+count=`ls -1 processor* 2>/dev/null | wc -l`
+if [ $count != 0 ];
+then
+    rm -rf processor*
+fi
+
+# decompose the mesh                                                                                                                                                                                                                                         
+decomposePar -region porousMat
+decomposePar -region subMat1
+
+#run case
+mpiexec -np $NPROCESSOR PATOx -parallel
+
+# 3D post-processing
+reconstructPar -region porousMat
+reconstructPar -region subMat1 
+# paraFoam -builtin
+
+# probe scalar fields (temperature, pressure, density, etc) at desired locations - chosen in system/sampleDict  
+postProcess -func sampleDict -region porousMat
+
+# grab probed fields and copy them into files  
+# postProcessTime <dictName> <regionName> <inputFileName> <outputFileName> 
+postProcessTime sampleDict porousMat surfacePatch_Ta.xy output/plot_surfacePatch_Ta

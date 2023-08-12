@@ -1,0 +1,12 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+rm -f results
+rm -f constantProperties.i
+rm -f *.out
+rm -f *.rst
+rm -f *.dat
+
+# remove temporary files
+find . -name '*~' -ls -delete
+

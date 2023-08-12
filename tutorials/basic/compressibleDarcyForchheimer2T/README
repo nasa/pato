@@ -1,0 +1,11 @@
+To run the case there are 2 ./Allrun scripts:
+1 ./Allrun_basic                  # Darcy Forchheimer
+2 compressibleDarcy/Allrun_basic  # Darcy
+
+To plot a comparison :
+./Allplot
+
+A comparison.pdf file will be generated.
+
+This is a high velocity case, so Darcy and Darcy-Forchheimer's law does not give the same result.
+Il you want to see a comparison at low velocity, decrease inlet and internalField pressure to 100067.5 Pa in both cases.

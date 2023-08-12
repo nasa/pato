@@ -1,0 +1,34 @@
+/*---------------------------------------------------------------------------*\
+OpenFOAM file. Numerical method and parameter options for the finite-rate chemistry solver.
+No modifications are needed for tutorial-derived cases.
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     5.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat/poroursMatProperties";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+Energy {
+  createFields ((Ta volScalarField)      // Temperature [K]
+  (k volTensorField)	 // Solid thermal conductivity [W/m/K]
+  (rho_s volScalarField)); // Solid density [kg/m3]
+}
+
+GasProperties {
+  createFields ((h_g volScalarField)); // Gaseous enthalpy [J/kg]
+}
+
+Mass {
+  createFields ((p volScalarField)        // pressure [Pa]
+  (mDotG volVectorField)    // Gaseous mass flux [kg/m2/s]
+  (mDotGw volScalarField)); // Wall gaseous mass flux [kg/m2/s]
+}
+
+MaterialProperties {
+  MaterialPropertiesType Porous;
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Composites/TACOT";
+}

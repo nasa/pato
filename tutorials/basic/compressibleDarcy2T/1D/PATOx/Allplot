@@ -1,0 +1,17 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+if [ ! -d "postProcessing/singleGraph/" ]; then
+    echo "Fatal Error : plots seems to not have been generated.\n"
+    echo "exit"
+    exit 1
+else
+    ./plots/plots.py
+    ./plots/plots_error.py
+fi

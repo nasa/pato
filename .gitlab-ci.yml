@@ -1,0 +1,61 @@
+image:
+    name: registry.gitlab.com/pato/pato-dev:gcc-10_std-cpp20
+    entrypoint: ['bash', '-c', 'useradd myuser && exec su myuser -c bash']
+
+stages:
+    - build
+    - test
+
+build:
+    stage: build
+    timeout: 3h
+    script:
+        - echo source /opt/openfoam7/etc/bashrc >> build_pato
+        - echo export FOAM_EXTEND_SRC=/opt/foam-extend-4.1_for_openfoam-7/src >> build_pato
+        - echo export FOAM_EXTEND_LIB=/opt/foam-extend-4.1_for_openfoam-7/lib/linux64GccDPInt32Opt >> build_pato
+        - echo export PATO_DIR=\$PWD >> build_pato
+        - echo source \$PATO_DIR/bashrc >> build_pato
+        - echo \$PATO_DIR/src/applications/utilities/tests/ci_gitlab/start >> build_pato
+        - echo ./AllwcleanAllclean >> build_pato
+        - echo ./Allwmake >> build_pato
+        - echo "Building PATO"
+        - cat build_pato
+        - chmod +x build_pato
+        - ./build_pato
+    artifacts:
+        paths:
+            - install/
+            - src/thirdParty/mutation++/install/
+    only:
+        refs:
+            - merge_requests
+            - branches
+        variables: 
+            - $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"
+
+test:
+    stage: test
+    timeout: 3h
+    script:
+        - echo "Testing PATO"
+        - sed -i "s/endTime_factor \+[0-9]*/endTime_factor 6/g" src/applications/utilities/tests/testframework/runtests_options
+        - sed -i "s/tol_linux_0 \+[0-9]*e\-[0-9]*/tol_linux_0 1e-3/g" src/applications/utilities/tests/testframework/runtests_options
+        - sed -i "s/tol_linux_1 \+[0-9]*e\-[0-9]*/tol_linux_1 1e-3/g" src/applications/utilities/tests/testframework/runtests_options
+        - cat src/applications/utilities/tests/testframework/runtests_options
+        - echo source /opt/openfoam7/etc/bashrc >> run_pato
+        - echo export FOAM_EXTEND_SRC=/opt/foam-extend-4.1_for_openfoam-7/src >> run_pato
+        - echo export FOAM_EXTEND_LIB=/opt/foam-extend-4.1_for_openfoam-7/lib/linux64GccDPInt32Opt >> run_pato
+        - echo export PATO_DIR=\$PWD >> run_pato
+        - echo source \$PATO_DIR/bashrc >> run_pato
+        - echo tuto=\"TestTutorials_folders\" >> run_pato
+        - echo \$PATO_DIR/install/bin/runtests 2\>\&1 \| tee log.test >> run_pato
+        - echo \$PATO_DIR/src/applications/utilities/tests/ci_gitlab/success >> run_pato
+        - chmod +x run_pato
+        - cat run_pato
+        - ./run_pato
+    only:
+        refs:
+            - merge_requests
+            - branches
+        variables: 
+            - $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"

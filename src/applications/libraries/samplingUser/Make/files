@@ -1,0 +1,6 @@
+functionObjectTest.C
+functionObjectListTest.C
+sampledSetsTest.C
+sampledSetsTestGrouping.C
+
+LIB = $(PATO_DIR)/install/lib/libSamplingUser

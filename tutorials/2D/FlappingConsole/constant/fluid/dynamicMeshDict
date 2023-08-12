@@ -1,0 +1,28 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version         4.0;
+  format          ascii;
+  class           dictionary;
+  object          dynamicMeshDict;
+}
+
+/* * *          User-defined mesh motion parameters      * * */
+
+// For code initialization - Do NOT modify
+dynamicFvMesh           dynamicMotionSolverFvMesh;    // mesh motion class
+
+solver                  velocityLaplacian;            // mesh motion solver
+
+velocityLaplacianCoeffs {
+  diffusivity          uniform;  // try quadratic if topology is lost due to large dispacements
+}
+
+v0                      v0 [ 0 1 -1 0 0 0 0 ]   (0 0 0);        // initialization of the recession velocity (t=0)
+
+

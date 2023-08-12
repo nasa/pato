@@ -1,0 +1,81 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# source OpenFOAM and PATO if darwin
+if [ "$(uname)" = "Darwin" ]; then
+    source $FOAM_ETC/bashrc
+    source $PATO_DIR/bashrc
+fi
+# Source tutorial run functions
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+# Check number of processors
+if [ -z $1 ];
+then
+    echo "error: correct usage = ./Allrun <number_processors>"
+    exit 1
+fi
+re='^[0-9]+$'
+if ! [[ $1 =~ $re ]] ; then
+   echo "error: First argument is not a number" >&2
+   exit 1
+fi
+
+NPROCESSOR=$1
+
+# change the decomposeParDict files
+$(sed_cmd) -i 's/numberOfSubdomains \+[0-9]*;/numberOfSubdomains '"$NPROCESSOR"';/g' system/decomposeParDict
+
+# Create background mesh (dictionnaire: blockMeshDict)
+runApplication blockMesh
+
+# Create final mesh (dictionaire: snappyHexMeshDict, meshQualityDict)
+runApplication snappyHexMesh -overwrite
+runApplication extrudeMesh
+
+# Check the Mesh for information
+runApplication checkMesh
+
+# Rescale the Mesh in micro-meters.
+runApplication transformPoints -scale '(1e-06 1e-06 1e-06)'
+
+# Make the linear system more diagonal dominant. It will speed-up the linear solvers.
+#runParallel renumberMesh -copyZero
+
+# Extract the domain region
+#runParallel topoSet 
+runApplication topoSet
+
+runApplication decomposePar
+
+# To run in parallel the solver. getApplication finds solver name from "application" entry in controlDict
+runParallel simpleFoam
+
+# To Reconstruct a mesh using geometric information only. constant = include the 'constant/' dir in the times list 
+#runApplication reconstructParMesh -constant
+
+# To reconstruct the case for post-processing. 
+runApplication reconstructPar
+
+# Remove processor folders
+rm -r proc*
+
+# Extract the domain region
+runApplication topoSet 
+
+# Post-processing functions: calculate pressure gradient between inlet and outlet
+postProcess -fields '(p)' -func  pressureDifferenceSurface
+
+# Post-processing functions: calculate pressure gradient in y and z direction
+#postProcess -fields '(p)' -func  pressureDifferencePatch1
+#postProcess -fields '(p)' -func  pressureDifferencePatch2
+
+# python3 Permeability_Estimation.py # error in macOS
+
+#------------------------------------------------------------------------------

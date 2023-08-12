@@ -1,0 +1,3 @@
+processSetsName.C
+
+EXE = $(PATO_DIR)/install/bin/processSetsName

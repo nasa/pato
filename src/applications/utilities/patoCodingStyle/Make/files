@@ -1,0 +1,2 @@
+patoCodingStyle.C
+EXE = $(PATO_DIR)/install/bin/patoCodingStyle

@@ -1,0 +1,48 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+Volume-averaged temperature of the ablative material (gas + solid).
+Please activate the right boundaryField for the 'top' Patch.
+In other words, place the '/*' in front of the wrong 'top' option.
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  object      Ta;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 300;
+
+boundaryField {
+  top
+  {
+    type        boundaryMapping;
+    mappingType constant;
+    mappingFileName "constant/porousMat/BoundaryConditions";
+    mappingFields
+    (
+        (Ta "2")
+    );
+    value           uniform 300;
+  }
+  sides
+  {
+    type		empty;
+  }
+  wedge_pos
+  {
+    type            wedge;
+  }
+  wedge_neg
+  {
+    type            wedge;
+  }
+  center
+  {
+    type		empty;
+  }
+
+}
+// ************************************************************************* /

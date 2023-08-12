@@ -1,0 +1,29 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# create volume fields                                                                                                                             
+  cp -rf origin.0 0
+
+
+# generate mesh blocks
+blockMesh -region tube
+
+
+
+# run PATOx                                                                                                        
+decomposePar -allRegions -force
+mpirun -np 4 PATOx -parallel
+reconstructPar -allRegions
+
+# Create data
+postProcess -region  tube  -func sampleDict
+postProcess -region  tube  -func sampleDict1
+
+
+#------------------------------------------------------------------------------

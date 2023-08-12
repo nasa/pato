@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+movingMesh      no;
+/****************************** end GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields (U vG); // write fields in the time folders
+  probingFunctions
+  (
+      //plotDict
+      //surfacePatchDict
+  ); // name of sampling/probing dictionaries in "system/porousMat"
+}
+/****************************** END IO ************************************/
+
+/****************************** MASS, ENERGY, PYROLYSIS *******************/
+MaterialProperties {
+  MaterialPropertiesType         Porous; // porous material properties
+  MaterialPropertiesDirectory    "$PATO_DIR/data/Materials/dummyPorousMaterial"; // material properties file
+}
+
+Pyrolysis {
+  PyrolysisType    no; // PATO pyrolysis
+}
+
+Mass {
+  MassType    DarcyLaw2T; // Solve the semi implicit pressure equation
+}
+
+Energy {
+  EnergyType    Darcy2T;  // Solve the temperature equation
+}
+
+SolidMechanics {
+  SolidMechanicsType    no;
+}
+/****************************** END MASS, ENERGY, PYROLYSIS ****************/
+
+/****************************** GAS PROPERTIES  ************************************/
+GasProperties {
+  GasPropertiesType    Tabulated2T; // tabulated gas properties
+  GasPropertiesFile    "$PATO_DIR/data/Materials/dummyPorousMaterial/gasProperties_with_k"; // tabulated gas properties file
+}
+/****************************** END GAS PROPERTIES **************************/
+
+/****************************** TIME CONTROL  **********************************/
+TimeControl {
+  TimeControlType              GradP; // change the integration time step in function of the gradient of the pressure and the species mass fractions
+  chemTransEulerStepLimiter    no;
+}
+/****************************** END TIME CONTROL  ******************************/

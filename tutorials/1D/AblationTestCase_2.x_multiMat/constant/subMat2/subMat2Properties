@@ -1,0 +1,41 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/subMat2";
+  object      subMat2Properties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** IO *****************************************/
+IO {
+  writeFields(); // write fields in the time folders
+  probingFunctions
+  (
+      plotDict
+  ); // name of sampling/probing dictionaries in "system/porousMat"
+}
+/****************************** END IO ************************************/
+
+/****************************** ENERGY ************************************/
+Energy {
+  EnergyType PureConduction;
+}
+/****************************** END ENERGY ********************************/
+
+/****************************** MATERIAL PROPERTIES ***********************/
+MaterialProperties {
+  MaterialPropertiesType Fourier; // sub material (Fourier's law)
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Fourier/FourierTemplate"; // sub material file (Fourier's law)
+}
+/****************************** END MATERIAL PROPERTIES ********************/
+
+// ************************************************************************* //

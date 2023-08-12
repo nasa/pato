@@ -1,0 +1,197 @@
+### Original OpenFOAM .gitignore with additions for PATO ###
+
+# Editor and misc backup files - anywhere
+*~
+.*~
+*.bak
+*.bak[0-9][0-9]
+*.orig
+*.orig[0-9][0-9]
+\#*\#
+
+# python
+*.pyc 
+src/thirdParty/patoPlot/patoPlot.pyc
+
+# File-browser settings - anywhere
+.directory
+
+# CVS recovered versions - anywhere
+.#*
+
+# Objects and archives - anywhere
+*.[oa]
+*.la
+*.so
+
+# Derived files
+lex.yy.c
+
+# Corefiles
+core
+
+# Dependency files - anywhere
+*.dep
+
+# lnInclude (symlink) directories - anywhere
+lnInclude
+
+# Build directories - anywhere
+linux*Clang*/
+linux*Gcc*/
+linux*Icc*/
+solaris*Gcc*/
+SunOS*Gcc*/
+platforms/
+
+# Reinstate wmake/rules that might look like build directories
+!wmake/rules/*/
+
+# doxygen generated documentation
+doc/Doxygen/html
+doc/Doxygen/latex
+doc/Doxygen/man
+doc/Doxygen/DTAGS
+
+# Generated files in the main directory (e.g. ReleaseNotes-?.?.html)
+# and in the doc directory
+/*.html
+/doc/*.html
+
+# Untracked configuration files
+/etc/prefs.csh
+/etc/prefs.sh
+/etc/config/prefs.csh
+/etc/config/prefs.sh
+
+# Source packages - anywhere
+*.tar.bz2
+*.tar.gz
+*.tar
+*.tgz
+*.gtgz
+
+# Ignore the persistent .build tag in the main directory
+/.build
+
+# Ignore .timeStamp in the main directory
+/.timeStamp
+
+# Ignore .tags in the main directory
+/.tags
+
+# Ignore eclipse project files in the main directory
+/.cproject
+/.project
+
+# Ignore the test directories
+/tutorialsTest
+tutorials/debug
+
+### Additional OpenFOAM files ###
+
+tutorials/*/*/[1-9]*
+tutorials/*/*/[0-9]*\.[0-9]*
+!tutorials/*/*/0/*
+!tutorials/**/[0-9]D*
+#tutorials/*/*/output/*
+tutorials/*/*/processor[0-9]*
+
+**/postProcessing/*
+**/plots/profiles/*
+**/plots/*.pdf
+*.OpenFOAM
+*.blockMesh
+
+# debug
+tutorials/debug/*
+
+### LaTeX ###
+
+*.acn
+*.acr
+*.alg
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.glg
+*.glo
+*.gls
+*.idx
+*.ilg
+*.ind
+*.ist
+*.lof
+*.log
+*.lot
+*.maf
+*.mtc
+*.mtc0
+*.nav
+*.nlo
+*.out
+*.pdfsync
+*.ps
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdy
+*.tdo
+documentation/PATO_UserGuide/PATO_UserGuide.pdf
+
+### Sublime Text ###
+# Cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+
+# Workspace files are user-specific
+*.sublime-workspace
+
+### IDE (Eclipse, netbeans, CLion, qtCreator, etc.) ###
+nbproject
+.idea
+.project
+.cproject
+*.creator.user
+*.creator
+*.config
+*.files
+*.includes
+*.cflags
+*.cxxflags
+*.dir-locals.el
+*.kdev4
+
+### Other protections ###
+.svn
+.~lock*
+log_log.dat
+*.aux
+*.log
+
+# PATO install system files
+install
+
+# Mutation build system files
+src/thirdParty/mutation++/mutation++/build
+src/thirdParty/mutation++/mutation++/install
+src/thirdParty/mutation++/run
+
+# Documentation
+documentation/Doxygen/DTAGS
+documentation/Doxygen/html
+
+# MACOS
+darwin64Clang*
+*.DS_Store
+
+# GNU tags files
+GPATH
+GRTAGS
+GTAGS
+TAGS

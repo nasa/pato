@@ -1,0 +1,20 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Source tutorial clean functions
+. $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+cleanCase
+
+# remove all the *.pdf files
+rm -rf plots > /dev/null 2>&1
+
+find -name '*~' -ls -delete > /dev/null 2>&1
+
+

@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+/****************************** END GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields ();  // write fields in the time folders
+  probingFunctions   // name of sampling/probing dictionaries in "system/porousMat"
+  (
+      plotDict
+  );
+}
+/****************************** END IO *************************************/
+
+/****************************** ENERGY *************************************/
+Energy {
+  EnergyType BoundaryTable;
+  createFields ((rho_s volScalarField)); // solid density [kg/m3]
+}
+/****************************** NO ENERGY **********************************/
+
+
+/****************************** PYROLYSIS **********************************/
+Pyrolysis {
+  PyrolysisType FIAT; // FIAT pyrolysis model
+  GAMMA 0.5; // resin volume fraction
+  PHI 0.8; // porosity of virigin material
+  RVI (300 900 1600); // initial densities [kg/m3]
+  RCI (0 600 1600); // residual densities [kg/m3]
+  AI (1.2e4 4.48e9 0); // pre-exponential factors [1/s]
+  PSII (3 3 0); // density factor exponent [-]
+  EI (8555.55 20444.44 0); // activation temperatures [K]
+  TRACI (333.33 555.55 50000); // minimum temperatures [K]
+}
+/****************************** END PYROLYSIS ******************************/

@@ -1,0 +1,127 @@
+# Usage:
+#   dakota -i xxx.in -o run.out > stdout.out
+
+
+
+################################################################################
+environment
+    	#graphics
+	tabular_data
+    	tabular_data_file = 'table_out.dat'
+	annotated        
+	#tabular_graphics_file = 'table_out.dat'
+    	#custom_annotated header eval_id	#No interface column
+
+	results_output
+ 	results_output_file = 'results'
+ 	
+	top_method_pointer = 'HS' #points hybrid sequential
+
+################################################################################
+    
+
+################################################################################
+
+method
+  id_method = 'HS'
+  hybrid sequential
+  method_pointer_list = 'MOGA'
+################################################################################
+
+################################################################################    
+method
+	id_method = 'MOGA'
+    	model_pointer = 'M1'
+	moga
+   		output normal
+   		population_size = 80 # TO MODIFY
+
+   		initialization_type unique_random
+   		print_each_pop
+
+   
+		#SET HERE PARAMETERS FOR MOGA   
+		    fitness_type domination_count
+
+		    niching_type distance 0.02 0.02 0.02 0.02 0.02 0.02
+
+		    replacement_type 
+		    unique_roulette_wheel 
+
+		    postprocessor_type orthogonal_distance 0.03 0.03 0.03 0.03 0.03 0.03
+
+  		    crossover_type shuffle_random
+  		    num_offspring = 2 
+  		    num_parents = 2
+  		    crossover_rate = 0.85 
+
+ 	 	    mutation_type replace_uniform
+  		    mutation_rate = 0.35 
+
+
+		#STOPPING CRITERIA
+	   	    max_function_evaluations = 10 # 5000  # TO MODIFY
+		    convergence_type metric_tracker
+		 
+		    percent_change = 0.05
+		    num_generations = 10   # TO MODIFY
+ 		    final_solutions = 1
+  
+################################################################################
+
+  
+################################################################################
+
+variables # TO MODIFY
+	id_variables = 'V1'
+	continuous_design = 4
+	cdv_initial_point   1e-3 1e-3 0 0
+ 	cdv_lower_bounds    1e-3 1e-3 0 0 
+	cdv_upper_bounds    0.05 0.04 5e-10 1e-10    
+	cdv_descriptor      'kv0' 'kc0' 'kv3' 'kc3' # k = k0 + k3 * T^3  
+	scale_types = 'auto' 'auto' 'auto' 'auto' 
+
+################################################################################
+
+model #for MOGA
+  id_model = 'M1'
+  single
+  interface_pointer = 'I1'
+  variables_pointer = 'V1'
+  responses_pointer = 'R1'
+
+
+################################################################################
+interface
+	id_interface = 'I1'
+	fork
+	
+	asynchronous
+	evaluation_concurrency = 1   # TO MODIFY
+	analysis_driver = 'simulator_script'
+	parameters_file = 'params.in'
+	results_file    = 'results.out'
+	work_directory directory_tag
+
+        copy_files = 'templatedir/*'
+	  
+# uncomment to leave params.in and results.out files in work_dir subdirectories
+ 	named 'workdir' 
+	file_save  
+	#directory_save
+	aprepro
+	  
+# when using conmin_frcg (above) with analytic_gradients (below), 
+# need to turn off the active set vector as the interface does not parse it.
+ 	deactivate active_set_vector
+################################################################################
+
+################################################################################	  
+responses #MOGA
+ 	id_responses = 'R1' 
+	num_objective_functions = 4
+	no_gradients 	
+	no_hessians
+ 	sense 'min'
+################################################################################
+

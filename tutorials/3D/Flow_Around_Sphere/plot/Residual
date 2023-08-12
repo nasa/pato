@@ -1,0 +1,21 @@
+set logscale y
+set title "Residuals"
+set ylabel 'Residual'
+set xlabel 'Iteration'
+set key outside
+set grid
+
+nCorrectors=0
+nNonOrthogonalCorrectors=0
+
+nCont = nCorrectors
+nP = (nNonOrthogonalCorrectors+1)*nCont
+nPSkip = nP-1
+nContSkip = nCont-1
+
+
+
+plot "< cat log.PATOx| grep 'Solving for Ux' | cut -d' ' -f9 | tr -d ','" title 'Ux' with linespoints,\
+     "< cat log.PATOx| grep 'time step continuity errors :' | cut -d' ' -f9 | tr -d ','" title 'continuity' with linespoints,\
+     "< cat log.PATOx | grep 'Solving for p' | cut -d' ' -f9 | tr -d ','" title 'p' with linespoints lc 8
+pause 5

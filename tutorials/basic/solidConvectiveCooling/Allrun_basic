@@ -1,0 +1,26 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# create 0 folder
+if [ ! -d 0 ]; then
+    scp -r origin.0 0
+fi
+
+# create polyMesh
+blockMesh -region cube
+
+# run PATOx
+PATOx
+
+# Plot results
+#./Allplot
+
+# Velocity along the sample
+# Uncomment if needed
+# postProcess -region porousMat -func singleGraph

@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       polyBoundaryMesh;
+  location    "constant/porousMat/polyMesh";
+  object      boundary;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+5
+(
+top {
+  type            patch;
+  nFaces          43;
+  startFace       2507;
+}
+bottom {
+  type            patch;
+  nFaces          43;
+  startFace       2550;
+}
+wedge1 {
+  type            wedge;
+  inGroups        List<word> 1(wedge);
+  nFaces          1290;
+  startFace       2593;
+}
+wedge2 {
+  type            wedge;
+  inGroups        List<word> 1(wedge);
+  nFaces          1290;
+  startFace       3883;
+}
+porousMat_to_tank {
+  type            mappedWall;
+  inGroups        List<word> 1(wall);
+  nFaces          30;
+  startFace       5173;
+  sampleMode      nearestPatchFace;
+  sampleRegion    tank;
+  samplePatch     tank_to_porousMat;
+}
+)
+
+// ************************************************************************* //

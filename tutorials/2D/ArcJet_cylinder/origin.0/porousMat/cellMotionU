@@ -1,0 +1,55 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+Input file needed for the mesh motion solver. Please do not remove.
+It is not advised to modify this file unless you need to modify the boundaryField names.
+\*---------------------------------------------------------------------------*/
+
+FoamFile {
+  version         2.0;
+  format          ascii;
+  class           volVectorField;
+  object          cellMotionU;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField {
+  top      // name of the moving Patch
+  {
+    type            fixedValue;
+    value           uniform (0 0 0);
+  }
+
+  sides
+  {
+    type            slip;
+  }
+
+
+  bottom
+  {
+    type            fixedValue;
+    value           uniform (0 0 0);
+  }
+
+  wedge_pos
+  {
+    type            wedge;
+  }
+  wedge_neg
+  {
+    type            wedge;
+  }
+  center
+  {
+    type		empty;
+  }
+
+}
+
+
+// ************************************************************************* //

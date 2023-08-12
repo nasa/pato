@@ -1,0 +1,29 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+ROOTDIR=`pwd`
+
+# Source tutorial run functions
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+# run 1_Velocity_X_Direction
+cd Velocity_X_Direction
+./Allclean
+
+# run 2_Velocity_Y_Direction
+cd $ROOTDIR
+cd Velocity_Y_Direction
+./Allclean
+
+# run 3_Velocity_Z_Direction
+cd $ROOTDIR
+cd Velocity_Z_Direction
+./Allclean
+
+#------------------------------------------------------------------------------

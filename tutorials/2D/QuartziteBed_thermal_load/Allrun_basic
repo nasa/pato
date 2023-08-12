@@ -1,0 +1,44 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Get application directory
+application=$(getApplication)
+
+# Copy initial case
+if [ ! -d 0 ]; then
+    cp -r origin.0 0
+fi
+
+# Generate mesh
+blockMesh
+
+# Check the mesh
+checkMesh -allTopology -allGeometry
+
+# Create 2 regions
+topoSet
+
+# Split mesh region
+splitMeshRegions -cellZones -defaultRegionName porousMat -overwrite
+
+# Map temperature fields from gas calculations
+mapFields -sourceRegion porousMat -targetRegion porousMat -sourceTime 3600 ./thermalLoad
+mapFields -sourceRegion tank -targetRegion tank -sourceTime 3600 ./thermalLoad
+
+# Reorder the mesh
+renumberMesh -region porousMat -overwrite
+
+# Run case
+"$application"
+
+# Construct paraview outputs
+#paraFoam -touchAll

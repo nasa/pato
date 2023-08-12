@@ -1,0 +1,3 @@
+analyticalHotCylinder.C
+
+EXE = $(PATO_DIR)/install/bin/analyticalHotCylinder

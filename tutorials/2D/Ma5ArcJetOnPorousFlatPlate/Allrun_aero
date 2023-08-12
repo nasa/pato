@@ -1,0 +1,36 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+eval `tutoInDevel.sh` # Tutorial in development. Usage: ./Allrun <continue_flag> <error_msg>
+
+# aero with initialisation
+scp constant/flow/thermophysicalProperties constant/thermophysicalProperties
+scp constant/flow/turbulenceProperties constant/turbulenceProperties
+
+scp system/flow/fvSchemes system/fvSchemes 
+scp system/flow/fvSolution system/fvSolution 
+
+scp -r aero.0/ 0/
+scp -r system/blockMeshDict.aero system/blockMeshDict
+
+# generate meshes
+blockMesh
+
+# run case
+rhoCentralFoam
+
+# obtain Mach Number 
+
+rhoCentralFoam -postProcess -func MachNo
+
+# sample
+
+rhoCentralFoam -postProcess -func sampleDict
+
+# -----------------------------------------------------------------------------

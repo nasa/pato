@@ -1,0 +1,52 @@
+/*---------------------------------------------------------------------------*\
+OpenFOAM file. Numerical method and parameter options for the finite-rate chemistry solver.
+No modifications are needed for tutorial-derived cases.
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     5.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat/poroursMatProperties";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+IO {
+  IOType PurePyrolysis;
+  readFiles
+  (
+      "data-3.1/Temperature.txt"
+  );
+  writeFields
+  (
+  );
+  probingFunctions
+  (
+      plotDict
+      surfacePatchDict
+  );
+}
+
+Pyrolysis {
+  PyrolysisType LinearArrhenius;
+}
+
+MaterialProperties {
+  MaterialPropertiesType Porous;
+  MaterialPropertiesDirectory "$FOAM_CASE/TACOT-pyrolysis";
+}
+
+MaterialChemistry { // Transport and MaterialChemistry for the gas phase
+  MaterialChemistryType ConstantFiniteRate;
+  mixtureMutationFiniteRate  TACOT_frozen_species;
+}
+
+Energy {
+  createFields ((Ta volScalarField)
+  (rho_s volScalarField));
+}
+
+Mass {
+  createFields ((p volScalarField));
+}

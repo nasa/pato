@@ -1,0 +1,40 @@
+/*---------------------------------------------------------------------------*\
+Numerical method and parameter options for the finite-rate chemistry solver.
+No modifications should be needed for tutorial-derived cases.
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      binary;
+  class       dictionary;
+  location    "constant";
+  object      chemistryProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+chemistryType {
+  chemistrySolver   EulerImplicit;
+  chemistryThermo   psi;
+}
+
+chemistry           on;
+
+initialChemicalTimeStep 1e-05;
+
+sequentialCoeffs {
+  cTauChem        0.001;
+}
+
+EulerImplicitCoeffs {
+  cTauChem        0.05;
+  equilibriumRateLimiter off;
+}
+
+odeCoeffs {
+  solver          SIBS;
+  eps             0.05;
+  scale           1;
+}
+
+
+// ************************************************************************* //

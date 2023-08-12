@@ -1,0 +1,63 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.5                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     PAM;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         40;
+
+deltaT          1e-6;
+
+writeControl    adjustableRunTime;
+
+writeFields     no;
+
+writeInterval   40;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  12;
+
+writeCompression uncompressed;
+
+timeFormat      general;
+
+timePrecision   8;
+
+graphFormat     xmgr;
+
+runTimeModifiable yes;
+
+/* Adjustable time step - based on a limiter on the max. pressure gradient */
+adjustTimeStep  yes; // you can turn it off but it's going to be very slow
+
+adjustStartTime 0;
+
+maxCo           10;
+
+maxDeltaT   0.005; // reduce it if the surface temperature starts oscilliating
+
+minDeltaT   1e-6;
+
+REVlength   1e3;
+
+// ************************************************************************* //

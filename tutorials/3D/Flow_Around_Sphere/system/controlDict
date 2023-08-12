@@ -1,0 +1,88 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "system";
+  object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     PATOx;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         300;
+
+deltaT          1;
+
+writeControl    adjustableRunTime;
+
+writeInterval   600;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  10;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+// ************************************************************************* //
+
+functions {
+#includeEtc "caseDicts/postProcessing/visualization/streamlines"
+  ObjectLibs ("fluid");
+
+  forceCoeffs_object
+  {
+    // rhoInf - reference density
+    // CofR - Centre of rotation
+    // dragDir - Direction of drag coefficient
+    // liftDir - Direction of lift coefficient
+    // pitchAxis - Pitching moment axis
+    // magUinf - free stream velocity magnitude
+    // lRef - reference length
+    // Aref - reference area
+    type forceCoeffs;
+    functionObjectLibs ("libforces.so");
+    patches ("fibres");
+
+    region          fluid;   // Specify the region
+
+
+    pName p;
+    Uname U;
+    rho rhoInf;
+    rhoInf 1;
+
+    log true;                     // Dump to file
+
+    CofR (50 50 50);
+    liftDir (0 1 0);
+    dragDir (1 0 0);
+    pitchAxis (0 0 1);
+    magUInf 5e-4;
+    lRef 2.0;         		      // reference length (cylinder diameter)
+    Aref 3.14159265359;           // reference area
+
+    writeControl   timeStep;
+    writeInterval  1;
+  }
+}

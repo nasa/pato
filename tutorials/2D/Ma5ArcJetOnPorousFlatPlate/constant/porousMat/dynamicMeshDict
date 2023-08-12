@@ -1,0 +1,40 @@
+/*---------------------------------------------------------------------------*\
+Directory of the dynamic mesh.
+This is where the mesh parameters are set by the user.
+\*---------------------------------------------------------------------------*/
+
+FoamFile {
+  version         2.0;
+  format          ascii;
+  class           dictionary;
+  object          dynamicMeshDict;
+}
+
+/* * * 		User-defined mesh motion parameters	 * * */
+
+twoDMotion     		no; 	// "yes" for 1D and 2D deformations (n.b. axi-symmetrical is 3D).
+meshMotion      	yes; 	// "no" to force no recession while using the boundary layer approximation
+// (eg. for AblationTestCase2.1).
+movingPatch		porousMat_to_flow; 	// name of moving patch (ie. ablating surface) -
+// needs to be consistant with 'constant/polyMesh/boundary' (and with
+// 'constant/polyMesh/blockMeshDict' if 'blockMesh' is used to generate the mesh)
+distancePatches
+(
+    porousMat_to_flow // same as movingPatch
+
+);
+movingRegion    	porousMat; // name of moving region (only one by default: 'region0')
+
+//==============================================================================================
+// For code initialization - Do NOT modify
+dynamicFvMesh   	dynamicMotionSolverFvMesh; 		// mesh motion class
+solver        		velocityLaplacian;			// mesh motion solver
+velocityLaplacianCoeffs {
+  diffusivity    	uniform;				// try quadratic if topology is lost due to large dispacements
+}
+pointMotionDirection	(0 -1 0); // direction of the recession when the recession speed is read from file or when the direction of the mesh motion is imposed to conserve some topology properties (case of large deformations).
+fluxFactorThreshold	fluxFactorThreshold [ 0 0 0 0 0 0 0 ] 0.97; // Mesh motion direction is projected on the direction of pointMotionDirection when the value of the fluxFactor is higher than the set Threshold, otherwise motion is applied directly along the face normal. This is useful to preserve the topology for large and strongly distorted deformations.
+v0			v0 [ 0 1 -1 0 0 0 0 ] 	(0 0 0); 	// initialization of the recession velocity (t=0)
+exitPatch		bottom; //utilité ?
+developper		no; // allows to run non physical cases for code verification
+//==============================================================================================
