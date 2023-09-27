@@ -1,0 +1,21 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+Description
+    Calculates the magnitude of a field.
+
+\*---------------------------------------------------------------------------*/
+
+type            mag;
+libs            ("libfieldFunctionObjects.so");
+
+field           sigma;
+
+executeControl  writeTime;
+writeControl    writeTime;
+
+// ************************************************************************* //

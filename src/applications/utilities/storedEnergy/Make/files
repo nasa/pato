@@ -1,0 +1,3 @@
+storedEnergy.C
+
+EXE = $(PATO_DIR)/install/bin/storedEnergy

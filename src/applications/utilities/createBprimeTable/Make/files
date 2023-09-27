@@ -1,0 +1,2 @@
+createBprimeTable.C
+EXE = $(PATO_DIR)/install/bin/createBprimeTable

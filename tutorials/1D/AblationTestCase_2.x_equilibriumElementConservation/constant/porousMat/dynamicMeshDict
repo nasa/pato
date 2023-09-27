@@ -1,0 +1,20 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version         7.0;
+  format          ascii;
+  class           dictionary;
+  object          dynamicMeshDict;
+}
+
+/* * *          User-defined mesh motion parameters      * * */
+// For code initialization - Do NOT modify
+dynamicFvMesh   dynamicMotionSolverFvMesh;
+motionSolverLibs ("libfvMotionSolvers.so");
+motionSolver    velocityLaplacian;
+diffusivity     directional (0 1 0);

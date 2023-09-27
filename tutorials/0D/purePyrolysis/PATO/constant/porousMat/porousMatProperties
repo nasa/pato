@@ -1,0 +1,58 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+/****************************** GENERAL ************************************/
+//debug yes;
+/****************************** END GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields ();  // write fields in the time folders
+  probingFunctions   // name of sampling/probing dictionaries in "system/porousMat"
+  (
+      plotDict
+  );
+}
+/****************************** END IO *************************************/
+
+/****************************** MASS *************************************/
+Mass {
+  createFields ((p volScalarField)); // pressure [Pa]
+}
+/****************************** END MASS *********************************/
+
+/****************************** ENERGY *************************************/
+Energy {
+  EnergyType BoundaryTable;
+  createFields ((rho_s volScalarField)); // solid density [kg/m3]
+}
+/****************************** NO ENERGY **********************************/
+
+/****************************** PYROLYSIS **********************************/
+Pyrolysis {
+  PyrolysisType LinearArrhenius;
+}
+/****************************** END PYROLYSIS ******************************/
+
+/****************************** MATERIAL PROPERTIES ***********************/
+MaterialProperties {
+  MaterialPropertiesType Porous; // porous material properties
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Composites/TACOT"; // material properties directory
+}
+/****************************** END MATERIAL PROPERTIES ******************/
+

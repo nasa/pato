@@ -1,0 +1,5 @@
+<mixture mechanism="none" thermo_db="NASA-9" >
+    <species>
+C H O CH4 C3H8O,1propanol CO C3H8O,2propanol CO2 C6H5OH,phenol H2 H2O	
+    </species>
+</mixture>

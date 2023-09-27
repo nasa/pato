@@ -1,0 +1,5 @@
+testframework/runtests.C
+testframework/subtest.C
+mastertest.C
+
+EXE = $(PATO_DIR)/install/bin/runtests

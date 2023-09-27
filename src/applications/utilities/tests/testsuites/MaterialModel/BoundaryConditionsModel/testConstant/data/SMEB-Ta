@@ -1,0 +1,39 @@
+/*---------------------------------------------------------------------------*\
+boundaryConditions
+
+Application
+    Provides boundary-condition information at the surface, tabulated as a function of time.
+
+Description
+    There is a switch in file 'constant/porousMat/dynamicMeshDict' called:  convectiveBoundaryLayer.
+        It needs to be turned to "yes" or "no" according to the problem studied.
+        - "yes" : CMA-type boundary layer approximation.
+        It needs some simplified boundary layer information (provided below)
+        and a B' table ('constant/environmentProperties/Bprime')
+        or on-the-fly B' with Mutation++ (option 'mutationBprime = yes' in setCase).
+        The boundary layer solution provides both surface temperature and recession rate
+        (so the values of T_w and v_a provided here are not used).
+        - "no" : imposed temperature and surface recession.
+        The surface temperature (T_w) and the ablation rate (v_abl) are read below
+        (the values following T_w and v_a are unused).
+
+Please update used fields as needed and leave other fieds as they are.
+But very importantly, please keep the order of the 11 columns and the number of columns in each line.
+\*---------------------------------------------------------------------------*/
+/*
+t(se)   p_total_w(Pa)   T_w(K)  v_abl(m/s)      rhoUeCH(kg/m²/s)        h_r(J/kg)       q_rad(W/m²)     q_other(W/m²)   chemistryOn  lambda  T_inf(K)        pressureFactorOn        p_dyn_w (Pa)
+Y&N     Y&N             N       N               Y                       Y               Y               Y               Y       Y       Y               Y&N                     Y&N
+*/
+0 1 2 3 4 5 6 7 8  9 10 11 12
+1 2 3 4 5 6 7 8  9 10 11 12 13
+
+/*
+Y: used if convectiveBoundaryLayer  = "YES"
+N: used if convectiveBoundaryLayer  = "NO"
+Y&N: used in both cases
+
+chemistryOn is a switch that turns the heat-sources on/off (1/0).
+When chemistryOn turned 'off' (0), the problem becomes purely re-radiating.
+When 'pressureFactorOn=0', then: p = p_total_w (recommended for 1D cases).
+When 'pressureFactorOn=1', then: p(y) = (p_total_w - p_dyn_w) + p_dyn_w * pressureFactor(y) (used for axi-symmetrical cases)
+*/

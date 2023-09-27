@@ -1,0 +1,38 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      surfaceSubsetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Select triangles by label
+faces ( );
+
+// Select triangles using given points (local point numbering)
+localPoints ( );
+
+// Select triangles using given edges
+edges ();
+
+// Select triangles (with face centre) inside box. Only fibres inside this box will be detected
+zone
+(
+    ( 2  2  2)
+    (48 38 38)
+);
+
+// Extend selection with edge neighbours
+addFaceNeighbours no;
+
+// Invert selection
+invertSelection false;
+
+// ************************************************************************* //

@@ -1,0 +1,67 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+movingMesh      yes;
+/****************************** end GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields (D sigma epsilon deltaD); // write fields in the time folders
+  probingFunctions (surfacePatchDict); // name of sampling/probing dictionaries in "system/porousMat"
+}
+/****************************** END IO ************************************/
+
+/****************************** MASS, ENERGY, PYROLYSIS *******************/
+MaterialProperties {
+  MaterialPropertiesType Porous_const; // porous material properties
+  MaterialPropertiesDirectory "$FOAM_CASE/constant/console"; // material properties file
+  detailedSolidEnthalpies no;
+}
+
+Pyrolysis {
+  PyrolysisType virgin; // PATO pyrolysis
+}
+
+Mass {
+  createFields ((p volScalarField)); // pressure [Pa]
+}
+
+Energy {
+  createFields ((Ta volScalarField) // temperature [K]
+  (rho_s volScalarField)); // solid density [kg/m3]
+}
+
+SolidMechanics {
+  SolidMechanicsType  ElasticThermal; // Displacement, ElasticThermal, no
+  planeStress         yes;           // Plane stress true, false
+}
+/****************************** END MASS, ENERGY, PYROLYSIS ****************/
+
+/****************************** GAS PROPERTIES  ************************************/
+GasProperties {
+  GasPropertiesType no; // tabulated gas properties
+}
+/****************************** END GAS PROPERTIES **************************/
+
+/****************************** TIME CONTROL  **********************************/
+TimeControl {
+  TimeControlType no; // change the integration time step in function of the gradient of the pressure and the species mass fractions
+  chemTransEulerStepLimiter no;
+}
+/****************************** END TIME CONTROL  ******************************/

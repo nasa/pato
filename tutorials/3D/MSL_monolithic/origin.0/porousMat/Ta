@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  location    "50/porousMat";
+  object      Ta;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 300;
+
+boundaryField {
+  bottom
+  {
+    type            zeroGradient;
+  }
+  porousMat_to_subMat1
+  {
+    type            compressible::turbulentTemperatureCoupledBaffleMixed;
+    Tnbr            Ta;
+    kappaMethod     lookup;
+    kappa           k_abl_sym;
+    value           uniform 300;
+  }
+  top
+  {
+    type            Bprime;
+    BprimeFile      "$FOAM_CASE/data/Materials/TACOT-Mars/BprimeTable";
+    mappingType     "3D-tecplot";
+    mappingFileName "$FOAM_CASE/data/Environment/DPLR-MSL"; // name of the files: "DPLR-MSL_time"
+    mappingSymmetry y;
+    mappingFields   (
+        (p "3")
+        (rhoeUeCH "9")
+        (h_r "5")
+    );
+    Tbackground     187;
+    qRad            0;
+    lambda          0.5;
+    Tedge 300;
+    hconv 0;
+    chemistryOn          1;
+    value           uniform 300;
+  }
+}
+
+
+// ************************************************************************* //

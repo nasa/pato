@@ -1,0 +1,40 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Check number of processors
+if [ -z $1 ];
+then
+    echo "error: correct usage = ./Allrun_parallel <number_processors>"
+    exit 1
+fi
+re='^[0-9]+$'
+if ! [[ $1 =~ $re ]] ; then
+   echo "error: First argument is not a number" >&2
+   exit 1
+fi
+
+NPROCESSOR=$1
+
+# change the decomposeParDict files
+$(sed_cmd) -i 's/numberOfSubdomains \+[0-9]*;/numberOfSubdomains '"$NPROCESSOR"';/g' system/hotFlow/decomposeParDict
+$(sed_cmd) -i 's/numberOfSubdomains \+[0-9]*;/numberOfSubdomains '"$NPROCESSOR"';/g' system/porousMat/decomposeParDict
+
+# create volume fields
+cp -rf origin.0 0
+
+# generate meshes
+cp -r constant/hotFlow/copy.polyMesh constant/hotFlow/polyMesh
+cp -r constant/porousMat/copy.polyMesh constant/porousMat/polyMesh
+
+# run PATOx
+decomposePar -allRegions
+mpiexec -np $NPROCESSOR PATOx -parallel
+reconstructPar -allRegions
+
+#------------------------------------------------------------------------------

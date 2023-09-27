@@ -1,0 +1,6 @@
+#!/bin/sh
+rm  -rf $MPP_DIRECTORY/build
+rm  -rf $MPP_DIRECTORY/install
+rm  -rf $MPP_DIRECTORY/thirdparty/catch/build
+rm  -rf $MPP_DIRECTORY/thirdparty/eigen/build
+rm  -f  $MPP_DIRECTORY/scripts/utils.pyc

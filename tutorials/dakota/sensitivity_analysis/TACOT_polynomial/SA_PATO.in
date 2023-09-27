@@ -1,0 +1,38 @@
+
+environment
+  tabular_data
+    tabular_data_file = 'PATO_Ablation1.dat'
+
+method
+# sampling
+ # sample_type lhs
+ # samples = 20
+ # seed = 12347
+# variance_based_decomp drop_tolerance = 1e-25 
+
+ polynomial_chaos
+  sparse_grid_level = 3
+ # quadrature_order = 5
+    # samples_on_emulator = 1000
+    seed = 12347
+   # response_levels = 
+    variance_based_decomp drop_tolerance = 1e-25
+
+variables
+  active uncertain
+  normal_uncertain = 11
+    means = 12000 4.97777e8 4.9777e8 0.8 0.85 1.6e-11 2e-11 0.025 1e-10 0.02 1e-10  
+    std_deviations =  1200 4.9777e7 4.9777e7 0.08 0.085 1.6e-12 2e-12 0.0025 1e-11 0.002 1e-11
+    descriptors     = 'A1' 'A2' 'A3' 'poros_v' 'poros_c' 'perm_v' 'perm_c' 'kConv_v' 'kRad_v' 'kConv_c' 'kRad_c'
+
+interface
+  fork
+    analysis_drivers = 'driver.sh'
+
+responses
+ response_functions = 2
+  field_responses = 2
+    lengths = 121 121
+    descriptors = 'T' 'P'
+  no_gradients
+  no_hessians

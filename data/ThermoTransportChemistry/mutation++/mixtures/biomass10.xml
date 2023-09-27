@@ -1,0 +1,13 @@
+<mixture mechanism="none" thermo_db="NASA-9"
+>
+    <species>
+C H O N
+N2
+O2
+CO2
+CO
+H2O
+H2
+CH4
+    </species>
+</mixture>

@@ -1,0 +1,14 @@
+ELEMENTS
+ C   N   O 
+END
+SPECIES
+ N2                O2                CO2               CO              C(gr)
+END
+REACTIONS
+! 2 C(gr) + O2 => 2 CO                   1e5    0.000  28680.00 ! Test   
+! FORD	/ C(gr)	1 /
+
+  C(gr) + O2 => CO2                      5e7    0.000  28680.00 ! Lachaud JSR 2010   
+END
+
+

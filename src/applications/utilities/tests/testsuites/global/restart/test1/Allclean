@@ -1,0 +1,21 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Allclean origin and restart
+origin/Allclean
+restart/Allclean
+
+# remove log file
+rm -f log.run
+rm -f origin/log.run
+rm -f restart/log.run
+
+# remove temporary files
+find . -name '*~' -ls -delete
+

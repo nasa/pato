@@ -1,0 +1,11 @@
+/*---------------------------------------------------------------------------*\
+boundaryConditions
+
+Application
+    Provides boundary-condition information at the surface, tabulated as a function of time.
+\*---------------------------------------------------------------------------*/
+/*
+t(s)	rhoUeCH(kg/m²/s)
+*/
+0	1
+3600	1

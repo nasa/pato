@@ -1,0 +1,3 @@
+#!/bin/sh
+
+mppequil -T 290:50:15000 -P 4000:500:8000 -m 0,1,10,9,32,33,3 --thermo-db "NASA-9" air5 > testfinaln.txt

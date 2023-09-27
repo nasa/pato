@@ -1,0 +1,53 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Source tutorial run functions
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+./Allclean
+
+# Extract surface features 
+surfaceFeatures
+
+# Create background mesh 
+blockMesh
+
+# Decompose the mesh for parallel running 
+#decomposePar -copyZero
+
+# Create final mesh 
+snappyHexMesh -overwrite
+
+# Check the Mesh for information
+checkMesh
+
+# Rescale the Mesh in micro-meters.
+transformPoints -scale '(1e-6 1e-6 1e-6)'
+
+# Make the linear system more diagonal dominant. It will speed-up the linear solvers.
+renumberMesh -overwrite
+
+# Create the CellZone region for the effective domain
+topoSet
+
+# To run the solver. 
+"$(getApplication)"
+
+# To Reconstruct a mesh using geometric information only. constant = include the 'constant/' dir in the times list 
+#reconstructParMesh -constant
+
+# To reconstruct the case for post-processing. 
+#reconstructPar
+
+# Post-processing functions: calculate pressure gradient between inlet and outlet
+postProcess -fields '(p)' -func  pressureDifferencePatch
+
+#rm -r proc*
+
+#------------------------------------------------------------------------------

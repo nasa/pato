@@ -1,0 +1,7 @@
+ELEMENTS
+ C   H   N   O 
+END
+SPECIES
+ N2                O2                CO2               CO                H2O              
+ H2                CH4               A1                A1OH              
+END

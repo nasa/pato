@@ -1,0 +1,15 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Allrun origin and restart
+restart_time=1
+origin/Allrun > origin/log.run 2>&1
+rm -rf restart/origin.$restart_time
+cp -r origin/$restart_time restart/origin.$restart_time
+restart/Allrun > restart/log.run 2>&1

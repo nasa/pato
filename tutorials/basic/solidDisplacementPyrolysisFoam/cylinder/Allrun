@@ -1,0 +1,20 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+application=`getApplication`
+
+runApplication blockMesh
+runApplication $application
+runApplication -s sigma        postProcess -func "components(sigma)"
+runApplication -s singleGraph  postProcess -func singleGraph
+
+#------------------------------------------------------------------------------

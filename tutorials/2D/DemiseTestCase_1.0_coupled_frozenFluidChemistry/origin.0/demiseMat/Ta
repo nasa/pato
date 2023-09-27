@@ -1,0 +1,75 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  location    "0";
+  object      Ta;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 310;
+
+boundaryField {
+  lateral
+  {
+    type            zeroGradient;
+  }
+  demiseMat_to_porousMat
+  {
+    type            compressible::turbulentTemperatureCoupledBaffleMixed;
+    value           uniform 310;
+    Tnbr		Ta;
+    kappaMethod     lookup;
+    kappa           k_abl_sym;
+  }
+
+  wedge_pos
+  {
+    type            wedge;
+  }
+  wedge_neg
+  {
+    type            wedge;
+  }
+  center
+  {
+    type            empty;
+  }
+  demiseMat_to_ceramicMat
+  {
+    type            compressible::turbulentTemperatureCoupledBaffleMixed;
+    value           uniform 310;
+    Tnbr		Ta;
+    kappaMethod     lookup;
+    kappa           k_abl_sym;
+  }
+  top
+  {
+    type            zeroGradient;
+  }
+  bottom
+  {
+    type        zeroGradient;
+  }
+  demiseMat_to_hotFlow
+  {
+    type            compressible::turbulentTemperatureRadCoupledMixed;
+    Tnbr            T;
+    kappaMethod     lookup;
+    kappa	   	  k_abl_sym;
+    QrNbr           none;
+    Qr              Qr;
+    value           uniform 310;
+  }
+
+}
+// ************************************************************************* //

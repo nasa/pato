@@ -1,0 +1,21 @@
+#!/bin/bash
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Verify if dakota executable exists
+if ! command -v dakota &> /dev/null
+then
+    echo "dakota not found"
+    exit 1
+fi
+
+# Clean
+./Allclean
+
+# Run Dakota
+dakota MOGA.in

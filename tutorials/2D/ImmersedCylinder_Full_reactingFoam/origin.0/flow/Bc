@@ -1,0 +1,11 @@
+up {
+  type            symmetryPlane;
+}
+
+
+down {
+  type            symmetryPlane;
+}
+
+
+

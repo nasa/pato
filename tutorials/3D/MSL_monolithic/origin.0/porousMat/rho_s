@@ -1,0 +1,38 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     5.0;
+  format      ascii;
+  class       volScalarField;
+  location    "50/porousMat";
+  object      rho_s;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -3 0 0 0 0 0];
+
+internalField   uniform 300;
+
+boundaryField {
+  bottom
+  {
+    type            zeroGradient;
+  }
+  porousMat_to_subMat1
+  {
+    type            zeroGradient;
+  }
+  top
+  {
+    type            fixedValue;
+    value           uniform 300;
+  }
+}
+
+
+// ************************************************************************* //

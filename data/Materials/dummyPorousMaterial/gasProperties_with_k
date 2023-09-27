@@ -1,0 +1,19 @@
+// Tabulated gas properties as a function of pressure and temperature. 
+// Interpolation is linear. No extrapolation is allowed.
+// If out of (p,B'g,T) range, PATO will send a warning and exit.
+// NB: all data are needed: do not use zeros.
+
+// HERE, the gaz composition is assumed to be PURE NITROGEN (N2).
+
+//	 p (Pa)		T (K)	M (kg/mol)	cp_g (J/kg/K)	h_g(J/kg) mu (Pa.s)	   k_g (W/m-K)
+
+         1e+06          293     2.801e-02       1012           0          1.61345e-05      0.0299983
+         1e+06          323     2.801e-02       1012           30360      1.61345e-05      0.0299983
+
+         1e+01          293     2.801e-02       1012           0          1.61345e-05      0.0299983
+         1e+01          323     2.801e-02       1012           30360      1.61345e-05      0.0299983
+
+
+
+         
+       

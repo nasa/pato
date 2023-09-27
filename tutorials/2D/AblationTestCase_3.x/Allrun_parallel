@@ -1,0 +1,58 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# source OpenFOAM and PATO if darwin
+if [ "$(uname)" = "Darwin" ]; then
+    source $FOAM_ETC/bashrc
+    source $PATO_DIR/bashrc
+fi
+
+# Check number of processors
+if [ -z $1 ];
+then
+    echo "error: correct usage = ./Allrun_parallel <number_processors>"
+    exit 1
+fi
+re='^[0-9]+$'
+if ! [[ $1 =~ $re ]] ; then
+   echo "error: First argument is not a number" >&2
+   exit 1
+fi
+
+# Number of processors
+NPROCESSOR=$1
+
+# Change the decomposeParDict files
+sed -i 's/numberOfSubdomains \+[0-9]*;/numberOfSubdomains '"$NPROCESSOR"';/g' system/decomposeParDict
+sed -i 's/numberOfSubdomains \+[0-9]*;/numberOfSubdomains '"$NPROCESSOR"';/g' system/porousMat/decomposeParDict
+
+# Create volume fields (first time step : 0 s)
+scp -r origin.0 0
+
+# Select the mesh (Arc, Ellipse, or a mesh of your choice) 
+cp system/porousMat/blockMeshDict_Ellipse system/porousMat/blockMeshDict
+
+# Generate axial mesh from definition in blockMeshDict 
+blockMesh -region porousMat
+
+count=`ls -1 processor* 2>/dev/null | wc -l`
+if [ $count != 0 ];
+then
+    rm -rf processor*
+fi
+
+# Decompose the mesh                                                                                                                                                                                                                                         
+decomposePar -region porousMat
+
+# Run case in parallel
+mpiexec -np $NPROCESSOR PATOx -parallel
+
+# 3D post-processing
+# reconstructPar -region porousMat
+# paraFoam -builtin

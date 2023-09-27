@@ -1,0 +1,8 @@
+ASBeautifier.C	
+ASEnhancer.C  
+ASFormatter.C  
+ASLocalizer.C  
+ASResource.C 
+astyle_main.C
+
+EXE = $(PATO_DIR)/install/bin/style-google

@@ -1,0 +1,817 @@
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+  \\    /   O peration     |
+  \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+  \\/     M anipulation  |
+  -------------------------------------------------------------------------------
+  License
+  This file is part of OpenFOAM.
+
+  OpenFOAM is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+  Application
+  patoManager
+
+  Description
+  run/clean tutorials, run tests, add/remove model types/BC.
+
+  \*---------------------------------------------------------------------------*/
+
+// include headers
+#include "fvCFD.H"
+#include "IOFunctions.H"
+#include "fileOperation.H"
+
+// namespace
+using namespace Foam;
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+fileName foundDir(word tutoDir)
+{
+  const fileName pato_tuto = getEnv("PATO_TUTORIALS");
+  fileName tutoFolder = pato_tuto;
+  if(tutoDir=="all") {
+    return tutoFolder;
+  }
+  fileNameList dirs=readDir(pato_tuto, fileType::directory);
+  List<fileNameList> subdirs(dirs.size());
+  forAll(subdirs, dirI) {
+    subdirs[dirI] = readDir(pato_tuto+"/"+dirs[dirI], fileType::directory);
+  }
+
+  forAll(subdirs, dirI) {
+    forAll(subdirs[dirI], sI) {
+      forAll(dirs, dirJ) {
+        if (dirs[dirJ] == subdirs[dirI][sI]) {
+          fileName folder_ = tutoFolder + "/" + dirs[dirI] + "/" + subdirs[dirI][sI];
+          folder_.replaceAll(pato_tuto, "$PATO_TUTORIALS");
+          FatalErrorInFunction << "You need to rename " << folder_ <<  " folder. A sub-directory can not have the same name than a directory in $PATO_TUTORIALS." << exit(FatalError);
+        }
+      }
+    }
+  }
+  bool found=false;
+  forAll(dirs, dirI) {
+    if (dirs[dirI]==tutoDir) {
+      found = true;
+      tutoFolder+="/"+tutoDir;
+      break;
+    }
+  }
+  forAll(dirs, dirI) {
+    forAll(subdirs[dirI], sI) {
+      if (subdirs[dirI][sI]==tutoDir) {
+        found = true;
+        tutoFolder+="/"+dirs[dirI]+"/"+tutoDir;
+        break;
+      }
+    }
+  }
+  if (!found) {
+    dirs.append("all");
+    FatalErrorInFunction << (fileName) tutoDir << " not valid." << nl
+                         << "The valid folders in $PATO_TUTORIALS are: " << dirs
+                         << "The valid subfolders are: " << subdirs
+                         << exit(FatalError);
+  }
+  return tutoFolder;
+}
+
+void commandTuto(word command, word tutoDir)
+{
+  int dummy; // To keep g++ happy
+  fileName tutoFolder = foundDir(tutoDir);
+  if(tutoDir!="all") {
+    Info << nl << command << " the tutorials in " << tutoFolder << " :"
+         << endl;
+  } else {
+    Info << nl << command << " all the tutorials:" << endl;
+  }
+
+  fileNameList tutoFolders = searchFoldersKeyword(tutoFolder,command);
+
+  forAll(tutoFolders,folderI) {
+    word folder = (word) tutoFolders[folderI];
+    word folderCopy = folder;
+    Info << "   - " << folderCopy << endl;
+    if (isDir(folder)) {
+      dummy = system(folder+"/" + command + " > /dev/null");
+    }
+
+  }
+}
+
+int main(int argc, char *argv[])
+{
+  if (argc<2) {
+    FatalError << "patoManager must have at least 1 option."
+               << exit(FatalError);
+  }
+
+  // Remove options
+  argList::noParallel();
+  argList::removeOption("case");
+  argList::removeOption("noFunctionObjects");
+  argList::addOption("cleanTuto","tutoDir","Clean the tutorials in <tutoDir> (N.B. use \"all\" to clean all the tutorials)" );
+  argList::addOption("runTuto","tutoDir","Run the tutorials in <tutoDir> (N.B. use \"all\" to run all the tutorials)" );
+  argList::addOption("runTest","args","Run unit test suites");
+  argList::addOption("addBC","oldBCName/newBCName","Add new BC (copy of old BC)");
+  argList::addOption("removeBC","BCName","Remove BC");
+  argList::addOption("addType","modelName/oldTypeName/newTypeName","Add new type (copy of old type)");
+  argList::addOption("removeType","modelName/typeName","Remove type");
+  argList::addOption("listModels","","List the available models");
+  argList::addOption("listTypes","","List the available models and related types");
+  argList::addOption("addAllTests","","Add all the new test files (*.C) from \"$PATO_UNIT_TESTING/testsuites\" to the unit testing framework");
+  argList::addOption("showDoc","browser","Show PATO documentation generated by Doxygen");
+
+  int dummy; // To keep g++ happy
+  const fileName pato_dir = getEnv("PATO_DIR");
+  const fileName pato_test = getEnv("PATO_UNIT_TESTING");
+  fileName refTutoFolder = pato_test+"/testsuites/tutorials/ref";
+  fileName refTutoFolder_copy = refTutoFolder;
+  argList::addOption("saveTest","tutoDir","Save the reference tutorials from <tutoDir> to " + refTutoFolder_copy.replaceAll(pato_dir,"$PATO_DIR"));
+
+  argList args(argc, argv);
+
+  if (!args.check()) {
+    FatalError.exit();
+  }
+
+  word sed_command="sed";
+#ifdef __APPLE__
+  sed_command="gsed";
+#endif
+
+  word browserOption=word::null;
+  if (args.optionReadIfPresent("showDoc", browserOption)) {
+    word command = browserOption + " $PATO_DIR/documentation/Doxygen/html/index.html";
+    Info << command << endl;
+    dummy = system(command);
+  }
+
+  word tutoDirOption=word::null;
+  if (args.optionReadIfPresent("cleanTuto", tutoDirOption)) {
+    commandTuto("Allclean",tutoDirOption);
+  }
+
+  if (args.optionReadIfPresent("runTuto", tutoDirOption)) {
+    commandTuto("Allrun",tutoDirOption);
+  }
+
+  word argsRunTest_;
+  if (args.optionReadIfPresent("runTest", argsRunTest_)) {
+    Info << nl << "  $ runtests " << argsRunTest_ << endl;
+    dummy = system("runtests " + argsRunTest_);
+  }
+
+  word optionAddTest_ = word::null;
+  if (args.optionReadIfPresent("addAllTests", optionAddTest_)) {
+    optionAddTest_ = "testsuites";
+    word command_ = "$PATO_UNIT_TESTING/addTests " + optionAddTest_ ;
+    Info << "  $ " << (fileName) command_ << endl;
+    dummy = system(command_+ ">log.patoManager 2> log.patoManagerError");
+    command_ = "wclean $PATO_UNIT_TESTING";
+    Info << "  $ " << (fileName) command_ << endl;
+    dummy = system(command_+ ">log.patoManager 2> log.patoManagerError");
+    command_ = "wmake $PATO_UNIT_TESTING";
+    Info << "  $ " << (fileName) command_ << endl;
+    dummy = system(command_+ ">log.patoManager 2> log.patoManagerError");
+    dummy = system("rm log.patoManager");
+    dummy = system("rm log.patoManagerError");
+  }
+
+  if (args.optionReadIfPresent("saveTest", tutoDirOption)) {
+    commandTuto("Allclean",tutoDirOption);
+    commandTuto("Allrun",tutoDirOption);
+
+    const fileName pato_tuto= getEnv("PATO_TUTORIALS");
+    fileName tutoFolder = foundDir(tutoDirOption);
+    fileNameList tutoFolders = searchFoldersKeyword(tutoFolder,"Allrun");
+    forAll(tutoFolders, tutoI) {
+      tutoFolders[tutoI] = tutoFolders[tutoI].replaceAll(pato_tuto+"/","");
+    }
+
+    if (tutoDirOption=="all") {
+      if (isDir(refTutoFolder)) {
+        dummy = system("rm -rf " + refTutoFolder);
+      }
+      dummy = system("mkdir -p " + refTutoFolder);
+    } else {
+      fileName copyTutoFolder = tutoFolder;
+      copyTutoFolder.replaceAll(pato_tuto+"/","");
+      if(isDir(refTutoFolder+"/"+ copyTutoFolder)) {
+        dummy = system("rm -rf " + refTutoFolder+"/"+ copyTutoFolder);
+      }
+    }
+
+    wordList keepFiles;
+    keepFiles.append("output");
+    keepFiles.append("Allrun");
+    keepFiles.append("Allclean");
+
+    Info << nl << "Save the tutorials in: " << endl;
+
+    forAll(tutoFolders, tutoI) {
+      fileName tuto = pato_tuto+"/" + tutoFolders[tutoI] ;
+      fileName ref = refTutoFolder+"/" + tutoFolders[tutoI] ;
+
+      forAll(keepFiles, fileI) {
+        fileName file_= tuto+"/"+keepFiles[fileI];
+        bool found = (isFile(file_) || isDir(file_));
+        if(!found) {
+          FatalErrorInFunction << file_ << " not found." << exit(FatalError);
+        }
+      }
+
+
+      word command = "mkdir -p " + ref.path();
+      dummy = system(command);
+      command = "cp -r " + tuto + " " + ref;
+      dummy = system(command);
+
+      if (!isDir("temporary.copy")) {
+        dummy = system("mkdir temporary.copy");
+      } else {
+        FatalErrorInFunction << "temporary.copy folder found." << exit(FatalError);
+      }
+      forAll(keepFiles, fileI) {
+        command = "mv " + ref +"/" + keepFiles[fileI] + " temporary.copy/";
+        dummy = system(command);
+      }
+
+      command = "rm -rf " + ref +"/* ";
+      dummy = system(command);
+
+      forAll(keepFiles, fileI) {
+        command = "mv temporary.copy/" + keepFiles[fileI]  + " " + ref + "/"+ keepFiles[fileI];
+        dummy = system(command);
+      }
+      dummy = system("rm -rf temporary.copy");
+
+
+      Info << "     - "<< ref << endl;
+    }
+    commandTuto("Allclean",tutoDirOption);
+
+  }
+  word optionRemoveBC_;  //e.g.: Name
+  if (args.optionReadIfPresent("removeBC", optionRemoveBC_)) {
+    word name = optionRemoveBC_;
+    const fileName libPATO = getEnv("LIB_PATO");
+    if (!isDir(libPATO)) {
+      FatalError << "$libPATO folder not found" << exit(FatalError);
+    }
+    fileName bcPath = libPATO+"/libPATOx/MaterialModel/BoundaryConditions";
+    fileNameList dirs=readDir(bcPath, fileType::directory);
+    wordList bcNames;
+    forAll(dirs, dirI) {
+      string dirI_=dirs[dirI];
+      bcNames.append(dirI_);
+    }
+    if(!foundInList<word>(name,bcNames)) {
+      FatalError << "\"" << name << "\" not found in PATO BC.\nAvailable BC are:" << bcNames  << exit(FatalError);
+    }
+
+    fileName folder = bcPath + "/" + name;
+    if (!isDir(folder)) {
+      FatalErrorInFunction << folder << " not found." << exit(FatalError);
+    }
+
+    fileNameList files=readDir(folder, fileType::file);
+    word command = "";
+    forAll(files, fI) {
+      word file_copy = (word) files[fI];
+      word ext = file_copy.replaceAll(name,"");
+      fileName newSourceFileName_ =  bcPath.replaceAll((word)libPATO+"/libPATOx/","")+ "/" + name+ "/" + name +ext ;
+      command = sed_command + " -i '/"+ (word) newSourceFileName_.replaceAll("/","\\/") +"/d' " + (word) libPATO + "/libPATOx/Make/files";
+      Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+      dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+    }
+
+    command = "rm -rf " + folder;
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    if (!isDir(getEnv("LIB_PATO"))) {
+      FatalError << "$LIB_PATO not found." << exit(FatalError);
+    }
+
+    command = "wclean libso $LIB_PATO/libPATOx";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError" );
+
+    command = "wmake libso $LIB_PATO/libPATOx";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    dummy = system("rm log.patoManager");
+    dummy = system("rm log.patoManagerError");
+    dummy = system("wmake libso $LIB_PATO/libPATOx");
+
+    Info  << endl;
+    Info << "\e[1mRemoved \""  << name << "\" from " << folder.replaceAll(libPATO,"$LIB_PATO") << "\e[0m" << endl;
+    Info  << endl;
+  }
+
+  word optionAddBC_;  //e.g.: oldName/newName
+  if (args.optionReadIfPresent("addBC", optionAddBC_)) {
+    int pos_1 = optionAddBC_.find("/");
+    if (pos_1 < 0 ) {
+      FatalError << "\"/\" missing in addBC option." << nl << "usage example: patoManager -addBC \"Bprime/newBCName\""<< exit(FatalError);
+    }
+    word oldName_= optionAddBC_.substr(0,pos_1); //e.g.: Bprime
+    word newName_= optionAddBC_.substr(pos_1+1,std::string::npos); //e.g.: NewName
+
+    const fileName libPATO = getEnv("LIB_PATO");
+    if (!isDir(libPATO)) {
+      FatalError << "$libPATO folder not found" << exit(FatalError);
+    }
+    fileName bcPath = libPATO+"/libPATOx/MaterialModel/BoundaryConditions";
+    fileNameList dirs=readDir(bcPath, fileType::directory);
+    wordList bcNames;
+    forAll(dirs, dirI) {
+      string dirI_=dirs[dirI];
+      bcNames.append(dirI_);
+    }
+    if(!foundInList<word>(oldName_,bcNames)) {
+      FatalError << "\"" << oldName_ << "\" not found in PATO BC.\nAvailable BC are:" << bcNames  << exit(FatalError);
+    }
+    if (isDir(bcPath +"/"+newName_)) {
+      FatalError << "\"" << (word) bcPath.replaceAll(libPATO,"$LIB_PATO") << "/" << newName_ << "\" exists already." << exit(FatalError);
+    }
+    word command ="scp -r " + bcPath +"/"+oldName_ + " " + bcPath +"/"+newName_;
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    fileNameList files=readDir(bcPath+"/"+newName_, fileType::file);
+    forAll(files, fI) {
+      command = sed_command + " -i 's/" + oldName_ + "/" + newName_ + "/g' " + bcPath+"/"+newName_+"/"+ files[fI];
+      Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+      dummy = system(command + ">log.patoManager 2> log.patoManagerError");
+
+      word copy_file = files[fI];
+      word old_file_path = bcPath +"/"+newName_+"/"+ copy_file;
+      word new_file_path = bcPath +"/"+newName_+"/"+ copy_file.replaceAll(oldName_,newName_);
+      command = "mv " + old_file_path + " " + new_file_path;
+
+      Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+      dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+      copy_file = files[fI];
+      copy_file.replaceAll(oldName_,"");
+      word ext = copy_file;
+      fileName bcPath_copy=bcPath;
+      bcPath_copy.replaceAll((word)libPATO+"/libPATOx/","");
+      fileName oldSourceFileName_ =  bcPath_copy+ "/" + oldName_+  "/" + oldName_ +ext ;
+      fileName newSourceFileName_ =  bcPath_copy+ "/" + newName_+ "/" + newName_ +ext ;
+      command = sed_command + " -i '/"+ (word) oldSourceFileName_.replaceAll("/","\\/") +"/a" + (word) newSourceFileName_.replaceAll("/","\\/") + "' " + (word) libPATO + "/libPATOx/Make/files";
+      Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+      dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+    }
+
+    if (!isDir(getEnv("LIB_PATO"))) {
+      FatalError << "$LIB_PATO not found." << exit(FatalError);
+    }
+
+    command = "wclean libso $LIB_PATO/libPATOx";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError" );
+
+    command = "wmake libso $LIB_PATO/libPATOx";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    dummy = system("rm log.patoManager");
+    dummy = system("rm log.patoManagerError");
+    dummy = system("wmake libso $LIB_PATO/libPATOx");
+
+    fileName newFolder =  bcPath +"/"+newName_;
+    Info  << endl;
+    Info << "\e[1mAdded \""  << newName_ << "\" BC based on \"" << oldName_ << "\" BC to " << newFolder.replaceAll(libPATO,"$LIB_PATO") << "\e[0m" << endl;
+    Info  << endl;
+  }
+
+  word optionAddType_;  //e.g.: Chemistry/oldName/newName
+  if (args.optionReadIfPresent("addType", optionAddType_)) {
+    int pos_1 = optionAddType_.find("/");
+    word substr_ = optionAddType_.substr(pos_1+1, std::string::npos);
+    int pos_2 = substr_.find("/");
+
+    if (pos_1 < 0 || pos_2 < 0) {
+      FatalError << "One or two \"/\" missing in newModel option." << nl << "usage example: patoManager -addModel \"Chemistry/no/new\""<< exit(FatalError);
+    }
+    pos_2 += pos_1 + 1;
+    word modelNameOption_= optionAddType_.substr(0,pos_1); //e.g.: Chemistry
+    word oldModelOption_= optionAddType_.substr(pos_1+1,pos_2-pos_1-1); //e.g.: oldName
+    word newModelOption_ = optionAddType_.substr(pos_2+1, std::string::npos); //e.g.: newName
+
+    if (((int) modelNameOption_.find("/") >= 0) || ((int) oldModelOption_.find("/") >= 0) || ((int) newModelOption_.find("/") >= 0)) {
+      FatalError << "newModel option problem." << nl << "usage example: patoManager -addModel \"Chemistry/no/new\""<< exit(FatalError);
+    }
+
+    if (modelNameOption_.empty() || oldModelOption_.empty() || newModelOption_.empty() ) {
+      FatalError << "newModel option problem." << nl << "usage example: patoManager -addModel \"Chemistry/no/new\""<< exit(FatalError);
+    }
+
+    int pos = modelNameOption_.find("Model");
+
+    if(pos>=0) {
+      modelNameOption_= modelNameOption_.replaceAll("Model","");
+    }
+
+    const fileName libPATO = getEnv("LIB_PATO");
+    if (!isDir(libPATO)) {
+      FatalError << "$libPATO folder not found" << exit(FatalError);
+    }
+    fileNameList dirs=readDir(libPATO+"/libPATOx/MaterialModel", fileType::directory);
+    wordList modelNames;
+    forAll(dirs, dirI) {
+      string dirI_=dirs[dirI];
+      int pos = dirI_.find("Model");
+
+      if(pos>=0) {
+        dirI_= dirI_.replaceAll("Model","");
+        if (dirI_!="Material") {
+          modelNames.append(dirI_);
+        }
+      }
+    }
+
+    if (!foundInList<word>(modelNameOption_, modelNames)) {
+      FatalError << (fileName) modelNameOption_ << " not found in the models:" << modelNames << exit(FatalError);
+    }
+
+    word newName_=newModelOption_; //e.g.: newName
+    word oldName_=oldModelOption_; //e.g.: oldName
+    word modelName_ = modelNameOption_; //e.g.: Chemistry
+    fileName typePath_= libPATO + "/libPATOx/MaterialModel/" + modelName_ + "Model/types";
+
+    if (!isDir(typePath_)) {
+      FatalError << typePath_ << " not found." << exit(FatalError);
+    }
+
+    fileNameList dirTypes=readDir(typePath_, fileType::directory);
+    wordList typeNames;
+    List<fileName> typePaths;
+    forAll(dirTypes, dirI) {
+      string dirI_=dirTypes[dirI];
+
+      fileNameList fileTypes=readDir(typePath_+"/"+dirI_, fileType::file);
+      forAll(fileTypes, fileI) {
+        string fileI_ = fileTypes[fileI];
+        int pos = fileI_.find(modelName_+"Model.C");
+
+        if(pos>0) {
+          fileI_= fileI_.replaceAll(modelName_+"Model.C","");
+          if (fileI_!=""&& !foundInList((word) fileI_,typeNames) ) {
+            typeNames.append(fileI_);
+            typePaths.append(typePath_+"/"+dirI_+"/"+fileI_+modelName_+"Model");
+          }
+        }
+      }
+    }
+
+    if (!foundInList<word>(oldName_, typeNames)) {
+      FatalError << (fileName) oldName_ << " not found in the " << modelName_ << " types:" << typeNames << exit(FatalError);
+    }
+
+    if (oldName_=="") {
+      FatalError << "\"" << oldModelOption_ << "\" option does not have a solver name." << nl << "usage example: patoManager -addModel \"Chemistry/no/new\"" << nl <<
+                 "Available types are:" << typeNames << exit(FatalError);
+    }
+    if (newName_=="") {
+      FatalError << "\"" << newModelOption_ << "\" option does not have a solver name." << nl << "usage example: patoManager -addModel \"Chemistry/no/new\"" << nl <<
+                 "Available types are:" << typeNames << exit(FatalError);
+    }
+
+    label index_ = -1;
+    forAll(typeNames, i) {
+      if (typeNames[i]==oldName_) {
+        index_=i;
+      }
+    }
+    fileName oldFolder_ = typePaths[index_].path();
+    if (!isDir(oldFolder_)) {
+      FatalError << "\"" << oldModelOption_ << "\"" << " option not correct." << nl << oldFolder_.replaceAll(libPATO,"$LIB_PATO") << " does not exist.\nAvailable types are:" << typeNames << exit(FatalError);
+    }
+    fileName newFolder_ = typePath_+"/"+newName_;
+    if (isDir(newFolder_)) {
+      FatalError <<  "\"" << newModelOption_  <<  "\"" << " option not correct." << nl << newFolder_.replaceAll(libPATO,"$LIB_PATO") << " exists already.\nThe new solver can not be the same than the current types:" << typeNames << exit(FatalError);
+    }
+
+    word command = "cp -r " + oldFolder_+ " "+newFolder_   ;
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+    if (!isDir(newFolder_)) {
+      FatalError << newFolder_.replaceAll(libPATO,"$LIB_PATO") << " not found." << exit(FatalError);
+    }
+
+    fileNameList files=readDir(newFolder_, fileType::file);
+
+    forAll(files, fileI) {
+      string fileIC_ = files[fileI];
+      fileIC_.replaceAll(modelName_+"Model.C","");
+      string fileIH_ = files[fileI];
+      fileIH_.replaceAll(modelName_+"Model.H","");
+      if (fileIC_!=oldName_ && fileIH_!=oldName_) {
+        dummy = system("rm -f " + newFolder_ + "/" + files[fileI]);
+      } else {
+        command = sed_command + " -i 's/" + oldName_ + modelName_+ "/" + newName_ + modelName_+ "/g' " + newFolder_+"/"+files[fileI];
+        Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+        dummy = system(command + ">log.patoManager 2> log.patoManagerError");
+        command = sed_command + " -i 's/TypeName(\""+ oldName_ +"\");/TypeName(\"" + newName_ + "\");/g' " + newFolder_+"/"+files[fileI];
+        Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+        dummy = system(command + ">log.patoManager 2> log.patoManagerError");
+        word copy_file = files[fileI];
+        word old_file_path = newFolder_+"/"+copy_file;
+        copy_file.replaceAll(oldName_ + modelName_, newName_ + modelName_);
+        word new_file_path = newFolder_+"/"+copy_file;
+        command = "mv " + old_file_path + " " + new_file_path;
+        Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+        dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+      }
+    }
+
+    fileName makeTypesPath_ = typePath_.path();
+    if (!isDir(makeTypesPath_)) {
+      FatalError << makeTypesPath_.replaceAll(libPATO,"$LIB_PATO") << " not found." << exit(FatalError);
+    }
+
+    command = sed_command + " -i '/\\#include \\\""+ oldName_ + modelName_ +"Model.H\\\"/a \\#include \\\"" + newName_ + modelName_ +"Model.H\\\"' " + makeTypesPath_+"/make" + modelName_ + "Model.C";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    command = sed_command + " -i '/}/i\\ ' " + makeTypesPath_+"/make" + modelName_ + "Model.C";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    command = sed_command + " -i '/}/idefineTypeNameAndDebug(" + newName_ + modelName_ + "Model, 0);' "
+              + makeTypesPath_+"/make" + modelName_ + "Model.C";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    command = sed_command + " -i '/}/iaddToRunTimeSelectionTable(simple"+modelName_+"Model, "+  newName_ + modelName_  + "Model, fvMesh);' "
+              + makeTypesPath_+"/make" + modelName_ + "Model.C";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    fileName copy_oldFolder_ = oldFolder_;
+    copy_oldFolder_.replaceAll((word)libPATO+"/libPATOx/","");
+    fileName oldSourceFileName_ = copy_oldFolder_+ "/" + oldName_ + modelName_ +"Model.C" ;
+    fileName copy_newFolder_ = newFolder_;
+    copy_newFolder_.replaceAll((word)libPATO+"/libPATOx/","");
+    fileName newSourceFileName_ = copy_newFolder_ + "/" + newName_ + modelName_ +"Model.C" ;
+    command = sed_command + " -i '/"+ (word) oldSourceFileName_.replaceAll("/","\\/") +"/a" + (word) newSourceFileName_.replaceAll("/","\\/") + "' " + (word) libPATO + "/libPATOx/Make/files";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    if (!isDir(getEnv("LIB_PATO"))) {
+      FatalError << "$LIB_PATO not found." << exit(FatalError);
+    }
+
+    command = "wclean libso $LIB_PATO/libPATOx";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError" );
+
+    command = "wmake libso $LIB_PATO/libPATOx";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    dummy = system("rm log.patoManager");
+    dummy = system("rm log.patoManagerError");
+
+    Info  << endl;
+    Info << "\e[1mAdded \""  << newModelOption_ << "\" based on \"" << oldModelOption_ << "\" to \"$LIB_PATO/libPATOx/" << (word) newFolder_ << "\"\e[0m" << endl;
+    Info  << endl;
+  }
+
+  fileName optionRemoveModel_;  //e.g.: modelName/typeName
+  if (args.optionReadIfPresent("removeType", optionRemoveModel_)) {
+
+    int pos_1 = optionRemoveModel_.find("/");
+    if (pos_1 < 0 ) {
+      FatalError << "\"/\" missing in modelName option." << nl << "usage example: patoManager -removeModel \"Chemistry/modelNameToRemove\""<< exit(FatalError);
+    }
+    word modelNameOption_= optionRemoveModel_.substr(0,pos_1); //e.g.: Chemistry
+    word typeNameOption_= optionRemoveModel_.substr(pos_1+1,std::string::npos); //e.g.: no
+
+    const fileName libPATO = getEnv("LIB_PATO");
+    if (!isDir(libPATO)) {
+      FatalError << "$libPATO folder not found" << exit(FatalError);
+    }
+    fileNameList dirs=readDir(libPATO+"/libPATOx/MaterialModel", fileType::directory);
+    wordList modelNames;
+    forAll(dirs, dirI) {
+      string dirI_=dirs[dirI];
+      int pos = dirI_.find("Model");
+
+      if(pos>0) {
+        dirI_= dirI_.replaceAll("Model","");
+        if (dirI_!="Material") {
+          modelNames.append(dirI_);
+        }
+      }
+    }
+
+    if(!foundInList<word>(modelNameOption_,modelNames)) {
+      FatalError << "\"" << modelNameOption_ << "\" not found in PATO models.\nAvailable models are:" << modelNames  << exit(FatalError);
+    }
+
+    word removeModelName_=modelNameOption_; //e.g.: Chemistry
+    word removeTypeName_=typeNameOption_; //e.g.: newName
+
+    fileName typePath_= libPATO + "/libPATOx/MaterialModel/" + removeModelName_ + "Model/types";
+
+    if (!isDir(typePath_)) {
+      FatalError << typePath_ << " not found." << exit(FatalError);
+    }
+
+    fileNameList dirTypes=readDir(typePath_, fileType::directory);
+    wordList typeNames;
+    List<fileName> typePaths;
+    forAll(dirTypes, dirI) {
+      string dirI_=dirTypes[dirI];
+
+      fileNameList fileTypes=readDir(typePath_+"/"+dirI_, fileType::file);
+      forAll(fileTypes, fileI) {
+        string fileI_ = fileTypes[fileI];
+        int pos = fileI_.find(removeModelName_+"Model.C");
+
+        if(pos>0) {
+          fileI_= fileI_.replaceAll(removeModelName_+"Model.C","");
+          if (fileI_!=""&& !foundInList((word) fileI_,typeNames) ) {
+            typeNames.append(fileI_);
+            typePaths.append(typePath_+"/"+dirI_+"/"+fileI_+removeModelName_+"Model");
+          }
+        }
+      }
+    }
+
+    label index_ =-1;
+    forAll(typeNames, typeI) {
+      if (typeNames[typeI]==removeTypeName_) {
+        index_=typeI;
+      }
+    }
+    if(!foundInList<word>(removeTypeName_, typeNames)) {
+      FatalError << "\"" << removeTypeName_ << "\" solver not found.\nAvailable types are: " << typeNames << exit(FatalError);
+    }
+    if(removeTypeName_=="no") {
+      FatalError << "\"no\" solver can not be removed." << exit(FatalError);
+    }
+
+    fileName removeFolderPath_= typePaths[index_].path();
+
+    if (!isDir(removeFolderPath_)) {
+      FatalError << removeFolderPath_ << " not found." << exit(FatalError);
+    }
+
+    fileName makeTypesPath_ = typePath_.path();
+    if (!isDir(makeTypesPath_)) {
+      FatalError << makeTypesPath_.replaceAll(libPATO,"$LIB_PATO") << " not found." << exit(FatalError);
+    }
+
+    Info << makeTypesPath_ << endl;
+    word command ="rm -rf " + removeFolderPath_;
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    command = sed_command + " -i '/\\#include \\\""+ removeTypeName_ + removeModelName_ +"Model.H\\\"/d' "
+              + makeTypesPath_+"/make" + removeModelName_ + "Model.C";
+    Info << "  $ " <<   command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    command = sed_command + " -i '/defineTypeNameAndDebug(" + removeTypeName_ + removeModelName_+ "Model, 0);/d' "
+              + makeTypesPath_+"/make" + removeModelName_ + "Model.C";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    command = sed_command + " -i '/addToRunTimeSelectionTable(simple"+removeModelName_+"Model, "
+              + removeTypeName_ + removeModelName_  + "Model, fvMesh);/d' "
+              + makeTypesPath_+"/make" + removeModelName_ + "Model.C";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    fileName copy_removeFolderPath_ = removeFolderPath_;
+    copy_removeFolderPath_.replaceAll((word)libPATO+"/libPATOx/","");
+    fileName removeSourceFileName_ = copy_removeFolderPath_ + "/" + removeTypeName_ + removeModelName_ +"Model.C" ;
+    command = sed_command + " -i '/"+ (word) removeSourceFileName_.replaceAll("/","\\/") +"/d' " + (word) libPATO + "/libPATOx/Make/files";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    command = "wclean libso $LIB_PATO/libPATOx";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError" );
+
+    command = "wmake libso $LIB_PATO/libPATOx";
+    Info << "  $ " << command.replaceAll(libPATO,"$LIB_PATO") << endl;
+    dummy = system(command+ ">log.patoManager 2> log.patoManagerError");
+
+    dummy = system("rm log.patoManager");
+    dummy = system("rm log.patoManagerError");
+
+    Info  << endl;
+    Info << "\e[1mRemoved "  << optionRemoveModel_  <<  " from " << removeFolderPath_.replaceAll(libPATO,"$LIB_PATO") << "\e[0m" << endl;
+    Info  << endl;
+  }
+
+  if (args.optionReadIfPresent("listModels", optionRemoveModel_)) {
+    Info << endl;
+    const fileName libPATO = getEnv("LIB_PATO");
+    if (!isDir(libPATO)) {
+      FatalError << "$libPATO folder not found" << exit(FatalError);
+    }
+    fileNameList dirs=readDir(libPATO+"/libPATOx/MaterialModel", fileType::directory);
+    wordList modelNames;
+    forAll(dirs, dirI) {
+      string dirI_=dirs[dirI];
+      int pos = dirI_.find("Model");
+
+      if(pos>0) {
+        dirI_= dirI_.replaceAll("Model","");
+        if (dirI_!="Material") {
+          modelNames.append(dirI_);
+        }
+      }
+    }
+
+    if (modelNames.size() <2) {
+      Info << "\e[1mAvailable models are:\e[0m" << nl << modelNames << nl << endl;
+    } else {
+      Info << "\e[1mAvailable models are:\e[0m" << modelNames << endl;
+    }
+  }
+
+  if (args.optionReadIfPresent("listTypes", optionRemoveModel_)) {
+    Info << endl;
+    const fileName libPATO = getEnv("LIB_PATO");
+    if (!isDir(libPATO)) {
+      FatalError << "$libPATO folder not found" << exit(FatalError);
+    }
+    fileNameList dirs=readDir(libPATO+"/libPATOx/MaterialModel", fileType::directory);
+    wordList modelNames;
+    forAll(dirs, dirI) {
+      string dirI_=dirs[dirI];
+      int pos = dirI_.find("Model");
+
+      if(pos>0) {
+        dirI_= dirI_.replaceAll("Model","");
+        if (dirI_!="Material" && dirI_!="simple") {
+          modelNames.append(dirI_);
+        }
+      }
+    }
+
+    forAll(modelNames, modelI) {
+      fileName typePath_= libPATO + "/libPATOx/MaterialModel/" + modelNames[modelI] + "Model/types";
+
+      if (!isDir(typePath_)) {
+        FatalError << typePath_ << " not found." << exit(FatalError);
+      }
+
+      fileNameList dirTypes=readDir(typePath_, fileType::directory);
+      wordList solverNames;
+      forAll(dirTypes, dirI) {
+        string dirI_=dirTypes[dirI];
+
+        fileNameList fileTypes=readDir(typePath_+"/"+dirI_, fileType::file);
+        forAll(fileTypes, fileI) {
+          string fileI_ = fileTypes[fileI];
+          int pos = fileI_.find(modelNames[modelI]+"Model.C");
+
+          if(pos>0) {
+            fileI_= fileI_.replaceAll(modelNames[modelI]+"Model.C","");
+            if (fileI_!=""&& !foundInList((word) fileI_,solverNames) ) {
+              solverNames.append(fileI_);
+            }
+          }
+        }
+      }
+      if (solverNames.size()<2) {
+        Info << "\e[1mAvailable types for " << modelNames[modelI] << "Model:\e[0m" << nl << solverNames  << nl << endl;
+      } else {
+        Info << "\e[1mAvailable types for " << modelNames[modelI] << "Model:\e[0m" << solverNames  << endl;
+      }
+    }
+  }
+
+  if (args.options().size() == 0) {
+    Info << nl << "Run \"patoManager -help\" for help" << endl;
+  }
+
+  Info << endl;
+  return 0;
+}

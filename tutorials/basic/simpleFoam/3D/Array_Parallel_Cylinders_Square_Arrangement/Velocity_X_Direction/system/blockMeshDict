@@ -1,0 +1,208 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1; // will be change after snappyHexMesh
+
+backgroundMesh {
+  yCells  20;
+  zCells  20;
+
+  // block A
+  xMinA    0;
+  xMaxA    0.25;
+  yMinA    0;
+  yMaxA    0.5;
+  zMinA    0;
+  zMaxA    0.5;
+  xCellsA  10;
+
+  // block B
+
+  xMinB    0.25;
+  xMaxB    0.75;
+  yMinB    0;
+  yMaxB    0.5;
+  zMinB    0;
+  zMaxB    0.5;
+  xCellsB  20;
+
+  // block C
+
+  xMinC    0.75;
+  xMaxC    1;
+  yMinC    0;
+  yMaxC    0.5;
+  zMinC    0;
+  zMaxC    0.5;
+  xCellsC  10;
+}
+
+vertices
+(
+    // block A
+    ($:backgroundMesh.xMinA $:backgroundMesh.yMinA $:backgroundMesh.zMinA) // 0
+    ($:backgroundMesh.xMaxA $:backgroundMesh.yMinA $:backgroundMesh.zMinA) // 1
+    ($:backgroundMesh.xMaxA $:backgroundMesh.yMaxA $:backgroundMesh.zMinA) // 2
+    ($:backgroundMesh.xMinA $:backgroundMesh.yMaxA $:backgroundMesh.zMinA) // 3
+    ($:backgroundMesh.xMinA $:backgroundMesh.yMinA $:backgroundMesh.zMaxA) // 4
+    ($:backgroundMesh.xMaxA $:backgroundMesh.yMinA $:backgroundMesh.zMaxA) // 5
+    ($:backgroundMesh.xMaxA $:backgroundMesh.yMaxA $:backgroundMesh.zMaxA) // 6
+    ($:backgroundMesh.xMinA $:backgroundMesh.yMaxA $:backgroundMesh.zMaxA) // 7
+
+    // block B
+    ($:backgroundMesh.xMinB $:backgroundMesh.yMinB $:backgroundMesh.zMinB) // 8
+    ($:backgroundMesh.xMaxB $:backgroundMesh.yMinB $:backgroundMesh.zMinB) // 9
+    ($:backgroundMesh.xMaxB $:backgroundMesh.yMaxB $:backgroundMesh.zMinB) // 10
+    ($:backgroundMesh.xMinB $:backgroundMesh.yMaxB $:backgroundMesh.zMinB) // 11
+    ($:backgroundMesh.xMinB $:backgroundMesh.yMinB $:backgroundMesh.zMaxB) // 12
+    ($:backgroundMesh.xMaxB $:backgroundMesh.yMinB $:backgroundMesh.zMaxB) // 13
+    ($:backgroundMesh.xMaxB $:backgroundMesh.yMaxB $:backgroundMesh.zMaxB) // 14
+    ($:backgroundMesh.xMinB $:backgroundMesh.yMaxB $:backgroundMesh.zMaxB) // 15
+
+    // block C
+    ($:backgroundMesh.xMinC $:backgroundMesh.yMinC $:backgroundMesh.zMinC) // 16
+    ($:backgroundMesh.xMaxC $:backgroundMesh.yMinC $:backgroundMesh.zMinC) // 17
+    ($:backgroundMesh.xMaxC $:backgroundMesh.yMaxC $:backgroundMesh.zMinC) // 18
+    ($:backgroundMesh.xMinC $:backgroundMesh.yMaxC $:backgroundMesh.zMinC) // 19
+    ($:backgroundMesh.xMinC $:backgroundMesh.yMinC $:backgroundMesh.zMaxC) // 20
+    ($:backgroundMesh.xMaxC $:backgroundMesh.yMinC $:backgroundMesh.zMaxC) // 21
+    ($:backgroundMesh.xMaxC $:backgroundMesh.yMaxC $:backgroundMesh.zMaxC) // 22
+    ($:backgroundMesh.xMinC $:backgroundMesh.yMaxC $:backgroundMesh.zMaxC) // 23
+);
+
+blocks
+(
+    // block A
+    hex (0 1 2 3 4 5 6 7) ($:backgroundMesh.xCellsA $:backgroundMesh.yCells $:backgroundMesh.zCells) simpleGrading (1 1 1)
+
+    // block B
+    hex (8 9 10 11 12 13 14 15) ($:backgroundMesh.xCellsB $:backgroundMesh.yCells $:backgroundMesh.zCells) simpleGrading (1 1 1)
+
+    // block C
+    hex (16 17 18 19 20 21 22 23) ($:backgroundMesh.xCellsC $:backgroundMesh.yCells $:backgroundMesh.zCells) simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+boundary
+(
+inlet {
+  type patch;
+  faces
+  (
+      (0 4 7 3)
+  );
+}
+
+outlet {
+  type patch;
+  faces
+  (
+      (22 21 17 18)
+  );
+}
+
+wall_buffer {
+  type wall;
+  faces
+  (
+      (3 7 6 2)
+      (0 1 5 4)
+      (4 5 6 7)
+      (0 3 2 1)
+
+      (19 23 22 18)
+      (16 17 21 20)
+      (20 21 22 23)
+      (16 19 18 17)
+  );
+}
+
+wall_effective_y1 {
+  type wall;
+  faces
+  (
+      (11 15 14 10)
+  );
+}
+
+wall_effective_y2 {
+  type wall;
+  faces
+  (
+      (8 9 13 12)
+  );
+}
+
+wall_effective_z1 {
+  type wall;
+  faces
+  (
+      (12 13 14 15)
+  );
+}
+
+wall_effective_z2 {
+  type wall;
+  faces
+  (
+      (8 11 10 9)
+  );
+}
+
+master1 {
+  type patch;
+  faces
+  (
+      (6 5 1 2)
+  );
+}
+
+master2 {
+  type patch;
+  faces
+  (
+      (14 13 9 10)
+  );
+}
+
+slave1 {
+  type patch;
+  faces
+  (
+      (8 12 15 11)
+  );
+}
+
+slave2 {
+  type patch;
+  faces
+  (
+      (16 20 23 19)
+  );
+}
+
+
+);
+
+mergePatchPairs
+(
+    (master1 slave1)
+    (master2 slave2)
+);
+
+// ************************************************************************* //

@@ -1,0 +1,54 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Get application name from directory
+application=$(getApplication)
+
+# Copy 0 folder
+cp -rf 0.org 0
+
+# sed command
+if [ "$(uname)" = "Darwin" ]; then
+    sed_cmd=gsed
+else
+    sed_cmd=sed
+fi
+
+runApplication blockMesh -region cylinder
+runApplication $application
+
+# Analytical solution
+cp -r constant/cylinder/polyMesh constant/
+cp system/cylinder/fvSchemes system/
+cp system/cylinder/fvSolution system/
+wmake analyticalHotCylinder
+runApplication analyticalHotCylinder
+line=$(grep -r "endTime \+[0-9]*;" system/controlDict) # if integer
+endTime=$(echo "$line" | $sed_cmd 's/[^0-9]*//g')
+if [ -z "$line" ]; # if line empty, check if float
+then
+    line=$(grep -r "endTime \+[0-9]*.[0-9]*;" system/controlDict)
+    endTime=$(echo "$line" | $sed_cmd 's/[^0-9.]*//g')
+fi
+if ! [[ $endTime =~ ^[+-]?[0-9]+$ ]] && ! [[ $endTime =~ ^[+-]?[0-9]+\.?[0-9]*$ ]]; then # if not integer and not float
+    >&2 echo "Error: endTime ($endTime) is not a number"
+    exit 1
+fi
+if [ -d "$endTime/cylinder" ]; then
+    mv $endTime/analytical* $endTime/cylinder/
+    mv $endTime/sigma* $endTime/cylinder/
+
+    # Post processing
+    runApplication -s sigma postProcess -region cylinder -func magSigma
+    runApplication -s analyticalSigma postProcess -region cylinder -func magAnalyticalSigma
+    runApplication -s singleGraph postProcess -region cylinder -latestTime -func singleGraph
+fi

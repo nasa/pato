@@ -1,0 +1,94 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volVectorField;
+  location    "0";
+  object      cellMotionU;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField {
+  topWall
+  {
+    type    slip;
+    value   $internalField;
+  }
+
+  bottomWall
+  {
+    type    slip;
+    value   $internalField;
+  }
+
+  outlet
+  {
+    type    fixedValue;
+    value   $internalField;
+  }
+
+  inlet
+  {
+    type    fixedValue;
+    value   $internalField;
+  }
+
+  fluid_to_solid
+  {
+    type            codedFixedValue;
+    value           uniform (0 0 0);
+    name            solidfollowing;
+    code
+#{
+    vectorField n(this->patch().nf());
+    scalar deltaT = this->db().time().deltaTValue();
+    const mappedPatchBase& mpp =
+    refCast<const mappedPatchBase>(this->patch().patch());
+    const polyMesh& nbrMesh = mpp.sampleMesh();
+
+    const label samplePatchI = mpp.samplePolyPatch().index();
+    const fvPatch& nbrPatch =
+    refCast<const fvMesh>(nbrMesh).boundary()[samplePatchI];
+
+    const fvPatchField<vector>& nbrField =
+    nbrPatch.lookupPatchField
+    <
+    GeometricField<vector, fvPatchField, volMesh>,
+    vector
+    >
+    ("deltaD");
+
+    tmp<Field<vector>> nbrIntFld
+    (
+        new Field<vector>(nbrField.size(), pTraits<vector>::zero)
+    );
+    nbrIntFld.ref() = nbrField.patchInternalField();
+    vectorField deltaD = nbrIntFld.ref();
+    operator==(deltaD/deltaT);
+#};
+
+    codeInclude
+#{
+#include "mappedPatchBase.H"
+#};
+
+    codeOptions
+#{
+    -I$(LIB_SRC)/meshTools/lnInclude
+#};
+  }
+}
+
+
+
+// ************************************************************************* //

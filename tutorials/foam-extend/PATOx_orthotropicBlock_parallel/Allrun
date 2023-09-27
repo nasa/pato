@@ -1,0 +1,49 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# check if foam-extend is activated
+if [[ -z "${FOAM_EXTEND_SRC}" ]] && [[ -z "${FOAM_EXTEND_LIB}" ]]; then
+    echo "PATO needs to be compiled with foam-extend to run this tutorial."
+    exit 0
+fi
+    
+# create 0 folder
+if [ ! -d 0 ]; then
+    scp -r origin.0 0
+fi
+
+# copy polyMesh
+if [ ! -d constant/porousMat/polyMesh ]; then
+    cp -r constant/porousMat/copy.polyMesh constant/porousMat/polyMesh
+fi
+
+# change the decomposeParDict files
+cmd_sed=sed
+if [ "$(uname)" = "Darwin" ]; then
+    cmd_sed=gsed
+    source $FOAM_ETC/bashrc
+    source $PATO_DIR/bashrc
+fi
+    
+# run PATOx
+if [ -z $1 ];
+then
+    PATOx
+else
+    re='^[0-9]+$'
+    if ! [[ $1 =~ $re ]] ; then
+	echo "error: First argument is not a number" >&2
+	echo "Correct usage = ./Allrun <number_processors>"
+	exit 1
+    fi
+    $cmd_sed -i 's/numberOfSubdomains \+[0-9]*;/numberOfSubdomains '"$1"';/g' system/porousMat/decomposeParDict
+    decomposePar -region porousMat
+    mpiexec -np $1 PATOx -parallel
+    reconstructPar -newTimes -region porousMat
+fi

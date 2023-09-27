@@ -1,0 +1,163 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+#!/usr/bin/env python3
+
+import patoPlot
+from os import mkdir
+from os.path import isdir
+import sys
+
+# Check if postProcessing directory exists
+if not isdir("postProcessing/singleGraph/"):
+    print("Fatal Error : plots seems to not have been generated.\n")
+    sys.exit("exit")
+
+if not isdir("plots"):
+    mkdir("plots")
+# List of data files
+PATOFileList_=[]
+
+PATOFileList_.append("./postProcessing/singleGraph/5/line_p_T_g_T_s.xy")
+PATOFileList_.append("./postProcessing/singleGraph/10/line_p_T_g_T_s.xy")
+PATOFileList_.append("./postProcessing/singleGraph/15/line_p_T_g_T_s.xy")
+
+# Read data files
+data = patoPlot.patoPlot(PATOFileList_)
+
+# Set up plot parameters
+params = {
+    'axes.labelsize': 14,
+    'legend.fontsize': 14,
+    'xtick.labelsize': 14,
+    'ytick.labelsize': 14,
+    'text.usetex': False,
+    'figure.figsize': [40, 20]
+}
+patoPlot.rcParams.update(params)
+
+# Create figure for pressure
+fig = patoPlot.plt.figure()
+p = fig.add_subplot(2, 2, 1)
+# set labels
+p.set_xlabel('Position (m)', fontsize=16)
+p.set_ylabel('Pressure (Pa)', fontsize=16)
+patoPlot.tick_params(axis='x', top='off')
+patoPlot.tick_params(axis='y', right='off')
+# x limit
+DataTBas=data.dataList[0]
+DataT1=data.dataList[1]
+DataT2=data.dataList[2]
+
+xlim = DataTBas[:,1]
+
+# plot data
+patoPlot.plot(DataTBas[:,0],DataTBas[:,1], 'vb', markersize=4, mfc='none', label='5s')
+patoPlot.plot(DataTBas[:,0],DataT1[:,1], '^g', markersize=4, mfc='none', label='10s')
+patoPlot.plot(DataTBas[:,0],DataT2[:,1], 'sc', markersize=4, mfc='none', label='15s')
+
+# tight layout
+patoPlot.plt.tight_layout()
+# add grid
+patoPlot.plt.grid()
+# put legend
+handles, labels = p.get_legend_handles_labels()
+legend = p.legend(handles,labels, loc=1, fontsize =13)
+frame = legend.get_frame()
+frame.set_facecolor('1.0')
+frame.set_edgecolor('1.0')
+
+# Create figure for solid temperature
+Ts = fig.add_subplot(2, 2, 3)
+# set labels
+Ts.set_xlabel('Position (m)', fontsize=16)
+Ts.set_ylabel('Solid temperature (K)', fontsize=16)
+patoPlot.tick_params(axis='x', top='off')
+patoPlot.tick_params(axis='y', right='off')
+
+# plot data
+patoPlot.plot(DataTBas[:,0],DataTBas[:,3], 'vb', markersize=4, mfc='none', label='5s')
+patoPlot.plot(DataTBas[:,0],DataT1[:,3],'^g', markersize=4, mfc='none', label='10s')
+patoPlot.plot(DataTBas[:,0],DataT2[:,3], 'sc', markersize=4, mfc='none', label='15s')
+
+# tight layout
+patoPlot.plt.tight_layout()
+# add grid
+patoPlot.plt.grid()
+# put legend
+handles, labels = Ts.get_legend_handles_labels()
+legend = Ts.legend(handles,labels, loc=1, fontsize =13)
+frame = legend.get_frame()
+frame.set_facecolor('1.0')
+frame.set_edgecolor('1.0')
+
+# Create figure for gas temperature
+Tg = fig.add_subplot(2, 2, 2)
+# set labels
+Tg.set_xlabel('Position (m)', fontsize=16)
+Tg.set_ylabel('Gas temperature (K)', fontsize=16)
+patoPlot.tick_params(axis='x', top='off')
+patoPlot.tick_params(axis='y', right='off')
+
+# plot data
+patoPlot.plot(DataTBas[:,0],DataTBas[:,2], 'vb', markersize=4, mfc='none', label='5s')
+patoPlot.plot(DataTBas[:,0],DataT1[:,2], '^g', markersize=4, mfc='none', label='10s')
+patoPlot.plot(DataTBas[:,0],DataT2[:,2], 'sc', markersize=4, mfc='none', label='15s')
+
+# tight layout
+patoPlot.plt.tight_layout()
+# add grid
+patoPlot.plt.grid()
+# put legend
+handles, labels = Tg.get_legend_handles_labels()
+legend = Tg.legend(handles,labels, loc=1, fontsize =13)
+frame = legend.get_frame()
+frame.set_facecolor('1.0')
+frame.set_edgecolor('1.0')
+
+
+
+# Create figure for velocity
+PATOFileList_=[]
+PATOFileList_.append("./postProcessing/singleGraph/5/line_u_g.xy")
+PATOFileList_.append("./postProcessing/singleGraph/10/line_u_g.xy")
+PATOFileList_.append("./postProcessing/singleGraph/15/line_u_g.xy")
+# Read data files
+data2 = patoPlot.patoPlot(PATOFileList_)
+
+U = fig.add_subplot(2, 2, 4)
+# set labels
+U.set_xlabel('Position (m)', fontsize=16)
+U.set_ylabel('Gas velocity (m/s)', fontsize=16)
+patoPlot.tick_params(axis='x', top='off')
+patoPlot.tick_params(axis='y', right='off')
+# x limit
+DataTBas=data2.dataList[0]
+DataT1=data2.dataList[1]
+DataT2=data2.dataList[2]
+
+# plot data
+patoPlot.plot(DataTBas[:,0],DataTBas[:,1], 'vb', markersize=4, mfc='none', label='5s')
+patoPlot.plot(DataTBas[:,0],DataT1[:,1],'^g', markersize=4, mfc='none', label='10s')
+patoPlot.plot(DataTBas[:,0],DataT2[:,1],'sc', markersize=4, mfc='none', label='15s')
+
+# tight layout
+patoPlot.plt.tight_layout()
+# add grid
+patoPlot.plt.grid()
+# put legend
+handles, labels = U.get_legend_handles_labels()
+legend = U.legend(handles,labels, loc=1, fontsize =13)
+frame = legend.get_frame()
+frame.set_facecolor('1.0')
+frame.set_edgecolor('1.0')
+
+
+outputFile_ = "./plots/results.pdf"
+patoPlot.savefig(outputFile_)

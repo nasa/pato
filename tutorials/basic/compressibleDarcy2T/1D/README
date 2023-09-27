@@ -1,0 +1,11 @@
+To run the case there are 2 ./Allrun scripts:
+1 ./Allrun      # compressibleDarcy2T
+2 PATOx/Allrun  # PATOx
+
+You can automatically run comparison test with :
+./Alltest
+
+Comparison results are located in PATOx/plots
+
+You can clean bots cases by :
+./TestsClean

@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+Volume-averaged gas pressure.
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 5000;
+
+boundaryField {
+  top
+  {
+    type            zeroGradient;
+  }
+  lateral
+  {
+    type            zeroGradient;
+  }
+  porousMat_to_demiseMat
+  {
+    type            zeroGradient;
+  }
+
+  bottom
+  {
+    type            zeroGradient;
+  }
+  wedge_pos
+  {
+    type            wedge;
+  }
+
+  wedge_neg
+  {
+    type            wedge;
+  }
+
+  axis
+  {
+    type		empty;
+  }
+
+}
+// ************************************************************************* /

@@ -1,0 +1,39 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/system/blockMeshDict"
+
+actions
+(
+    // Create tank cellZone from geometric region
+{
+  name    c0;
+  type    cellSet;
+  action  new;
+  source  boxToCell;
+  sourceInfo
+  {
+    box   (0.42 $s_neg 0)(0.43 $s $H);
+  }
+} {
+  name    tank;
+  type    cellZoneSet;
+  action  new;
+  source  setToCellZone;
+  sourceInfo { set c0; }
+}
+);
+
+// ************************************************************************* //

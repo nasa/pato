@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+Description
+    Interpolates pressures onto 2 specified triangulated surfaces and
+    calculates the difference between the average pressures.
+
+\*---------------------------------------------------------------------------*/
+
+#includeEtc "caseDicts/postProcessing/pressure/pressureDifference.cfg"
+
+region1
+{
+    regionType sampledSurface;
+    name outlet;
+    type surfaceFieldValue;
+
+    sampledSurfaceDict
+    {
+        type            plane;
+        planeType       pointAndNormal;
+        pointAndNormalDict
+        {
+            basePoint    (0.0000600001 0 0);
+            normalVector (1 0 0);
+        }
+    }
+}
+
+region2
+{
+    regionType sampledSurface;
+    name inlet;
+    type surfaceFieldValue;
+
+    sampledSurfaceDict
+    {
+        type            plane;
+        planeType       pointAndNormal;
+        pointAndNormalDict
+        {
+            basePoint    (0.0000399999 0 0);
+            normalVector (1 0 0);
+        }
+    }
+}
+
+// ************************************************************************* //

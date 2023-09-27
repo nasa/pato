@@ -1,0 +1,54 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# source OpenFOAM and PATO if darwin
+if [ "$(uname)" = "Darwin" ]; then
+    source $FOAM_ETC/bashrc
+    source $PATO_DIR/bashrc
+fi
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Check number of processors
+if [ -z $1 ];
+then
+    echo "error: correct usage = ./Allrun <number_processors>"
+    exit 1
+fi
+re='^[0-9]+$'
+if ! [[ $1 =~ $re ]] ; then
+   echo "error: First argument is not a number" >&2
+   exit 1
+fi
+
+NPROCESSOR=$1
+
+# change the decomposeParDict files
+$(sed_cmd) -i 's/numberOfSubdomains \+[0-9]*;/numberOfSubdomains '"$NPROCESSOR"';/g' system/decomposeParDict
+
+runApplication blockMesh
+runApplication snappyHexMesh -overwrite
+runApplication extrudeMesh
+runApplication checkMesh
+runApplication transformPoints -scale '(1e-06 1e-06 1e-06)'
+runApplication topoSet
+runApplication dsmcInitialise
+runApplication decomposePar
+runParallel dsmcFoam
+runApplication reconstructPar
+runApplication topoSet
+runApplication postProcess -fields '(p)' -func pressureDifferenceSurface
+cd ./0.0002
+mv UMean UMean.txt
+mv rhoNMean rhoNMean.txt
+mv V V.txt
+cd ..
+# python3 Permeability_Estimation.py # error in macOS
+
+#------------------------------------------------------------------------------

@@ -1,0 +1,13 @@
+TITLE = "Example: Multi-Zone 2D Plot"
+VARIABLES = "X"
+"Y" 
+"Press"
+"Temp"
+"Vel"
+ZONE T="flow2d"
+ I=3, J=1, K=1, ZONETYPE=Ordered
+ DATAPACKING=POINT
+ DT=(DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE)
+1.0 2.0 100.0 50.0 1.0
+1.0 3.0 95.0 50.0 1.00
+1.0 4.0 90.0 50.0 0.90

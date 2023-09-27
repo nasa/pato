@@ -1,0 +1,44 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  object      Ta;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 300;
+
+boundaryField {
+  porousMat2_to_porousMat1
+  {
+    type            coupledMixed;
+    value           uniform 3;
+    Tnbr            Ta;
+    kappaMethod     lookup;
+    kappa           k_abl_sym;
+    //type            fixedValue;
+    //value uniform 300;
+  }
+  sides
+  {
+    type            fixedValue;
+    value uniform 300;
+
+  }
+  bottom
+  {
+    type            fixedValue;
+    value uniform 300;
+  }
+}
+
+// ************************************************************************* /

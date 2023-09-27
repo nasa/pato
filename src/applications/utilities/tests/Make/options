@@ -1,0 +1,68 @@
+EXE_INC = \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_PATO)/libPATOx/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude \
+    -I$(LIB_SRC)/TurbulenceModels/compressible/lnInclude \
+    -isystem$(PATO_DIR)/src/thirdParty/mutation++/install/include \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_PATO)/samplingUser/lnInclude \
+    -I$(PATO_UNIT_TESTING)/testframework \
+    -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
+    -I$(PATO_UNIT_TESTING)/testsuites/tutorials \
+    -Wfatal-errors \
+    -Wno-old-style-cast \
+    -Wno-return-stack-address \
+    -Wno-macro-redefined \
+    -Wno-deprecated-copy-with-user-provided-copy \
+    -Wno-unqualified-std-cast-call
+
+EXE_LIBS = \
+    -lfiniteVolume \
+    -lmeshTools \
+    -ldynamicFvMesh \
+    -ldynamicMesh \
+    -lcompressibleTurbulenceModels \
+    -L$(PATO_DIR)/install/lib \
+    -lPATOx \
+    -L$(PATO_DIR)/src/thirdParty/mutation++/install/lib \
+    -lmutation++ \
+    -lsampling \
+    -L$(PATO_DIR)/install/lib \
+    -lSamplingUser \
+    -lregionModels \
+
+#if defined __has_include
+#if __has_include("Foam_extend_fvCFD.H")
+
+GFLAGS += -DFOAM_EXTEND
+
+EXE_INC += -DDUMMY_SCALAR_FUNCTIONS \
+           -Wno-dangling-gsl \
+           -I$(FOAM_EXTEND_SRC)/foam/lnInclude \
+           -I$(FOAM_EXTEND_SRC)/dynamicMesh/lnInclude \
+           -I$(FOAM_EXTEND_SRC)/dynamicMesh/dynamicMesh/lnInclude \
+           -I$(FOAM_EXTEND_SRC)/dynamicMesh/dynamicFvMesh/lnInclude \
+           -I$(FOAM_EXTEND_SRC)/dynamicMesh/topoChangerFvMesh/lnInclude \
+           -I$(FOAM_EXTEND_SRC)/meshTools/lnInclude \
+           -I$(FOAM_EXTEND_SRC)/finiteVolume/lnInclude \
+           -I$(FOAM_EXTEND_SRC)/solidModels/lnInclude \
+           -I$(FOAM_EXTEND_SRC)/OSspecific/POSIX/lnInclude
+
+LIB_LIBS +=  -L$(FOAM_EXTEND_LIB) \
+             -l_extend_foam \
+             -l_extend_finiteVolume \
+             -l_extend_meshTools \
+             -l_extend_dynamicFvMesh \
+             -l_extend_dynamicMesh \
+             -l_extend_topoChangerFvMesh \
+             -l_extend_solidModels \
+             $(FOAM_EXTEND_LIB)/lib_extend_OSspecific.o
+
+#if defined(darwin64)
+GFLAGS += -Ddarwin -D__clang__
+#endif
+
+#endif
+#endif

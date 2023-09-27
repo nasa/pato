@@ -1,0 +1,43 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  location    "0";
+  object      O2;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0.2;
+
+boundaryField {
+#include "Bc"
+  left
+  {
+    type            fixedValue;
+    value           $internalField ;
+  }
+  right
+  {
+    type            inletOutlet;
+    inletValue      $internalField;
+    value           $internalField ;
+  }
+  flow_to_porousMat
+  {
+    type            heterogeneousReaction;
+    ky              -10.0;
+    value		$internalField;
+  }
+}
+
+
+// ************************************************************************* //

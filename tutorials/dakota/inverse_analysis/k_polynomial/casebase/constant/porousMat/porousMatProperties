@@ -1,0 +1,65 @@
+/*---------------------------------------------------------------------------*\
+OpenFOAM file. Numerical method and parameter options for the finite-rate chemistry solver.
+No modifications are needed for tutorial-derived cases.
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     5.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat/poroursMatProperties";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+IO {
+  IOType InverseProblem;
+  readFiles
+  (
+      "data/Ta_ref"
+  );
+  dakotaMethod MOGA;
+  compareList
+  (
+      // ((readFileName columnI) (fieldI coordI)) // columnI starts at 0
+      ((Ta_ref  1) (Ta (0 0.049 0))) // TC1
+      ((Ta_ref  2) (Ta (0 0.048 0))) // TC2
+      ((Ta_ref  3) (Ta (0 0.046 0))) // TC3
+      ((Ta_ref  4) (Ta (0 0.042 0))) // TC4
+  );
+
+  writeFields
+  (
+  );
+  probingFunctions
+  (
+      plotDict
+      surfacePatchDict
+  );
+}
+
+Pyrolysis {
+  PyrolysisType LinearArrhenius;
+}
+
+Mass {
+  MassType DarcyLaw;
+}
+
+Energy {
+  EnergyType Pyrolysis;
+}
+
+GasProperties {
+  GasPropertiesType Tabulated;
+  GasPropertiesFile "$PATO_DIR/data/Materials/Composites/TACOT/gasProperties";
+}
+
+MaterialProperties {
+  MaterialPropertiesType Porous_polynomial_k_UQ;
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Composites/TACOT";
+  kCondVirgin 0.001;
+  kCondChar 0.001;
+  kRadVirgin 0;
+  kRadChar 0;
+}

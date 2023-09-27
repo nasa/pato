@@ -1,0 +1,65 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  location    "0/porousMat";
+  object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 405.3;
+
+boundaryField {
+  top
+  {
+    type            boundaryMapping;
+    mappingType "2D-axi_pressureMap";
+    mappingFileName "constant/porousMat/BoundaryConditions";
+    mappingFields ((p  "1"));
+    // 1- choose normal to directions along which the flux varies (e.g. axis of an IsoQ sample for example). Use X= (1 0 0), Y= (0 1 0), or Z= (0 0 1):
+    fluxFactorNormal        (0 -1 0);
+    // 2- choose center of axi-symmetry
+    fluxFactorCenter        (0.0 0.1 0.0);
+    // 3- choose type of projection
+    fluxFactorProjection    no;
+    // 'yes': projection on the plane perpendicular to the Normal and passing by the center (recommended for plane surfaces: e.g. top of a cylinder);
+    // 'no':  projection directly on the Normal itself; that is, the distance from the center is directly computed by projection on the Normal (recommended for convexe surfaces, e.g. IsoQ samples).
+    fluxFactorMapFileName "constant/porousMat/fluxFactorMap";
+    dynamicPressureFieldName p_dyn;
+    // direction of the recession when the recession speed is read from file or when the direction of the mesh motion is imposed to conserve some topology properties (case of large deformations).
+    pointMotionDirection    (0 -1 0);
+    // Mesh motion direction is projected on the direction of pointMotionDirection when the value of the fluxFactor is higher than the set Threshold,
+    //otherwise motion is applied directly along the face normal. This is useful to preserve the topology for large and strongly distorted deformations.
+    fluxFactorThreshold     fluxFactorThreshold [ 0 0 0 0 0 0 0 ] 0.97;
+
+    value           uniform 405.3;
+  }
+  bottom
+  {
+    type            zeroGradient;
+  }
+  wedge_neg
+  {
+    type            wedge;
+  }
+  wedge_pos
+  {
+    type            wedge;
+  }
+  axis
+  {
+    type            empty;
+  }
+}
+
+
+// ************************************************************************* //

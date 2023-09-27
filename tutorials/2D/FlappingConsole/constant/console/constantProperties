@@ -1,0 +1,22 @@
+/*---------------------------------------------------------------------------*\
+Constant property directory. Update as needed.
+\*---------------------------------------------------------------------------*/
+
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/cylinder/materialProperties";
+  object      constantProperties;
+}
+// * * * * * *  Units * * * * * [kg m s K mol A cd] * * * * * * * * * * * * * //
+// e.g. W: kg m^2 s^{-3}        [1 2 -3 0 0 0 0]
+
+/***            MATERIAL PROPERTIES                                         ***/
+rho_s_const     1000;
+k_const         1;
+cp_const        1;
+nu_const        0.3;
+E_const         2e6;
+alpha_const     1e-05;
+xi_const        0.5;

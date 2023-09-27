@@ -1,0 +1,26 @@
+EXE_INC = \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_PATO)/libPATOx/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude \
+    -I$(LIB_SRC)/TurbulenceModels/compressible/lnInclude \
+    -I$(PATO_DIR)/src/thirdParty/mutation++/install/include \
+    -I./MaterialFiatToPATO \
+    -Wno-old-style-cast \
+    -Wno-return-stack-address \
+    -Wno-macro-redefined \
+    -Wno-deprecated-copy-with-user-provided-copy \
+    -Wno-unqualified-std-cast-call
+
+EXE_LIBS = \
+    -lfiniteVolume \
+    -lmeshTools \
+    -ldynamicFvMesh \
+    -ldynamicMesh \
+    -lcompressibleTurbulenceModels \
+    -L$(PATO_DIR)/install/lib \
+    -lPATOx \
+    -lSamplingUser \
+    -L$(PATO_DIR)/src/thirdParty/mutation++/install/lib \
+    -lmutation++

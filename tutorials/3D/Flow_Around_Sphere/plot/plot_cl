@@ -1,0 +1,9 @@
+#set term x11 persist
+
+set xlabel 'time'
+set ylabel 'cl'
+set title 'Re = 1'
+plot [1:][] 'postProcessing/fluid/forceCoeffs_object/0/forceCoeffs.dat' u 1:4 w l notitle
+pause 5
+
+

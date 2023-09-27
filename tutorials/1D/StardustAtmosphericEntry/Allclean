@@ -1,0 +1,25 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# remove output folder and add an empty file for git repository                                                                  
+if [ -d output ]; then
+    rm -rf output
+    mkdir output
+    touch output/empty
+fi
+rm -f plots/*.pdf
+rm -rf plots/profiles
+rm -rf constant/cellToRegion
+rm -rf constant/polyMesh
+rm -rf constant/porousMat/polyMesh
+rm -rf constant/subMat1/polyMesh
+rm -rf constant/subMat2/polyMesh
+rm -rf [0-9]*
+
+find . -name '*~' -ls -delete

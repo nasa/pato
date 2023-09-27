@@ -1,0 +1,48 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Stop if error
+set -e
+
+ROOTDIR=`pwd`
+
+# compile Mutation++ and its thirdParty libraries
+if [ ! -d $MPP_DIRECTORY/install ]; then
+    cd $MPP_DIRECTORY
+    # python scripts/install_dependencies.py
+    mkdir build
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=$(realpath ../install) -DCMAKE_INSTALL_LIBDIR=lib ..
+    make -j `nproc` install
+    loc_eigen=`find /usr/ -name signature_of_eigen3_matrix_library -print 2>/dev/null | sed 's|\(.*\)/.*|\1|'`
+    if [ -z "${loc_eigen}" ]; then
+        loc_eigen=`find $MPP_DIRECTORY -name signature_of_eigen3_matrix_library  -print 2>/dev/null | sed 's|\(.*\)/.*|\1|'`
+    fi
+    loc_eigen="$loc_eigen/Eigen"
+    ln -s ${loc_eigen} ../install/include/Eigen
+    if [ "$(uname)" = "Darwin" ]; then
+	lib_name=$PATO_DIR/src/thirdParty/mutation++/install/lib/libmutation++.dylib
+	install_name_tool -id $lib_name $lib_name
+    fi
+    cd $ROOTDIR
+fi
+
+# compile C++ coding style dependency
+wmake src/thirdParty/google-astyle
+
+# compile PATO library, solvers and utilities
+cd src/applications
+wmake libso libraries/samplingUser
+wmake libso libraries/libPATOx
+wmake all solvers
+wmake all utilities
+cd $ROOTDIR
+
+# compile the documentation
+if [ "$BUILD_DOCUMENTATION" = "yes" ]; then
+    if [ ! -d documentation/Doxygen/html ]; then
+	documentation/Doxygen/Allmake
+    fi
+fi
+
+# ----------------------------------------------------------------- end-of-file

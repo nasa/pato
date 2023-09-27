@@ -1,0 +1,21 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# create volume fields
+cp -r origin.0 0
+
+# create polyMesh
+m4 cylinderMesh.m4 > system/porousMat/blockMeshDict
+blockMesh -region porousMat
+
+# run PATOx
+PATOx
+
+
+# -----------------------------------------------------------------------------

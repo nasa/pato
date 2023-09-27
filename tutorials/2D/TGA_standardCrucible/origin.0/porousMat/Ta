@@ -1,0 +1,59 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  location    "0/porousMat";
+  object      Ta;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 300;
+
+boundaryField {
+  top
+  {
+    type        boundaryMapping;
+    mappingType constant;
+    mappingFileName "constant/porousMat/BoundaryConditions";
+    mappingFields
+    (
+        (Ta "2")
+    );
+    value           uniform 300;
+  }
+
+  wedge_neg
+  {
+    type            wedge;
+  }
+  wedge_pos
+  {
+    type            wedge;
+  }
+  porousMat_to_subMat1
+  {
+    type            compressible::turbulentTemperatureCoupledBaffleMixed;
+    refValue        uniform 300;
+    refGradient     uniform 0;
+    valueFraction   uniform 1;
+    value           uniform 300;
+    Tnbr            Ta;
+    thicknessLayers 0();
+    kappaLayers     0();
+    kappaMethod     lookup;
+    kappa           k_abl_sym;
+    alphaAni        Anialpha;
+  }
+}
+
+
+// ************************************************************************* //

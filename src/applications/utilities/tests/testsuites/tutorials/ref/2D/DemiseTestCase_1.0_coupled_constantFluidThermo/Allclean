@@ -1,0 +1,38 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# remove time folders
+rm -rf [0-9]*
+
+# remove all the *.pdf files
+rm -f plots/*.pdf
+
+# remove meshes
+rm -rf constant/porousMat/polyMesh
+rm -rf constant/demiseMat/polyMesh
+rm -rf constant/ceramicMat/polyMesh
+rm -rf constant/hotFlow/polyMesh
+rm -rf constant/polyMesh
+
+# remove postProcessing folder
+rm -rf postProcessing
+
+# remove output folder and add an empty file for git repository
+if [ -d output ]; then
+    rm -rf output
+    mkdir output
+    touch output/empty
+fi
+
+# remove dynamicCode folder
+rm -rf dynamicCode
+
+# remove temporary files                                                                                                                                                                                                                                    
+find . -name '*~' -ls -delete
+

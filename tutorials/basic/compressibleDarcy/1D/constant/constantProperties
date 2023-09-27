@@ -1,0 +1,38 @@
+/*---------------------------------------------------------------------------*\
+Solid properties. Update as needed.
+\*---------------------------------------------------------------------------*/
+
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant";
+  object      solidProperties;
+}
+
+// * * * * * *  Units * * * * * [kg m s K mol A cd] * * * * * * * * * * * * * //
+// e.g. W: kg m^2 s^{-3}        [1 2 -3 0 0 0 0]
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//Perfect gas constant
+R		R [1 2 -2 -1 -1 0 0]      8.314471469;
+
+// Molar mass
+M		M [1 0 0 0 -1 0 0]      28e-3;
+
+
+// porosity
+eps		eps [0 0 0 0 0 0 0] 	0.3;
+
+// viscosity
+mu 		mu [1 -1 -1 0 0 0 0]	2e-5;
+
+// temperature
+T 		T [0 0 0 1 0 0 0]	300;
+
+// permeability in basis (x,y,z) of the mesh
+K		K [0 2 0 0 0 0 0]	(1e-13 0 0
+                       0 1e-13 0
+                       0 0 1e-13);
+
+// ************************************************************************* //

@@ -1,0 +1,60 @@
+FoamFile {
+  version     7.0;
+  format      ascii;
+  class       dictionary;
+  location    "$PATO_DIR/src/applications/utilities/tests";
+  object      runtests_options;
+}
+
+// endTime option
+endTime_factor 6; // endTime = startTime + (endTime - startTime) / endTime_factor;
+
+// tolerance option (see below)
+tol_linux_0 1e-3;
+tol_linux_1 1e-3;
+
+tol_mac_0 1e-3;
+tol_mac_1 1;
+tol_mac_2 2e-2;
+tol_mac_3 1e-3;
+
+/*
+assertEquals in subtest.C
+
+  // If val < machine precision, val = 0
+  min = 1e-15;
+  if(fabs(valActual) <= min) {
+    valActual=0;
+  }
+  if(valActual==0||valExpected==0) {
+    if(fabs(valExpected-valActual)<tol[0]) {
+      result->failed=0;
+    } else {
+      result->failed=1;
+    }
+  } else {
+#ifdef __APPLE__
+    if(valExpected < tol[1] || valActual < tol[1]) {
+      if(fabs(1-valExpected/valActual)<tol[2]) {
+        result->failed=0;
+      } else {
+        result->failed=1;
+      }
+    } else {
+      if(fabs(1-valExpected/valActual)<tol[3]) {
+        result->failed=0;
+      } else {
+        result->failed=1;
+      }
+    }
+#else
+    if(fabs(1-valExpected/valActual)<tol[1]) {
+      result->failed=0;
+    } else {
+      result->failed=1;
+    }
+#endif
+  }
+
+*/
+

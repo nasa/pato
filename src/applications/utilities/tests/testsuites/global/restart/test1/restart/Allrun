@@ -1,0 +1,20 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+start_time=1
+# create 0 folder
+if [ ! -d $start_time ]; then
+    scp -r origin.$start_time $start_time
+fi
+
+# create polyMesh
+blockMesh -region porousMat
+
+# run PATOx
+PATOx

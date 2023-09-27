@@ -1,0 +1,164 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1; // will be change after snappyHexMesh
+
+backgroundMesh {
+  yCells  20;
+  xCells  20;
+
+  // block A
+  xMinA    0;
+  xMaxA    0.5;
+  yMinA    0;
+  yMaxA    0.5;
+  zMinA    0;
+  zMaxA    0.25;
+  zCellsA  10;
+
+  // block B
+
+  xMinB    0;
+  xMaxB    0.5;
+  yMinB    0;
+  yMaxB    0.5;
+  zMinB    0.25;
+  zMaxB    0.75;
+  zCellsB  20;
+
+  // block C
+
+  xMinC    0;
+  xMaxC    0.5;
+  yMinC    0;
+  yMaxC    0.5;
+  zMinC    0.75;
+  zMaxC    1;
+  zCellsC  10;
+}
+
+vertices
+(
+    // block A
+    ($:backgroundMesh.xMinA $:backgroundMesh.yMinA $:backgroundMesh.zMinA) // 0
+    ($:backgroundMesh.xMaxA $:backgroundMesh.yMinA $:backgroundMesh.zMinA) // 1
+    ($:backgroundMesh.xMaxA $:backgroundMesh.yMaxA $:backgroundMesh.zMinA) // 2
+    ($:backgroundMesh.xMinA $:backgroundMesh.yMaxA $:backgroundMesh.zMinA) // 3
+    ($:backgroundMesh.xMinA $:backgroundMesh.yMinA $:backgroundMesh.zMaxA) // 4
+    ($:backgroundMesh.xMaxA $:backgroundMesh.yMinA $:backgroundMesh.zMaxA) // 5
+    ($:backgroundMesh.xMaxA $:backgroundMesh.yMaxA $:backgroundMesh.zMaxA) // 6
+    ($:backgroundMesh.xMinA $:backgroundMesh.yMaxA $:backgroundMesh.zMaxA) // 7
+
+    // block B
+    ($:backgroundMesh.xMinB $:backgroundMesh.yMinB $:backgroundMesh.zMaxB) // 8
+    ($:backgroundMesh.xMaxB $:backgroundMesh.yMinB $:backgroundMesh.zMaxB) // 9
+    ($:backgroundMesh.xMaxB $:backgroundMesh.yMaxB $:backgroundMesh.zMaxB) // 10
+    ($:backgroundMesh.xMinB $:backgroundMesh.yMaxB $:backgroundMesh.zMaxB) // 11
+
+    // block C
+    ($:backgroundMesh.xMinC $:backgroundMesh.yMinC $:backgroundMesh.zMaxC) // 12
+    ($:backgroundMesh.xMaxC $:backgroundMesh.yMinC $:backgroundMesh.zMaxC) // 13
+    ($:backgroundMesh.xMaxC $:backgroundMesh.yMaxC $:backgroundMesh.zMaxC) // 14
+    ($:backgroundMesh.xMinC $:backgroundMesh.yMaxC $:backgroundMesh.zMaxC) // 15
+);
+
+blocks
+(
+    // block A
+    hex (0 1 2 3 4 5 6 7) ($:backgroundMesh.xCells $:backgroundMesh.yCells $:backgroundMesh.zCellsA) simpleGrading (1 1 1)
+
+    // block B
+    hex (4 5 6 7 8 9 10 11) ($:backgroundMesh.xCells $:backgroundMesh.yCells $:backgroundMesh.zCellsB) simpleGrading (1 1 1)
+
+    // block C
+    hex (8 9 10 11 12 13 14 15) ($:backgroundMesh.xCells $:backgroundMesh.yCells $:backgroundMesh.zCellsC) simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+boundary
+(
+inlet {
+  type patch;
+  faces
+  (
+      (0 3 2 1)
+  );
+}
+
+outlet {
+  type patch;
+  faces
+  (
+      (12 13 14 15)
+  );
+}
+
+wall_buffer {
+  type wall;
+  faces
+  (
+      (3 7 6 2)
+      (1 2 6 5)
+      (1 5 4 0)
+      (0 4 7 3)
+
+      (9 10 14 13)
+      (11 15 14 10)
+      (8 12 15 11)
+      (9 13 12 8)
+  );
+}
+
+wall_effective_x1 {
+  type wall;
+  faces
+  (
+      (4 8 11 7)
+  );
+}
+
+wall_effective_x2 {
+  type wall;
+  faces
+  (
+      (6 10 9 5)
+  );
+}
+
+wall_effective_y1 {
+  type wall;
+  faces
+  (
+      (5 9 8 4)
+  );
+}
+
+wall_effective_y2 {
+  type wall;
+  faces
+  (
+      (7 11 10 6)
+  );
+}
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

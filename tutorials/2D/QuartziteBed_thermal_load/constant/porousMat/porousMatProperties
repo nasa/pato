@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+movingMesh      no;
+/****************************** end GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields (epsilon sigma D); // write fields in the time folders
+  probingFunctions
+  (); // name of sampling/probing dictionaries in "system/porousMat"
+}
+/****************************** END IO ************************************/
+
+/****************************** MASS, ENERGY, PYROLYSIS *******************/
+MaterialProperties {
+  MaterialPropertiesType Porous;
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Granular/Quartzite_bed";
+}
+
+Pyrolysis {
+  PyrolysisType virgin; // PATO pyrolysis
+}
+
+Mass {
+  createFields ((p volScalarField)); // pressure [Pa]
+}
+
+Energy {
+  createFields ((Ta volScalarField)      // temperature [K]
+  (rho_s volScalarField)); // solid density [kg/m3]
+}
+
+SolidMechanics {
+  SolidMechanicsType  ElasticThermal; // Displacement, ElasticThermal, no
+  planeStress         no;
+}
+
+/****************************** END MASS, ENERGY, PYROLYSIS ****************/
+
+/****************************** GAS PROPERTIES  ************************************/
+GasProperties {
+  GasPropertiesType no; // tabulated gas properties
+  GasPropertiesFile "$PATO_DIR/data/Materials/Granular/Quartzite_bed/gasProperties_with_k";
+}
+
+/****************************** END GAS PROPERTIES **************************/
+
+/****************************** TIME CONTROL  **********************************/
+TimeControl {
+  TimeControlType no;
+  chemTransEulerStepLimiter no;
+}
+
+/****************************** END TIME CONTROL  ******************************/

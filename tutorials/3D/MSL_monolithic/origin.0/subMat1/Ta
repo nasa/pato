@@ -1,0 +1,42 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  location    "50/subMat1";
+  object      Ta;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 300;
+
+boundaryField {
+  bottom
+  {
+    type            zeroGradient;
+  }
+  subMat1_to_porousMat
+  {
+    type            compressible::turbulentTemperatureCoupledBaffleMixed;
+    Tnbr            Ta;
+    kappaMethod     lookup;
+    kappa           k_abl_sym;
+    value           uniform 300;
+  }
+  top
+  {
+    type            fixedValue;
+    value           uniform 300;
+  }
+}
+
+
+// ************************************************************************* //

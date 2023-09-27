@@ -1,0 +1,98 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers {
+  T
+  {
+    solver 	     PCG; // symmetric matrix solver
+    preconditioner   DIC;
+    tolerance        1e-06;
+    relTol           0;
+  };
+
+  rho
+  {
+    solver          PCG;
+    preconditioner  DIC;
+    tolerance       1e-6;
+    relTol          0;
+  }
+
+  rhoFinal
+  {
+    $rho;
+    tolerance       1e-6;
+    relTol          0;
+  }
+
+  p_rgh
+  {
+    solver          PCG;
+    preconditioner  DIC;
+    tolerance        1e-7;
+    relTol           0;
+  }
+
+  p_rghFinal
+  {
+    $p_rgh;
+    tolerance        1e-7;
+    relTol           0;
+  }
+
+  "(U|h|k|epsilon|R)"
+  {
+    solver           PBiCG;
+    preconditioner   DILU;
+    tolerance        1e-6;
+    relTol           0;
+  }
+
+  "(U|h|k|epsilon|R)Final"
+  {
+    $U;
+    tolerance        1e-6;
+    relTol           0;
+  }
+
+  cellMotionU
+  {
+    solver          PCG;
+    preconditioner  DIC;
+    tolerance       1e-08;
+    relTol          0;
+  };
+
+}
+
+PIMPLE {
+  momentumPredictor   on;
+  nCorrectors         2;
+  nNonOrthogonalCorrectors 0;
+}
+
+relaxationFactors {
+  fields
+  {
+  }
+  equations
+  {
+    "h.*"           0.5;
+    "U.*"
+    0.5;
+  }
+}
+
+// ************************************************************************* //

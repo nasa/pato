@@ -1,0 +1,308 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#includeEtc "caseDicts/mesh/generation/snappyHexMeshDict.cfg"
+
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+geometry {
+  fibres
+  {
+    type triSurfaceMesh;
+    file "fibres.obj";
+  }
+
+  sphere2     // User defined region name
+  {
+    type    searchableSphere;    // region defined by bounding sphere
+    centre  (20. 20. 20.);
+    radius  3.0;
+  }
+
+  refinementBox_xyL
+  {
+    type searchableBox;
+    min ( 0 17 17);
+    max (17 23 23);
+  }
+
+  refinementBox_xyR
+  {
+    type searchableBox;
+    min (23 17 17);
+    max (50 23 23);
+  }
+
+  refinementBox_xyU
+  {
+    type searchableBox;
+    min (17  0 17);
+    max (23 17 23);
+  }
+
+  refinementBox_xyD
+  {
+    type searchableBox;
+    min (17 23 17);
+    max (23 40 23);
+  }
+
+  refinementBox_xzU
+  {
+    type searchableBox;
+    min (17 17  0);
+    max (23 23 17);
+  }
+
+  refinementBox_xzD
+  {
+    type searchableBox;
+    min (17 17 23);
+    max (23 23 40);
+  }
+};
+
+castellatedMeshControls {
+
+  // Refinement parameters
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  // If local number of cells is >= maxLocalCells on any processor
+  // switches from refinement followed by balancing
+  // (current method) to (weighted) balancing before refinement.
+  maxLocalCells 100000;
+
+  // Overall cell limit (approximately). Refinement will stop immediately
+  // upon reaching this number so a refinement level might not complete.
+  // Note that this is the number of cells before removing the part which
+  // is not 'visible' from the keepPoint. The final number of cells might
+  // actually be a lot less.
+  maxGlobalCells 2000000;
+
+  // The surface refinement loop might spend lots of iterations refining just a
+  // few cells. This setting will cause refinement to stop if <= minimumRefine
+  // are selected for refinement. Note: it will at least do one iteration
+  // (unless the number of cells to refine is 0)
+  minRefinementCells 10;
+
+  // Allow a certain level of imbalance during refining
+  // (since balancing is quite expensive)
+  // Expressed as fraction of perfect balance (= overall number of cells /
+  // nProcs). 0=balance always.
+  maxLoadUnbalance 0.10;
+
+
+  // Number of buffer layers between different levels.
+  // 1 means normal 2:1 refinement restriction, larger means slower
+  // refinement.
+  nCellsBetweenLevels 3;
+
+
+
+  // Explicit feature edge refinement
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  // Specifies a level for any cell intersected by its edges.
+
+  features
+  (
+  {
+    file "fibres.eMesh";  // file containing edge mesh features
+    level 4;              // level of refinement
+  }
+  );
+
+  // Surface based refinement
+  // ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  // Specifies two levels for every surface. The first is the minimum level,
+  // every cell intersecting a surface gets refined up to the minimum level.
+  // The second level is the maximum level. Cells that 'see' multiple
+  // intersections where the intersections make an
+  // angle > resolveFeatureAngle get refined up to the maximum level.
+
+  refinementSurfaces  // refinement for surfaces specified above
+  {
+    fibres
+    {
+      level (4 4);              // (min max) refinement for the whole surface
+      patchInfo { type wall; }  // optional specification of patch type (default is wall)
+    }
+  }
+
+  // Resolve sharp angles
+  resolveFeatureAngle 30;
+
+
+  // Region-wise refinement
+  // ~~~~~~~~~~~~~~~~~~~~~~
+
+  // Specifies refinement level for cells in relation to a surface. One of
+  // three modes
+  // - distance. 'levels' specifies per distance to the surface the
+  //   wanted refinement level. The distances need to be specified in
+  //   descending order.
+  // - inside. 'levels' is only one entry and only the level is used. All
+  //   cells inside the surface get refined up to the level. The surface
+  //   needs to be closed for this to be possible.
+  // - outside. Same but cells outside.
+  refinementRegions
+  {
+    sphere2
+    {
+      mode inside;
+      levels ((3 3));         // refinement level 4 (1.0 entry ignored)
+    }
+    refinementBox_xyL
+    {
+      mode inside;
+      levels ((2 2));         // refinement level 4 (1.0 entry ignored)
+    }
+
+    refinementBox_xyR
+    {
+      mode inside;
+      levels ((2 2));         // refinement level 4 (1.0 entry ignored)
+    }
+
+    refinementBox_xyU
+    {
+      mode inside;
+      levels ((2 2));         // refinement level 4 (1.0 entry ignored)
+    }
+
+    refinementBox_xyD
+    {
+      mode inside;
+      levels ((2 2));         // refinement level 4 (1.0 entry ignored)
+    }
+
+    refinementBox_xzU
+    {
+      mode inside;
+      levels ((2 2));         // refinement level 4 (1.0 entry ignored)
+    }
+
+    refinementBox_xzD
+    {
+      mode inside;
+      levels ((2 2));         // refinement level 4 (1.0 entry ignored)
+    }
+  }
+
+  // Mesh selection
+  // ~~~~~~~~~~~~~~
+
+  // After refinement patches get added for all refinementSurfaces and
+  // all cells intersecting the surfaces get put into these patches. The
+  // section reachable from the locationInMesh is kept.
+  // NOTE: This point should never be on a face, always inside a cell, even
+  // after refinement.
+  locationInMesh (10 10 10);   // location vector inside the region to be meshed
+
+  // Whether any faceZones (as specified in the refinementSurfaces)
+  // are only on the boundary of corresponding cellZones or also allow
+  // free-standing zone faces. Not used if there are no faceZones.
+  //allowFreeStandingZoneFaces true;
+}
+
+// Settings for the snapping. to move cell vertex points onto surface geometry to remove the jagged castellated surface from the mesh
+snapControls {
+  //- Number of patch smoothing iterations before finding correspondence
+  //  to surface
+  nSmoothPatch 3;
+
+  //- Relative distance for points to be attracted by surface feature point
+  //  or edge. True distance is this factor times local
+  //  maximum edge length.
+  tolerance 2.0;
+
+  //- Number of mesh displacement relaxation iterations.
+  nSolveIter 300;
+
+  //- Maximum number of snapping relaxation iterations. Should stop
+  //  before upon reaching a correct mesh.
+  nRelaxIter 10;
+
+  // Feature snapping
+
+  //- Number of feature edge snapping iterations.
+  //  Leave out altogether to disable.
+  nFeatureSnapIter 5;
+
+  //- Detect (geometric only) features by sampling the surface
+  //  (default=false).
+  implicitFeatureSnap false;
+
+  //- Use castellatedMeshControls::features (default = true)
+  explicitFeatureSnap true;
+
+  //- Detect points on multiple surfaces (only for explicitFeatureSnap)
+  multiRegionFeatureSnap false;
+}
+
+// Settings for the layer addition. To shrink the existing mesh from the boundary and inserting layers of cells
+addLayersControls {
+  // switch that sets whether the specified layer thicknesses are relative to undistorted cell size outside layer or absolute
+  // size of the refined cell outside layer (true) or absolute sizes (false, usually with firstLayerThickness).
+  relativeSizes       true;
+
+  // Per final patch (so not geometry!) the layer information. Dictionary specifying layers to be inserted
+  layers
+  {
+    "fibres"
+    {
+      nSurfaceLayers 1;
+    }
+  }
+  // expansion factor for layer mesh, increase in size from one layer to the next
+  expansionRatio      1.2;
+
+  // Wanted thickness of final added cell layer. If multiple layers
+  // is the thickness of the layer furthest away from the wall.
+  // Relative to undistorted size of cell outside layer.
+  // usually in combination with relative sizes according to the relativeSizes entry.
+  finalLayerThickness 0.5;
+
+  // Minimum thickness of cell layer. If for any reason layer
+  // cannot be above minThickness do not add layer.
+  // Relative to undistorted size of cell outside layer.
+  minThickness        1e-3;
+
+  // thickness of layer nearest the wall, usually in combination with absolute sizes according to the relativeSizes entry
+  //firstLayerThickness 0.01;
+}
+
+
+// Generic mesh quality settings. At any undoable phase these determine
+// where to undo.
+meshQualityControls {
+#include "meshQualityDict"
+}
+
+writeFlags
+(
+    //scalarLevels
+    //layerSets
+    //layerFields  // write volScalarField for layer coverage
+);
+
+// Merge tolerance. Is fraction of overall bounding box of initial mesh.
+// Note: the write tolerance needs to be higher than this.
+mergeTolerance 1e-6;
+
+// ************************************************************************* //

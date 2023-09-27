@@ -1,0 +1,33 @@
+/*---------------------------------------------------------------------------*\
+Earth composition.
+\*---------------------------------------------------------------------------*/
+
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "";
+  object      "environmentComposition";
+}
+
+/*** CHEMISTRY IN THE BOUNDARY LAYER ***/
+
+/***            Equilibrium chemistry: Boundary layer edge elemental composition (in MOLE fraction) used for option: mutationBprime     ***/
+//              Note: the list of elements comes from the mixture files that you have chosen
+//              in thermophysicalProperties (mixtureMutationBprime).
+//              Only the elements present in the mixture file are read here. Values not provided here default to 0.
+//              All zero will make the code crash because it's not set up to run without gas.
+Yke[C]                0.3276;
+Yke[O]                0.6556;
+Yke[N]                0.0118;
+Yke[AR]                0.005;
+
+
+// Finite-rate chemistry: Boundary layer edge species composition (in MASS fractions)
+Yie[CO2]               0.97;
+Yie[N2]                0.01;
+Yie[AR] 	       0.015;
+Yie[O2] 	       0.005;
+
+
+

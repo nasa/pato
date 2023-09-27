@@ -1,0 +1,25 @@
+EXE_INC = \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_PATO)/libPATOx/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
+    -I$(LIB_PATO)/samplingUser/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -isystem$(PATO_DIR)/src/thirdParty/mutation++/install/include \
+    -Wfatal-errors \
+    -Wno-old-style-cast \
+    -Wno-return-stack-address \
+    -Wno-macro-redefined \
+    -Wno-deprecated-copy-with-user-provided-copy \
+    -Wno-unqualified-std-cast-call
+    
+EXE_LIBS = \
+    -L$(PATO_DIR)/install/lib \
+    -L$(PATO_DIR)/src/thirdParty/mutation++/install/lib \
+    -lfiniteVolume \
+    -ldynamicFvMesh \
+    -lregionModels \
+    -lSamplingUser \
+    -lmeshTools \
+    -lmutation++ \
+    -lPATOx

@@ -1,0 +1,65 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+movingMesh      no;
+/****************************** end GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields (); // write fields in the time folders
+  probingFunctions
+  (
+      plotDict
+      surfacePatchDict
+  ); // name of sampling/probing dictionaries in "system/porousMat"
+}
+/****************************** END IO ************************************/
+
+
+/****************************** MASS, ENERGY, PYROLYSIS *******************/
+MaterialProperties {
+  MaterialPropertiesType FourierRadiation; // porous material properties
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Fourier/Quartzite";
+
+}
+
+Pyrolysis {
+  PyrolysisType no; // PATO pyrolysis
+}
+
+Mass {
+  MassType no; // Solve the semi implicit pressure equation
+}
+
+Energy {
+  EnergyType PureConduction;  // Solve the temperature equation
+}
+
+SolidMechanics {
+  SolidMechanicsType  no;
+}
+/****************************** END MASS, ENERGY, PYROLYSIS ****************/
+
+
+/****************************** TIME CONTROL  **********************************/
+TimeControl {
+  TimeControlType no; // change the integration time step in function of the gradient of the pressure
+  chemTransEulerStepLimiter no;
+}
+/****************************** END TIME CONTROL  ******************************/

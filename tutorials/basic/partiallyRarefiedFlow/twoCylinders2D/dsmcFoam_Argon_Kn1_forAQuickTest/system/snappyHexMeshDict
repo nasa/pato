@@ -1,0 +1,111 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#includeEtc "caseDicts/mesh/generation/snappyHexMeshDict.cfg"
+
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+geometry {
+  solid1
+  {
+    type searchableCylinder;
+    point1 (30.0 10.0 0.0);
+    point2 (30.0 10.0 1.0);
+    radius 2.5231;
+  }
+  solid2
+  {
+    type searchableCylinder;
+    point1 (50.0 10.0 0.0);
+    point2 (50.0 10.0 1.0);
+    radius 2.5231;
+  }
+
+};
+
+castellatedMeshControls {
+
+  maxLocalCells 10000000;
+  maxGlobalCells 100000000;
+  minRefinementCells 10;
+  maxLoadUnbalance 0.15;
+  nCellsBetweenLevels 2;
+
+  features
+  (
+  );
+
+  refinementSurfaces
+  {
+    solid1
+    {
+      level (1 1);
+    }
+    solid2
+    {
+      level (1 1);
+    }
+  }
+
+  resolveFeatureAngle 30;
+
+  refinementRegions
+  {
+  }
+
+  locationInMesh (4.0 4.0 0.5);//(4e-06 4e-06 0.5e-06); //(4.0 4.0 0.5);   // location vector inside the region to be meshed
+}
+
+snapControls {
+  nSmoothPatch 3;
+  tolerance 2.
+  nSolveIter 300;
+  nRelaxIter 10;
+  nFeatureSnapIter 5;
+  implicitFeatureSnap false;
+  explicitFeatureSnap true;
+  multiRegionFeatureSnap false;
+}
+
+addLayersControls {
+
+  relativeSizes       true;
+
+  layers
+  {
+    "solid*.*"
+    {
+      nSurfaceLayers 8;
+    }
+  }
+
+  expansionRatio 1.4;
+  firstLayerThickness 0.1;
+  minThickness 0.05;
+}
+
+meshQualityControls {
+#include "meshQualityDict"
+}
+
+writeFlags
+(
+);
+
+mergeTolerance 1e-6;
+
+// ************************************************************************* //

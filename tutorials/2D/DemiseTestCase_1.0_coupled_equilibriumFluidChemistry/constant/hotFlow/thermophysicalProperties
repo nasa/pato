@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/bottomAir";
+  object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermoType {
+  type            heRhoThermo;
+  mixture         pureMixture;
+  transport       tabular;
+  thermo          hTabular;
+  equationOfState Rhotabular;
+  specie          specie;
+  energy          sensibleEnthalpy;
+}
+
+mixture {
+  specie
+  {
+    nMoles          1;
+    molWeight       28.96;
+  }
+
+  equationOfState
+  {
+    file "$PATO_DIR/data/Fluids/fluidPropertyTable/Air5/Equilibrium/densityTable";
+    outOfBounds clamp;
+  }
+
+  thermodynamics
+  {
+    Hf 0;
+    Cp
+    {
+      file "$PATO_DIR/data/Fluids/fluidPropertyTable/Air5/Equilibrium/cpTable";
+      outOfBounds clamp;
+    }
+    h
+    {
+      file "$PATO_DIR/data/Fluids/fluidPropertyTable/Air5/Equilibrium/hTable";
+      outOfBounds clamp;
+    }
+  }
+
+  transport
+  {
+    mu
+    {
+      file "$PATO_DIR/data/Fluids/fluidPropertyTable/Air5/Equilibrium/muTable";
+      outOfBounds clamp;
+    }
+
+    kappa
+    {
+      file "$PATO_DIR/data/Fluids/fluidPropertyTable/Air5/Equilibrium/kappaTable";
+      outOfBounds clamp;
+    }
+  }
+}
+
+// ************************************************************************* //

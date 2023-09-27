@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/tank";
+  object      tankProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** IO *****************************************/
+IO {
+  writeFields (epsilon sigma D);
+  probingFunctions ();
+}
+/****************************** END IO ************************************/
+
+/****************************** MASS, ENERGY, PYROLYSIS *******************/
+MaterialProperties {
+  MaterialPropertiesType      Porous_const;
+  MaterialPropertiesDirectory "constant/tank";
+  detailedSolidEnthalpies     no;
+}
+
+Pyrolysis {
+  PyrolysisType virgin;
+}
+
+Mass {
+  createFields ((p volScalarField)); // pressure [Pa]
+}
+
+Energy {
+  createFields ((Ta volScalarField)      // temperature [K]
+  (rho_s volScalarField)); // solid density [kg/m3]
+}
+
+SolidMechanics {
+  SolidMechanicsType ElasticThermal;
+  planeStress        no;
+}
+/****************************** END MASS, ENERGY, PYROLYSIS ****************/
+
+/****************************** GAS PROPERTIES  ************************************/
+GasProperties {
+  GasPropertiesType no;
+}
+/****************************** END GAS PROPERTIES **************************/
+
+/****************************** TIME CONTROL  **********************************/
+TimeControl {
+  TimeControlType           no;
+  chemTransEulerStepLimiter no;
+}
+/****************************** END TIME CONTROL  ******************************/

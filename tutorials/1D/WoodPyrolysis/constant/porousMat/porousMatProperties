@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+//movingMesh yes;
+/****************************** end GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields (); // write fields in the time folders
+  probingFunctions
+  (
+      plotDict
+      surfacePatchDict
+  ); // name of sampling/probing dictionaries in "system/porousMat"
+}
+/****************************** END IO ************************************/
+
+/****************************** MASS, ENERGY, PYROLYSIS *******************/
+Pyrolysis {
+  PyrolysisType LinearArrhenius; // PATO pyrolysis
+}
+
+Mass {
+  MassType DarcyLaw; // Solve the semi implicit pressure equation
+}
+
+Energy {
+  EnergyType Pyrolysis; // Solve the temperature equation
+}
+/****************************** END MASS, ENERGY, PYROLYSIS ****************/
+
+/****************************** GAS PROPERTIES  ****************************/
+GasProperties {
+  GasPropertiesType Tabulated; // tabulated gas properties
+  GasPropertiesFile "$PATO_DIR/data/Materials/Wood/Generic/gasProperties"; // tabulated gas properties file
+}
+/****************************** END GAS PROPERTIES **************************/
+
+/****************************** MATERIAL PROPERTIES  ************************/
+MaterialProperties {
+  MaterialPropertiesType Porous; // porous material properties
+  MaterialPropertiesDirectory "$PATO_DIR/data/Materials/Wood/Generic"; // material properties file
+  detailedSolidEnthalpies yes; // use the pyrolysis enthlapies and the sensible energy (Lachaud 2017)
+}
+/****************************** END MATERIAL PROPERTIES  ********************/
+
+/****************************** TIME CONTROL  **********************************/
+TimeControl {
+  TimeControlType GradP; // change the integration time step in function of the gradient of the pressure and the species mass fractions
+  chemTransEulerStepLimiter no;
+}
+/****************************** END TIME CONTROL  ******************************/

@@ -1,0 +1,83 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant";
+  object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermoType {
+  type            hePsiThermoFrozen;
+  mixture         pureMixture;
+  transport       polynomial;
+  thermo          hPolynomial;
+  equationOfState perfectGas;
+  specie          specie;
+  energy          sensibleEnthalpy;
+}
+/*
+thermoType
+{
+    type            hePsiThermo;
+    mixture         pureMixture;
+    transport       const;
+    thermo          hConst;
+    equationOfState perfectGas;
+    specie          specie;
+    energy          sensibleInternalEnergy;
+}*/
+
+mixture {
+  specie
+  {
+    nMoles          1;
+    molWeight       28.96;
+  }
+  /*
+   equationOfState
+     {
+     Tc		126;
+     Vc 		0.0003081;
+     Pc		3400000;
+     omega	0.040;
+     }*/
+
+  thermodynamics
+  {
+    Hf 0;
+    Sf 0;
+    CpCoeffs<8>     ( 856.6626666666651 0.4395374769230862 -0.0001928405827505932 4.514327738928189e-08 -5.376055944056762e-12 2.547282051282582e-16 0 0);
+  }
+
+  transport
+  {
+    muCoeffs<8>     ( 5.334583333333723e-06 5.042896328671261e-08 -1.303677039627001e-11 2.639298834498745e-15 -2.03705361305354e-19 0 0 0);
+    kappaCoeffs<8>  ( 0.0006116666666672575 8.962145656565555e-05 -1.879202843822788e-08 3.572506604506483e-12 -2.713417249417158e-16 0 0 0);
+  }
+
+  /* thermodynamics
+    {
+        Cp              1005;
+        Hf              0;
+    }
+
+    transport
+    {
+        mu              0;
+  ts		110;
+  ts		0.000006064;
+        Pr              1;
+    }*/
+
+}
+
+
+// ************************************************************************* //

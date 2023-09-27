@@ -1,0 +1,95 @@
+# Usage:
+#   dakota -i xxx.in -o run.out > stdout.out
+
+
+
+################################################################################
+environment
+    	#graphics
+	tabular_data
+    	tabular_data_file = 'table_out.dat'
+	annotated        
+	results_output
+ 	results_output_file = 'results'
+################################################################################
+    
+
+
+################################################################################    
+method
+	id_method = 'SOGA'
+    	model_pointer = 'M1'
+	soga
+   		output normal
+  		population_size = 10 # TO MODIFY
+   		initialization_type unique_random
+		#SET HERE PARAMETERS FOR SOGA   
+		    ##SOGA fitness_type domination_count
+		    fitness_type merit_function
+		    replacement_type favor_feasible
+  		    crossover_type shuffle_random
+  		    num_offspring = 2 
+  		    num_parents = 2
+  		    crossover_rate = 0.85 
+ 	 	    mutation_type replace_uniform
+  		    mutation_rate = 0.35 
+		#STOPPING CRITERIA
+	   	    max_function_evaluations = 20 # 10000 # TO MODIFY 
+		    ##SOGA convergence_type metric_tracker
+			convergence_type best_fitness_tracker
+			convergence_tolerance 1e-9
+		    percent_change = 0.01
+		    num_generations = 5
+ 		    final_solutions = 1
+  
+################################################################################
+
+  
+################################################################################
+variables # TO MODIFY
+        id_variables = 'V1'
+        continuous_design = 12
+        cdv_initial_point    9.1265238356e+04 1.0513458704e+05 1.0431127372e+05 1e4 6.5174435895e+04 9.6183490610e+06 3.7532693234e+06 1e4 9.1442774488e+00 9.3191426239e+00 3.3538916122e+00 0.01
+        cdv_lower_bounds        1e3 1e4 1e4 1e4 1e3 1e4 1e4 1e4 0.01 0.01 0.01 0.01
+        cdv_upper_bounds       1e5 1e6 1e6 1e6 1e5 1e8 1e8 1e8 100 100 100 100
+        cdv_descriptor          'E1' 'E2' 'E3' 'E4' 'A1' 'A2' 'A3' 'A4' 'm1' 'm2' 'm3' 'm4'
+        scale_types = 'auto' 'auto' 'auto' 'auto' 'log' 'log' 'log' 'log' 'auto' 'auto' 'auto' 'auto'
+
+#################################################################################
+model #for SOGA
+  id_model = 'M1'
+  single
+  interface_pointer = 'I1'
+  variables_pointer = 'V1'
+  responses_pointer = 'R1'
+
+
+################################################################################
+interface
+	id_interface = 'I1'
+	fork
+	asynchronous
+	evaluation_concurrency = 10 # TO MODIFY
+	analysis_driver = 'simulator_script'
+	parameters_file = 'params.in'
+	results_file    = 'results.out'
+	work_directory directory_tag
+        copy_files = 'templatedir/*'
+	  
+# uncomment to leave params.in and results.out files in work_dir subdirectories
+ 	named 'workdir' 
+	aprepro
+	  
+# when using conmin_frcg (above) with analytic_gradients (below), 
+# need to turn off the active set vector as the interface does not parse it.
+ 	deactivate active_set_vector
+################################################################################
+
+responses 
+  id_responses = 'R1' 
+  calibration_terms = 124
+  numerical_gradients
+  no_hessians
+
+################################################################################
+

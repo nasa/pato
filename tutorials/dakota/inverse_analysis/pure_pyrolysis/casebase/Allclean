@@ -1,0 +1,20 @@
+#!/bin/bash
+cd ${0%/*} || exit 1    # Run from this directory                                                                                                                                                                                       # Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# remove polyMesh
+rm -rf constant/porousMat/polyMesh
+
+# remove the time folders
+rm -rf [0-9]*
+
+# remove results folder and add an empty file for git repository
+if [ -d results ]
+then
+    rm -rf results
+    mkdir results
+    touch results/empty
+fi

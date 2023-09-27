@@ -1,0 +1,49 @@
+#!/bin/bash 
+# check if the PATO unit-testing was a success
+if [ -z "${PATO_DIR}" ]; then
+    echo Error: \$PATO_DIR not defined >&2
+    exit 1
+fi
+cd $PATO_DIR
+rm -f success
+rm -f log.success
+if [ -f log.test ]; then
+   grep "\[---- Passed [0-9]* / [0-9]* Tests ----\]" log.test > log.success
+   str=$(cat log.success | tr -dc ‘0-9’)
+   n=${#str}
+   if [ $n == 2 ]; then
+       num1="${str:0:1}"
+       num2="${str:1:1}"
+   elif [ $n == 4 ]; then
+      num1="${str:0:1}${str:1:1}"
+      num2="${str:2:1}${str:3:1}"
+   elif [ $n == 6 ]; then
+      num1="${str:0:1}${str:1:1}${str:2:1}"
+      num2="${str:3:1}${str:4:1}${str:5:1}"
+   else
+	echo Error: Total number of digits != 2, 4 or 6 >&2
+	rm -f log.success
+	exit 1
+   fi
+   re='^[0-9]+$'
+   if ! [[ $num1 =~ $re ]] ; then
+      echo "Error: Not a number" >&2
+      rm -f log.success
+      exit 1
+   fi
+   if ! [[ $num2 =~ $re ]] ; then
+      echo "Error: Not a number" >&2 
+      rm -f log.success
+      exit 1
+   fi
+   if [ $num1 == $num2 ]; then
+      touch success
+      echo "Passed: ci_gitlab/success"
+      rm -f log.success
+      exit 0
+  fi
+   rm -f log.success
+fi
+
+echo "Not passed: ci_gitlab/success" >&2
+exit 1

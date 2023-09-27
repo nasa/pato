@@ -1,0 +1,14 @@
+/*---------------------------------------------------------------------------*\
+boundaryConditions
+
+Application
+    Provides boundary-condition information at the surface, tabulated as a function of time.
+\*---------------------------------------------------------------------------*/
+/*
+t(s)	p_total_w(Pa)	rhoUeCH(kg/m²/s)	h_r(J/kg)	chemistryOn		lambda		T_inf(K)	p_dyn_stag(Pa)
+*/
+0	101325		0.3e-2			0		1		0.5		300		0
+0.1	101325		0.3			1e7		1		0.5		300		0
+40	101325		0.3			1e7		1		0.5		300		0
+40.1	101325		0.3e-2			0		0		0.5		300		0
+80	101325		0.3e-2			0		0		0.5		300		0

@@ -1,0 +1,15 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+cd plots
+python3  plot_p.py
+python3  plot_u.py
+python3  analytical.py  >m.txt
+export -f defopen
+find . -name \*.PNG -exec /bin/bash -c 'defopen $0' {} \;

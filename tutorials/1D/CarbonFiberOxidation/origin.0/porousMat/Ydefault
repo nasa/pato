@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version         2.0;
+  format          ascii;
+  class           volScalarField;
+  object          Ydefault;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+dimensions          [ 0 0 0 0 0 0 0 ];
+
+internalField   uniform 0.0;
+
+boundaryField {
+  top
+  {
+    type            speciesBC;
+    environmentDirectory "$PATO_DIR/data/Environments/RawData/Earth";
+    mappingType constant;
+    mappingFileName "$FOAM_CASE/constant/porousMat/BoundaryConditions";
+    mappingFields
+    (
+        (rhoeUeCH "1")
+    );
+    value           uniform 0.0;
+  }
+  sides
+  {
+    type            zeroGradient;
+  }
+
+  bottom
+  {
+    type            zeroGradient;
+  }
+}
+
+
+// ************************************************************************* //

@@ -1,0 +1,53 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volScalarField;
+  location    "0";
+  object      Ta;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 300;
+
+boundaryField {
+  top
+  {
+    type            HeatFlux;
+    //BprimeFile      "/nobackup/jmthorn4/PATO_Cases/Material_Databases/PICA-Mars_2-11-20/BprimeTable_Mars";
+    // ON-THE-FLY Bprime
+    //mixtureMutationBprime tacot26;
+    //environmentDirectory "$PATO_DIR/data/Environments/RawData/Mars";
+    //recessionFlag no;
+    mappingType constant;
+    mappingFileName "constant/BoundaryConditions";
+    mappingFields
+    (
+        (p "1")
+        (qConvCFD "4")
+    );
+    Tbackground 0;
+    chemistryOn 1;
+    qRad 0;
+    value           uniform 300;
+  }
+  sides
+  {
+    type            zeroGradient;
+  }
+  bottom
+  {
+    type            zeroGradient;
+  }
+}
+
+
+// ************************************************************************* //

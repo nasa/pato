@@ -1,0 +1,44 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+/****************************** GENERAL ************************************/
+//debug yes;
+/****************************** END GENERAL ********************************/
+
+Mass {
+  createFields ((p volScalarField));
+}
+
+Pyrolysis {
+  PyrolysisType virgin;
+}
+
+Energy {
+  EnergyType FixedTemperature;
+  internalField_T 2;
+  boundaryField_T (("porousMat2_to_porousMat1" 0) ("bottom" 0) ("sides" 0));
+  createFields ((rho_s volScalarField));
+}
+
+MaterialProperties {
+  MaterialPropertiesType Porous; // porous material properties
+  MaterialPropertiesDirectory "$FOAM_CASE/dummyMaterial2"; // material properties directory
+  virginOrChar char; // Char material properties
+  K_v             K_v             [0 2 0 0 0 0 0]         (1.6e-11 0 0 0 1.6e-11 0 0 0 1.6e-11);   // virgin permeability
+  K_c             K_c             [0 2 0 0 0 0 0]         (2e-11 0 0 0 2e-11 0 0 0 2e-11);       // char permeability
+}

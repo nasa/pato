@@ -1,0 +1,33 @@
+/*---------------------------------------------------------------------------*\
+ThermophysicalProperties directory.
+\*---------------------------------------------------------------------------*/
+
+FoamFile {
+  version         7.0;
+  format          ascii;
+  class           dictionary;
+  object          thermodynamicProperties;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// Thermodynamics, Transport and Chemistry for the gas phase
+// Finite-rate chemistry (OpenFOAM chemistry solvers) -- for mode (finiteRate) ***/
+chemistryReader chemkinReader;
+CHEMKINFile "$FOAM_CASE/TACOT_oxidation.inp";  // Finite-rate chemistry file
+CHEMKINThermoFile "$PATO_DIR/data/ThermoTransportChemistry/OpenFOAM/thermo/nasa7_GB.dat"; // Thermo file used to compute reverse rates
+CHEMKINTransportFile "$PATO_DIR/data/ThermoTransportChemistry/OpenFOAM/transport/transportProperties"; // not used but needed for initialization, Mutation++ is used instead
+
+//==============================================================================================
+// For code initialization - do not modify
+thermoType {
+  type            hePsiThermo;
+  mixture         reactingMixture;
+  transport       sutherland;
+  thermo          janaf;
+  energy          sensibleEnthalpy;
+  equationOfState perfectGas;
+  specie          specie;
+}
+inertSpecie N2;
+//==============================================================================================

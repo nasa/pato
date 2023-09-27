@@ -1,0 +1,53 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  dev                                   |
+|   \\  /    A nd           | Web:      http://www.openfoam.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version         4.0;
+  format          ascii;
+  class           dictionary;
+  location        system/porousMat;
+  object          plotDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type sets;
+libs ("libsampling.so");
+
+interpolationScheme cellPoint;
+
+setFormat         raw;
+surfaceFormat     raw;
+
+sets
+(
+plot {
+  type            points;
+  ordered on;
+  axis            xyz;
+  points  (
+      // - porousMat
+      ( 0.00001 0.09619 0.0 ) // TC 1
+      ( 0.00001 0.09238 0.0 ) // TC 2
+      ( 0.00001 0.08857 0.0 ) // TC 3
+      ( 0.00001 0.08476 0.0 ) // TC 4
+      ( 0.00001 0.06952 0.0 ) // TC 5
+      ( 0.00001 0.07714 0.0 ) // TC 6
+      ( 0.02504 0.07714 0.0 ) // TC 7
+      ( 0.03810 0.07714 0.0 ) // TC 8
+      ( 0.04445 0.07714 0.0 ) // TC 9
+      ( 0.04445 0.06952 0.0 ) // TC 10
+  );
+}
+);
+
+fields
+(
+    Ta
+);
+
+// *********************************************************************** //

@@ -1,0 +1,174 @@
+/*---------------------------------------------------------------------------*\
+TACOT_nonPorous
+We assume that the porosity is closed porosity and that the matrix does not pyrolyse.
+\*---------------------------------------------------------------------------*/
+
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat/materialProperties";
+  object      constantProperties;
+}
+// * * * * * *  Units * * * * * [kg m s K mol A cd] * * * * * * * * * * * * * //
+// e.g. W: kg m^2 s^{-3}        [1 2 -3 0 0 0 0]
+
+/****           Universal constants                                             ****/
+R               R               [1 2 -2 -1 -1 0 0]      8.314471469;
+sigmaPlanck     sigmaPlanck     [1 0 -3 -1 0 0 0]       5.6697e-8;
+
+/***            MATERIAL PROPERTIES                                             ***/
+/***            Initial densities and volume fractions                          ***/
+nSolidPhases    2;                                              // number of phases (index starts at 1)
+rhoI[1]         rhoI[1]         [1 -3 0 0 0 0 0]        1600;   // intrinsic density of the fibers
+epsI[1]         epsI[1]         [0 0 0 0 0 0 0]         0.1;    // volume fraction of the fibrous preform
+rhoI[2]         rhoI[2]         [1 -3 0 0 0 0 0]        1200;   // initial intrinsic density of the virgin matrix
+epsI[2]         epsI[2]         [0 0 0 0 0 0 0]         0.1;    // volume fraction of the virgin matrix
+
+/***            Geometrical properties (for volAblation)                ***/
+rf0             rf0             [0 1 0 0 0 0 0]         5e-6;   // initial fiber radius
+rff             rff             [0 1 0 0 0 0 0]         1e-6;   // final fiber radius (only minerals left)
+rfFail          rfFail          [0 1 0 0 0 0 0]         1e-6;   // failure fiber radius (erosion model)
+fiberPhase      1;                                              // identify phase index to treat as fiber
+matrixPhase     2;                                              // identify phase index to treat as matrix surrounding the fibers
+
+/***            Averaged momentum-conservation related data (Darcy's law)       ***/
+K_v             K_v             [0 2 0 0 0 0 0]         (1.6e-11 0 0 0 1.6e-11 0 0 0 1.6e-11); // virgin material permeability (second order tensor)
+K_c             K_c             [0 2 0 0 0 0 0]         (2e-11 0 0 0 2e-11 0 0 0 2e-11);       // char permeability (second order tensor)
+Beta_v          Beta_v          [0 -1 0 0 0 0 0]        (1.4e5 0 0 0 1.4e5 0 0 0 1.4e5);       // virgin material Forchheimer coefficient (second order tensor)
+Beta_c          Beta_c          [0 -1 0 0 0 0 0]        (1.2e5 0 0 0 1.2e5 0 0 0 1.2e5);       // char Forchheimer coefficient (second order tensor)
+eps_g_v         eps_g_v         [0 0 0 0 0 0 0]         0.8;    // virgin material porosity
+eps_g_c         eps_g_c         [0 0 0 0 0 0 0]         0.85;   // char porosity
+
+/***            Convective heat exchange between solid and gas phases for 2 T model     ***/
+Hv0             Hv0             [1 -1 -3 -1 0 0 0]              3e5;    // heat transfer coefficient
+
+/***            Mass transfer in porous media                                           ***/
+eta0            eta0            [0 0 0 0 0 0 0]                 1.1;    // tortuosity
+
+/***            Anisotropic conductivity parameters: main directions and linear factors         ***/
+//              kxyz = tP & kijk' & P
+//              where, kijk'            =       (ki' 0  0
+//                                               0  kj' 0
+//                                               0  0  kk') (in direct orthonormal basis, i, j, k)
+//
+// 1- Express the main directions (ijk) of the diagonal conductivity matrix in the basis of the mesh (xyz)
+//              The transposed conductivity passage matrix (tP) expresses (i,j,k) coordinates in the basis (x,y,z)
+//              where (i,j,k) is a direct orthonormal basis of the diagonal conductivity matrix
+//              and (x,y,z) is the direct orthonormal basis of the mesh (in case of doubt, mesh directions can be seen in paraview)
+//                                                      (i j k)                 ex. rotation a (in radians) around axis z
+tP              tP              [0 0 0 0 0 0 0]         (1 0 0   // x           (cosa -sina 0
+    0 1 0   // y            sina  cosa 0
+    0 0 1); // z            0       0  1)
+// 2 - Linear factors
+kiCoef          kiCoef          [0 0 0 0 0 0 0]         1;       // to multiply column ki of the input files 'char' and 'virgin' by a linear factor: ki' = kiCoef*ki
+kjCoef          kjCoef          [0 0 0 0 0 0 0]         1;       // idem for kj
+kkCoef          kkCoef          [0 0 0 0 0 0 0]         1;       // idem for kk
+
+/***            Diffusion coefficient in binary diffusion mode - set it to 0 for no diffusion     ***/
+D0              D0              [0 2 -1 0 0 0 0]        1e-4;
+
+/***            Initial elemental composition of the gas phase inside the material and for B' balance (mole fractions) ***/
+//              Usual practice is:
+//              1- if 'elementConservation' is turned off, input the pyrolysis gas composition
+//              2- if 'elementConservation' is turned on, input the same initial compostion as boundary layer edge
+//              3- in 'finite-rate' mode:
+//                       (3.1) we need to input species (not elements)
+//                      -> the initial concentrations need to be updated in the directory 0 - update O2, N2, and add species as needed
+//                       (3.2) the values entered below are used for B' only.
+//              Note: the list of elements comes from the mixture files that you have chosen
+//              in thermophysicalProperties 'mixtureMutationBprime' and  'mixtureMutationEquilibrium'
+//              Only the elements present in the mixture file are read here. Values not provided here default to 0.
+//              All zero will make the code crash because it's not set up to run without gas.
+
+// TACOT average
+Zx[C]           0.206;
+Zx[H]           0.679;
+Zx[O]           0.115;
+Zx[N]           0.0;
+
+//Air
+/*Zx[C]                 0.0;
+Zx[H]           0.0;
+Zx[O]           0.21;
+Zx[N]           0.79;*/
+
+/***            Pyrolysis model         ***/
+// Please see description of the pyrolysis model implemented in PATO in Lachaud2015
+// (in directory documentation/references), pages 5,6. It is fully compatible with CMA,
+// and CMA-derived models, but allows for more flexibility and options if needed.
+// NB: zeta and gamma are expressed in mass fractions.
+// Only the elements present in the mixture file are read here. Values not provided here default to 0.
+// - zeta is used in equilibrium mode only, and when 'elementConservation' is selected.
+//   If 'elementConservation' is not selected zeta[i][j] defaults to the initial elemental composition selected above.
+// - gamma is used in finite-rate chemistry mode only
+// NB:  - the stoechiometric factors (gamma) of the species present in the finite-rate chemistry mechanism are looked-up,
+//        they default to gamma = 0 if the values are not found here.
+//      - use correct notations/spelling or species won't be found (eg. A1 might be used instead of C6H6, check in chemistry file).
+
+// Model below is for TACOT_v3.0 'ABLATION TEST-CASE SERIES'
+// Pyrolysis of phase 1 (fibers)
+nPyroReac[1]    0; // number of pyrolysis reactions for phase[1]
+
+// Pyrolysis of phase 2 (matrix)
+nPyroReac[2]    0; // number of pyrolysis reactions for phase[2]
+
+//              Phase 2 - Pyrolysis reaction 1
+F[2][1]         F[2][1]         [0 0 0 0 0 0 0]         0.25;
+A[2][1]         A[2][1]         [0 0 -1 0 0 0 0]        12000;
+E[2][1]         E[2][1]         [1 2 -2 0 -1 0 0]       71130.89;
+m[2][1]         m[2][1]         [0 0 0 0 0 0 0]         3;
+n[2][1]         n[2][1]         [0 0 0 0 0 0 0]         0;
+T[2][1]         T[2][1]         [0 0 0 1 0 0 0]         3.333E+02;
+h[2][1]         h[2][1]         [0 2 -2 0 0 0 0]        -4e6; // in TACOT: -2e6 J/kg (note 11 Ap. 2015: error factor 2 in TACOT_3.0.xls)
+
+zeta[2][1][C]           0.494996;  // zeta[solidPhase][pyroReac][species]
+zeta[2][1][H]           0.136912;
+zeta[2][1][O]           0.368092;
+
+gamma[2][1][H2O]        0.69;
+gamma[2][1][A1]         0.02;
+gamma[2][1][A1OH]       0.29;
+
+//              Phase 2 - Pyrolysis reaction 2
+F[2][2]         F[2][2]         [0 0 0 0 0 0 0]         0.19;
+A[2][2]         A[2][2]         [0 0 -1 0 0 0 0]        4.97777e8;
+E[2][2]         E[2][2]         [1 2 -2 0 -1 0 0]       1.69975e5;
+m[2][2]         m[2][2]         [0 0 0 0 0 0 0]         3;
+n[2][2]         n[2][2]         [0 0 0 0 0 0 0]         0;
+T[2][2]         T[2][2]         [0 0 0 1 0 0 0]         5.556E+02;
+h[2][2]         h[2][2]         [0 2 -2 0 0 0 0]        -4e6;
+
+zeta[2][2][C]           0.494996;
+zeta[2][2][H]           0.136912;
+zeta[2][2][O]           0.368092;
+
+gamma[2][2][CO2]        0.09;
+gamma[2][2][CO]         0.33;
+gamma[2][2][CH4]        0.58;
+
+//              Phase 2 - Pyrolysis reaction 3
+F[2][3]         F[2][3]         [0 0 0 0 0 0 0]         0.06;
+A[2][3]         A[2][3]         [0 0 -1 0 0 0 0]        4.97777e8;
+E[2][3]         E[2][3]         [1 2 -2 0 -1 0 0]       1.69975e5;
+m[2][3]         m[2][3]         [0 0 0 0 0 0 0]         3;
+n[2][3]         n[2][3]         [0 0 0 0 0 0 0]         0;
+T[2][3]         T[2][3]         [0 0 0 1 0 0 0]         5.556E+02;
+h[2][3]         h[2][3]         [0 2 -2 0 0 0 0]        -4e6;
+
+zeta[2][3][C]           0.494996;
+zeta[2][3][H]           0.136912;
+zeta[2][3][O]           0.368092;
+
+gamma[2][3][H2]         1;
+
+/***            Solid mechanics model         ***/
+nu_v    nu_v    [0 0 0 0 0 0 0]      0.3;    // virgin material Poisson's ratio
+nu_c    nu_c    [0 0 0 0 0 0 0]      0.3;    // char Poisson's ration
+E_v     E_v     [1 -1 -2 0 0 0 0]    70e9;   // virgin material Young modulus
+E_c     E_c     [1 -1 -2 0 0 0 0]    20e9;   // char Young modulus
+alpha_v alpha_v [0 0 0 -1 0 0 0]     8e-5;   // virgin thermal expansion coefficient
+alpha_c alpha_c [0 0 0 -1 0 0 0]     8e-5;   // char thermal expansion coefficient
+xi      xi      [0 0 0 0 0 0 0]      0.5;     // Jomaa Function (pyrolysis shrinkage)
+
+// ************************************************************************* //

@@ -1,0 +1,40 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       volTensorField;
+  location    "0";
+  object      k;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 1 -3 -1 0 0 0];
+
+internalField   uniform (1 0 0 0 1 0 0 0 1);
+
+boundaryField {
+  sides
+  {
+    type calculated;
+    value uniform (1 0 0 0 1 0 0 0 1);
+  }
+  subMat1_to_subMat2
+  {
+    type calculated;
+    value uniform (1 0 0 0 1 0 0 0 1);
+  }
+  subMat1_to_porousMat
+  {
+    type calculated;
+    value uniform (1 0 0 0 1 0 0 0 1);
+  }
+}
+
+
+// ************************************************************************* //

@@ -1,0 +1,12 @@
+/*---------------------------------------------------------------------------*\
+boundaryConditions
+
+Application
+    Provides boundary-condition information at the surface, tabulated as a function of time. 
+\*---------------------------------------------------------------------------*/
+/*
+t(s)	p_total_w(Pa)	T_w(K)
+*/
+0	101325		300
+50	101325		1300
+100	101325		1300

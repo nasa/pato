@@ -1,0 +1,73 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version     4.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant/porousMat";
+  object      porousMatProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****************************** GENERAL ************************************/
+//debug yes;
+movingMesh      no;
+/****************************** end GENERAL ********************************/
+
+/****************************** IO *****************************************/
+IO {
+  writeFields (epsilon sigma D); // write fields in the time folders
+  probingFunctions
+  (
+      // plotDict
+      // surfacePatchDict
+  ); // name of sampling/probing dictionaries in "system/porousMat"
+}
+/****************************** END IO ************************************/
+
+/****************************** MASS, ENERGY, PYROLYSIS *******************/
+MaterialProperties {
+  MaterialPropertiesType Porous_const;
+  MaterialPropertiesDirectory "constant/cylinder/";
+  detailedSolidEnthalpies no;
+}
+
+Pyrolysis {
+  PyrolysisType virgin; // PATO pyrolysis
+}
+
+Mass {
+  MassType no; // Solve the semi implicit pressure equation
+}
+
+Energy {
+  EnergyType PureConduction; // Solve the temperature equation
+}
+
+SolidMechanics {
+  SolidMechanicsType  ElasticThermal; // Displacement, ElasticThermal, no
+  planeStress         false;           // Plane stress true, false
+}
+
+/****************************** END MASS, ENERGY, PYROLYSIS ****************/
+
+/****************************** GAS PROPERTIES  ************************************/
+GasProperties {
+  GasPropertiesType no; // tabulated gas properties
+}
+
+/****************************** END GAS PROPERTIES **************************/
+
+/****************************** TIME CONTROL  **********************************/
+TimeControl {
+  TimeControlType no;
+  chemTransEulerStepLimiter no;
+}
+
+/****************************** END TIME CONTROL  ******************************/

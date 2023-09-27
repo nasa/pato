@@ -1,0 +1,13 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# Source PATO run functions
+. $PATO_DIR/src/applications/utilities/runFunctions/RunFunctions
+
+# Initialize the script
+pato_init
+
+# Clean all
+./dakota_cleanup
+rm -f results.txt
+casebase_try/Allclean

@@ -1,0 +1,11 @@
+// Tabulated char-material properties as a function of pressure and temperature.
+// Interpolation is linear. No extrapolation is allowed.
+// If out of (p,T) range, PATO will send a warning and exit.
+// Add as many pressure sub-tables as needed (lines) - (but do not change the number of columns)
+// NB: all data are needed: do not use zeros.
+// TACOT_v3 ends at 3333K. Not extrapolated : 4000 K = 3333 K for raw data. h integrated.
+
+// p(Pa)	T (K)		cp (J/kg/K)	h(J/kg)		ki (W/m/K)	kj (W/m/K)	kk(W/m/K)	emissivity	reflectivity
+							
+1.00E+000	2E+02	7.327E+02	-3.216E+04	1	1	1	0.9		0.9
+1.00E+000	1E+04	7.829E+02	0.000E+00	1	1	1	0.9		0.9

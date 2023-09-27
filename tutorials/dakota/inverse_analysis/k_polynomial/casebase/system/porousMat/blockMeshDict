@@ -1,0 +1,56 @@
+/* blockMeshDict */
+FoamFile {
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 0.01;
+
+vertices
+(
+    (0 0 0)
+    (1 0 0)
+    (1 5 0)
+    (0 5 0)
+    (0 0 1)
+    (1 0 1)
+    (1 5 1)
+    (0 5 1)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) porousMat (1 100 1) simpleGrading (1 0.1 1)
+);
+
+edges
+(
+);
+
+patches
+(
+    wall top
+    (
+        (3 7 6 2)
+    )
+    wall sides
+    (
+        (0 4 7 3)
+        (2 6 5 1)
+        (0 3 2 1)
+        (4 5 6 7)
+    )
+    wall bottom
+    (
+        (1 5 4 0)
+    )
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

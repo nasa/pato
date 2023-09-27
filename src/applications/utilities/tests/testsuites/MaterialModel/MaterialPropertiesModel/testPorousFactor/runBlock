@@ -1,0 +1,5 @@
+#!/bin/sh
+blockMesh -region char
+blockMesh -region virgin
+transformPoints -translate "(-0.5e-3 -1e-3 -0.5e-3)"  -region char
+transformPoints -translate "(-0.5e-3 -1e-3 -0.5e-3)"  -region virgin

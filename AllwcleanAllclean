@@ -1,0 +1,30 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+ROOTDIR=`pwd`
+
+# remove executables
+cd src/applications/
+wclean all solvers
+wclean all utilities
+wclean all libraries
+cd $ROOTDIR
+rm  -rf install
+
+# clean tutorials
+cd tutorials
+./Allclean_tutorials
+cd $ROOTDIR
+
+# remove Mutation++ build directories
+cd $PATO_DIR/src/thirdParty
+./Allwclean
+cd $ROOTDIR
+
+# clean documentation
+documentation/Doxygen/Allclean
+
+# remove temporary files
+find . -name '*~' -ls -delete
+
+# ----------------------------------------------------------------- end-of-file
